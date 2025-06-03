@@ -30,7 +30,25 @@ public class MaterialWS {
         materialBO = new MaterialBO();
         materialCreadorBO = new MaterialCreadorBO();
     }
+    @WebMethod(operationName = "insertarMaterial")
+    public int insertarMaterial(
+        @WebParam(name = "titulo") String titulo,
+        @WebParam(name = "edicion") String edicion,
+        @WebParam(name = "nivel") String nivel,
+        @WebParam(name = "anioPublicacion") Integer anioPublicacion,
+        @WebParam(name = "portada") String portada,
+        @WebParam(name = "idEditorial") Integer idEditorial
+    ) {
+        try {
+            NivelDeIngles nivelDeIngles = NivelDeIngles.valueOf(nivel.toUpperCase());
+            return materialBO.insertar(titulo,edicion,nivelDeIngles,anioPublicacion,portada,idEditorial);
 
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al insertar material: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al insertar material: " + e.getMessage());
+        }
+    }
     /**
      * This is a sample web service operation
      */
