@@ -110,4 +110,13 @@ public class PersonaWS {
             throw new WebServiceException("Error al obtener por credenciales: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "calcularLimitePrestamos")
+    public int calcularLimitePrestamos(@WebParam(name = "correo") String correo) {
+        try {
+            return personaBO.calcularLimitePrestamos(correo);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al calcular límite de préstamos: " + e.getMessage());
+        }
+    }
 }
