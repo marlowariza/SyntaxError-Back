@@ -1,12 +1,14 @@
-
 package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.MaterialBO;
 import com.syntaxerror.biblioteca.business.MaterialCreadorBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
+import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import jakarta.jws.WebService;
@@ -84,6 +86,17 @@ public class MaterialWS {
             return materialBO.obtenerPorId(idMaterial); // Llamada al método en el MaterialBO
         } catch (BusinessException e) {
             throw new WebServiceException("Error al obtener el material: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarEjemplaresMaterial")
+    public ArrayList<EjemplarDTO> listarEjemplaresMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial
+    ) {
+        try {
+            return materialBO.listarEjemplaresMaterial(idMaterial);
+        } catch (Exception e) {
+            throw new WebServiceException("Error al modificar material: " + e.getMessage());
         }
     }
 

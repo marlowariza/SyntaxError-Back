@@ -4,11 +4,14 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EditorialDTO;
+import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,10 +21,12 @@ public class MaterialBO {
 
     private final MaterialDAO materialDAO;
     private final EditorialDAO editorialDAO;
+    private final EjemplarDAO ejemplarDAO;
 
     public MaterialBO() {
         this.materialDAO = new MaterialDAOImpl();
         this.editorialDAO = new EditorialDAOImpl();
+        this.ejemplarDAO = new EjemplarDAOImpl();
     }
 
     public int insertar(String titulo, String edicion, NivelDeIngles nivel, Integer anioPublicacion, String portada, Integer idEditorial) throws BusinessException {
@@ -83,6 +88,18 @@ public class MaterialBO {
         return this.materialDAO.listarTodos();
     }
 
+    public ArrayList<EjemplarDTO> listarEjemplaresMaterial(Integer idMaterial) {
+        ArrayList<EjemplarDTO> ejemplares = ejemplarDAO.listarTodos();
+        ArrayList<EjemplarDTO> ejemplaresFiltrados = new ArrayList<>();
+        for (EjemplarDTO ej : ejemplares) {
+            if (ej.getMaterial().getIdMaterial().equals(idMaterial)) {
+                ejemplaresFiltrados.add(ej);
+            }
+
+        }
+        return ejemplaresFiltrados;
+    }
+
     public ArrayList<MaterialDTO> listarPorCaracteres(String car) {
         ArrayList<MaterialDTO> listaMateriales = new MaterialBO().listarTodos();
         ArrayList<MaterialDTO> listaFiltrada = new ArrayList<>();
@@ -103,7 +120,7 @@ public class MaterialBO {
         ArrayList<MaterialDTO> resultado = new ArrayList<>();
 
         if (filtro == null || filtro.trim().isEmpty()) {
-            return resultado; 
+            return resultado;
         }
 
         filtro = filtro.trim().toLowerCase();
