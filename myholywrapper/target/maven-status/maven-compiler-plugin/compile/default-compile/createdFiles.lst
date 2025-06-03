@@ -1,0 +1,10 @@
+com\syntaxerror\biblioteca\bibliows\PrestamoWS.class
+com\syntaxerror\biblioteca\bibliows\JakartaRestConfiguration.class
+com\syntaxerror\biblioteca\bibliows\SedeWS.class
+com\syntaxerror\biblioteca\bibliows\EjemplarWS.class
+com\syntaxerror\biblioteca\bibliows\CreadorMaterialWS.class
+com\syntaxerror\biblioteca\bibliows\MaterialWS.class
+com\syntaxerror\biblioteca\bibliows\resources\JakartaEE10Resource.class
+com\syntaxerror\biblioteca\bibliows\PersonaWS.class
+com\syntaxerror\biblioteca\bibliows\CreadorWS.class
+com\syntaxerror\biblioteca\bibliows\EditorialWS.class
