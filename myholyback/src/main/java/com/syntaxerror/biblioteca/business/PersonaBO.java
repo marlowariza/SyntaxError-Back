@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.db.util.Cifrado;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.SedeDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
@@ -41,7 +42,7 @@ public class PersonaBO {
         persona.setDireccion(direccion);
         persona.setTelefono(telefono);
         persona.setCorreo(correo);
-        persona.setContrasenha(contrasenha);
+        persona.setContrasenha(Cifrado.cifrarMD5(contrasenha));
         persona.setTipo(tipo);
         persona.setNivel(nivel);
         persona.setTurno(turno);
@@ -76,7 +77,7 @@ public class PersonaBO {
         persona.setDireccion(direccion);
         persona.setTelefono(telefono);
         persona.setCorreo(correo);
-        persona.setContrasenha(contrasenha);
+        persona.setContrasenha(Cifrado.cifrarMD5(contrasenha));
         persona.setTipo(tipo);
         persona.setNivel(nivel);
         persona.setTurno(turno);
@@ -108,6 +109,37 @@ public class PersonaBO {
         return this.personaDAO.listarTodos();
     }
 
+    public PersonaDTO obtenerPorCredenciales(String correo, String contrasenha) throws BusinessException {
+        validarCredenciales(correo, contrasenha);
+        String contraCifrada = Cifrado.cifrarMD5(contrasenha);
+        ArrayList<PersonaDTO> listaPersonas = new PersonaBO().listarTodos();
+        for (PersonaDTO p : listaPersonas) {
+            if (p.getCorreo().equals(correo)
+                    && p.getContrasenha().equals(contraCifrada)) {
+                return p;
+            }
+        }
+        throw new BusinessException("Credenciales inválidas. Verifica correo y contraseña.");
+    }
+
+    private void validarCredenciales(String correo, String contrasenha) throws BusinessException {
+        if (correo == null || !correo.contains("@")) {
+            throw new BusinessException("El correo debe tener un formato válido.");
+        }
+
+        // Validar dominio específico
+        String dominio = correo.toLowerCase();
+        if (!(dominio.endsWith(".admin@myholylib.edu.pe")
+                || dominio.endsWith(".teacher@myholylib.edu.pe")
+                || dominio.endsWith(".student@myholylib.edu.pe"))) {
+            throw new BusinessException("El correo ingresado no es válido.");
+        }
+
+        if (contrasenha == null || contrasenha.length() < 6) {
+            throw new BusinessException("La contraseña debe tener al menos 6 caracteres.");
+        }
+    }
+
     private void validarDatos(String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
             TipoPersona tipo, NivelDeIngles nivel, Turnos turno,
@@ -121,13 +153,8 @@ public class PersonaBO {
         if (telefono == null || telefono.length() < 9) {
             throw new BusinessException("El teléfono debe tener al menos 9 dígitos.");
         }
-        if (correo == null || !correo.contains("@")) {
-            throw new BusinessException("El correo debe tener un formato válido.");
-        }
-        if (contrasenha == null || contrasenha.length() < 6) {
-            throw new BusinessException("La contraseña debe tener al menos 6 caracteres.");
-        }
 
+        validarCredenciales(correo, contrasenha);
         if (tipo == null) {
             throw new BusinessException("Debe seleccionar un tipo de persona.");
         }
