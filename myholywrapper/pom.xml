@@ -51,9 +51,9 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>9.2.0</version>
          </dependency>
-         <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ProyectoSyntaxErrorBiblioteca</artifactId>
+            <artifactId>myholyback</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
