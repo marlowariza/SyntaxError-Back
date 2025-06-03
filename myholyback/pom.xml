@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.syntaxerror.biblioteca</groupId>
-    <artifactId>ProyectoSyntaxErrorBiblioteca</artifactId>
+    <artifactId>myholyback</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
@@ -40,4 +40,5 @@
         <maven.compiler.release>17</maven.compiler.release>
         <exec.mainClass>com.syntaxerror.biblioteca.ProyectoSyntaxErrorBiblioteca</exec.mainClass>
     </properties>
+    <name>myholyback</name>
 </project>
