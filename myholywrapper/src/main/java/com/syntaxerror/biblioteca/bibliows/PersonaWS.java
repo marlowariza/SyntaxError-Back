@@ -101,4 +101,13 @@ public class PersonaWS {
             throw new WebServiceException("Error al eliminar persona: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "obtenerPersonaPorCredenciales")
+    public PersonaDTO obtenerPersonaPorCredenciales(@WebParam(name = "correo") String correo, @WebParam(name = "contrasenha") String contrasenha) {
+        try {
+            return personaBO.obtenerPorCredenciales(correo, contrasenha);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al obtener por credenciales: " + e.getMessage());
+        }
+    }
 }
