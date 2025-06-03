@@ -140,6 +140,24 @@ public class PersonaBO {
         }
     }
 
+    public int calcularLimitePrestamos(String correo) throws BusinessException {
+        if (correo == null) {
+            throw new BusinessException("Correo no puede ser nulo.");
+        }
+
+        correo = correo.toLowerCase();
+
+        if (correo.endsWith(".student@myholylib.edu.pe")) {
+            return 3;
+        } else if (correo.endsWith(".teacher@myholylib.edu.pe")) {
+            return 5;
+        } else if (correo.endsWith(".admin@myholylib.edu.pe")) {
+            return 2;
+        } else {
+            throw new BusinessException("Dominio de correo no reconocido para cálculo de préstamos.");
+        }
+    }
+
     private void validarDatos(String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
             TipoPersona tipo, NivelDeIngles nivel, Turnos turno,
