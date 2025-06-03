@@ -108,4 +108,13 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar Material por caracteres" + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarPorCaracter_Creador")
+    public ArrayList<MaterialDTO> listarPorCaracter_Creador(@WebParam(name = "caracteres") String car) {
+        try {
+            return materialBO.listarPorCaracter_Creador(car);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar Material por car_creadores" + e.getMessage());
+        }
+    }
 }
