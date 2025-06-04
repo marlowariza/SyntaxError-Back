@@ -43,13 +43,13 @@ public class EjemplarWS {
 
     @WebMethod(operationName = "insertarEjemplar")
     public int insertarEjemplar(
-        @WebParam(name = "fechaAdquisicion") Date fechaAdquisicion,
-        @WebParam(name = "disponible") Boolean disponible,
-        @WebParam(name = "tipo") TipoEjemplar tipo,
-        @WebParam(name = "formatoDigital") FormatoDigital formatoDigital,
-        @WebParam(name = "ubicacion") String ubicacion,
-        @WebParam(name = "idSede") Integer idSede,
-        @WebParam(name = "idMaterial") Integer idMaterial
+            @WebParam(name = "fechaAdquisicion") Date fechaAdquisicion,
+            @WebParam(name = "disponible") Boolean disponible,
+            @WebParam(name = "tipo") TipoEjemplar tipo,
+            @WebParam(name = "formatoDigital") FormatoDigital formatoDigital,
+            @WebParam(name = "ubicacion") String ubicacion,
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "idMaterial") Integer idMaterial
     ) {
         try {
             return ejemplarBO.insertar(fechaAdquisicion, disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
@@ -60,14 +60,14 @@ public class EjemplarWS {
 
     @WebMethod(operationName = "modificarEjemplar")
     public int modificarEjemplar(
-        @WebParam(name = "idEjemplar") Integer idEjemplar,
-        @WebParam(name = "fechaAdquisicion") Date fechaAdquisicion,
-        @WebParam(name = "disponible") Boolean disponible,
-        @WebParam(name = "tipo") TipoEjemplar tipo,
-        @WebParam(name = "formatoDigital") FormatoDigital formatoDigital,
-        @WebParam(name = "ubicacion") String ubicacion,
-        @WebParam(name = "idSede") Integer idSede,
-        @WebParam(name = "idMaterial") Integer idMaterial
+            @WebParam(name = "idEjemplar") Integer idEjemplar,
+            @WebParam(name = "fechaAdquisicion") Date fechaAdquisicion,
+            @WebParam(name = "disponible") Boolean disponible,
+            @WebParam(name = "tipo") TipoEjemplar tipo,
+            @WebParam(name = "formatoDigital") FormatoDigital formatoDigital,
+            @WebParam(name = "ubicacion") String ubicacion,
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "idMaterial") Integer idMaterial
     ) {
         try {
             return ejemplarBO.modificar(idEjemplar, fechaAdquisicion, disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
@@ -120,4 +120,23 @@ public class EjemplarWS {
             throw new WebServiceException("Error al contar ejemplares disponibles por sede: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarEjemplaresDisponiblesPorMaterial")
+    public ArrayList<EjemplarDTO> listarEjemplaresDisponiblesPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+        try {
+            return ejemplarBO.listarEjemplaresDisponiblesPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares disponibles por material: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "obtenerPrimerEjemplarDisponiblePorMaterial")
+    public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+        try {
+            return ejemplarBO.obtenerPrimerEjemplarDisponiblePorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al obtener el primer ejemplar disponible: " + e.getMessage());
+        }
+    }
+
 }

@@ -156,4 +156,25 @@ public class MaterialBO {
         return campo != null && campo.toLowerCase().contains(filtro);
     }
 
+    public ArrayList<MaterialDTO> listarMaterialesPorSede(Integer idSede) throws BusinessException {
+
+        BusinessValidator.validarId(idSede, "sede");
+        EjemplarBO ejemplarBO = new EjemplarBO();
+        ArrayList<EjemplarDTO> ejemplares = ejemplarBO.listarTodos();
+        ArrayList<MaterialDTO> materialesPorSede = new ArrayList<>();
+        HashSet<Integer> idsUnicos = new HashSet<>();
+
+        for (EjemplarDTO ej : ejemplares) {
+            if (ej.getSede() != null && ej.getSede().getIdSede().equals(idSede)) {
+                MaterialDTO material = ej.getMaterial();
+                if (material != null && !idsUnicos.contains(material.getIdMaterial())) {
+                    materialesPorSede.add(material);
+                    idsUnicos.add(material.getIdMaterial());
+                }
+            }
+        }
+
+        return materialesPorSede;
+    }
+
 }
