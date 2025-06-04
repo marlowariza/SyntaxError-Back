@@ -1,12 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.syntaxerror.biblioteca.bibliows.PersonaWSTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.246 s <<< FAILURE! -- in com.syntaxerror.biblioteca.bibliows.PersonaWSTest
-com.syntaxerror.biblioteca.bibliows.PersonaWSTest.testListarPersonas -- Time elapsed: 1.223 s <<< ERROR!
-jakarta.xml.ws.WebServiceException: Error al listar personas: Name is null
-	at com.syntaxerror.biblioteca.bibliows.PersonaWS.listarPersonas(PersonaWS.java:32)
-	at com.syntaxerror.biblioteca.bibliows.PersonaWSTest.testListarPersonas(PersonaWSTest.java:52)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.222 s -- in com.syntaxerror.biblioteca.bibliows.PersonaWSTest
