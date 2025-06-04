@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.PrestamoBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
+import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.PrestamoDTO;
 
 import jakarta.jws.WebService;
@@ -23,10 +24,10 @@ public class PrestamoWS {
 
     @WebMethod(operationName = "insertarPrestamo")
     public int insertarPrestamo(
-        @WebParam(name = "fechaSolicitud") Date fechaSolicitud,
-        @WebParam(name = "fechaPrestamo") Date fechaPrestamo,
-        @WebParam(name = "fechaDevolucion") Date fechaDevolucion,
-        @WebParam(name = "idPersona") Integer idPersona
+            @WebParam(name = "fechaSolicitud") Date fechaSolicitud,
+            @WebParam(name = "fechaPrestamo") Date fechaPrestamo,
+            @WebParam(name = "fechaDevolucion") Date fechaDevolucion,
+            @WebParam(name = "idPersona") Integer idPersona
     ) {
         try {
             return prestamoBO.insertar(fechaSolicitud, fechaPrestamo, fechaDevolucion, idPersona);
@@ -37,11 +38,11 @@ public class PrestamoWS {
 
     @WebMethod(operationName = "modificarPrestamo")
     public int modificarPrestamo(
-        @WebParam(name = "idPrestamo") Integer idPrestamo,
-        @WebParam(name = "fechaSolicitud") Date fechaSolicitud,
-        @WebParam(name = "fechaPrestamo") Date fechaPrestamo,
-        @WebParam(name = "fechaDevolucion") Date fechaDevolucion,
-        @WebParam(name = "idPersona") Integer idPersona
+            @WebParam(name = "idPrestamo") Integer idPrestamo,
+            @WebParam(name = "fechaSolicitud") Date fechaSolicitud,
+            @WebParam(name = "fechaPrestamo") Date fechaPrestamo,
+            @WebParam(name = "fechaDevolucion") Date fechaDevolucion,
+            @WebParam(name = "idPersona") Integer idPersona
     ) {
         try {
             return prestamoBO.modificar(idPrestamo, fechaSolicitud, fechaPrestamo, fechaDevolucion, idPersona);
@@ -103,4 +104,26 @@ public class PrestamoWS {
             throw new WebServiceException("Error al contar préstamos por material: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "solicitarPrestamo")
+    public void solicitarPrestamo(
+            @WebParam(name = "idPersona") Integer idPersona,
+            @WebParam(name = "idMaterial") Integer idMaterial
+    ) {
+        try {
+            prestamoBO.solicitarPrestamo(idPersona, idMaterial);
+        } catch (BusinessException | java.text.ParseException e) {
+            throw new WebServiceException("Error al solicitar préstamo: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarEjemplaresPrestadosPorPersona")
+    public ArrayList<EjemplarDTO> listarEjemplaresPrestadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarEjemplaresPrestadosPorPersona(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares prestados: " + e.getMessage());
+        }
+    }
+
 }

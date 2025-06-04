@@ -78,6 +78,23 @@ public class SancionBO {
         return this.sancionDAO.listarTodos();
     }
 
+    public ArrayList<SancionDTO> listarSancionesPorPersona(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<SancionDTO> sanciones = this.listarTodos();
+        ArrayList<SancionDTO> resultado = new ArrayList<>();
+
+        for (SancionDTO s : sanciones) {
+            if (s.getPrestamo() != null
+                    && s.getPrestamo().getPersona() != null
+                    && s.getPrestamo().getPersona().getIdPersona() == idPersona) {
+                resultado.add(s);
+            }
+        }
+
+        return resultado;
+    }
+
     private void validarDatos(TipoSancion tipo, Date fecha, Double monto, Date duracion, String descripcion, Integer idPrestamo) throws BusinessException {
         if (tipo == null) {
             throw new BusinessException("Debe especificarse un tipo de sanción.");
@@ -93,4 +110,18 @@ public class SancionBO {
         }
         BusinessValidator.validarId(idPrestamo, "préstamo asociado");
     }
+
+    public void verificarSancionesActivas(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<SancionDTO> sanciones = listarSancionesPorPersona(idPersona);
+        Date hoy = new Date();
+
+        for (SancionDTO s : sanciones) {
+            if (s.getDuracion() != null && s.getDuracion().after(hoy)) {
+                throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
+            }
+        }
+    }
+
 }

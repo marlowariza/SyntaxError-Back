@@ -24,12 +24,12 @@ public class SancionWS {
 
     @WebMethod(operationName = "insertarSancion")
     public int insertarSancion(
-        @WebParam(name = "tipo") TipoSancion tipo,
-        @WebParam(name = "fecha") Date fecha,
-        @WebParam(name = "monto") Double monto,
-        @WebParam(name = "duracion") Date duracion,
-        @WebParam(name = "descripcion") String descripcion,
-        @WebParam(name = "idPrestamo") Integer idPrestamo
+            @WebParam(name = "tipo") TipoSancion tipo,
+            @WebParam(name = "fecha") Date fecha,
+            @WebParam(name = "monto") Double monto,
+            @WebParam(name = "duracion") Date duracion,
+            @WebParam(name = "descripcion") String descripcion,
+            @WebParam(name = "idPrestamo") Integer idPrestamo
     ) {
         try {
             return sancionBO.insertar(tipo, fecha, monto, duracion, descripcion, idPrestamo);
@@ -40,13 +40,13 @@ public class SancionWS {
 
     @WebMethod(operationName = "modificarSancion")
     public int modificarSancion(
-        @WebParam(name = "idSancion") Integer idSancion,
-        @WebParam(name = "tipo") TipoSancion tipo,
-        @WebParam(name = "fecha") Date fecha,
-        @WebParam(name = "monto") Double monto,
-        @WebParam(name = "duracion") Date duracion,
-        @WebParam(name = "descripcion") String descripcion,
-        @WebParam(name = "idPrestamo") Integer idPrestamo
+            @WebParam(name = "idSancion") Integer idSancion,
+            @WebParam(name = "tipo") TipoSancion tipo,
+            @WebParam(name = "fecha") Date fecha,
+            @WebParam(name = "monto") Double monto,
+            @WebParam(name = "duracion") Date duracion,
+            @WebParam(name = "descripcion") String descripcion,
+            @WebParam(name = "idPrestamo") Integer idPrestamo
     ) {
         try {
             return sancionBO.modificar(idSancion, tipo, fecha, monto, duracion, descripcion, idPrestamo);
@@ -81,5 +81,23 @@ public class SancionWS {
             throw new WebServiceException("Error al listar sanciones: " + e.getMessage());
         }
     }
-}
 
+    @WebMethod(operationName = "listarSancionesPorPersona")
+    public ArrayList<SancionDTO> listarSancionesPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return sancionBO.listarSancionesPorPersona(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar sanciones por persona: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "verificarSancionesActivas")
+    public void verificarSancionesActivas(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            sancionBO.verificarSancionesActivas(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Sanciones activas encontradas: " + e.getMessage());
+        }
+    }
+
+}

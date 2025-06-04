@@ -6,11 +6,14 @@ import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.PrestamoDTO;
 import com.syntaxerror.biblioteca.model.PrestamoEjemplarDTO;
+import com.syntaxerror.biblioteca.model.SancionDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -148,4 +151,95 @@ public class PrestamoBO {
 
         BusinessValidator.validarId(idPersona, "persona");
     }
+
+    public void solicitarPrestamo(Integer idPersona, Integer idMaterial) throws BusinessException, ParseException {
+        // Validaciones iniciales
+        BusinessValidator.validarId(idPersona, "persona");
+        BusinessValidator.validarId(idMaterial, "material");
+
+        PersonaDTO persona = personaDAO.obtenerPorId(idPersona);
+        if (persona == null) {
+            throw new BusinessException("No se encontró a la persona solicitante.");
+        }
+
+        // Validar si tiene sanciones activas
+        new SancionBO().verificarSancionesActivas(idPersona);
+
+        // Verificar límite de préstamos activos
+        int prestamosActivos = this.contarPrestamosActivosPorUsuario(idPersona);
+        int limite = new PersonaBO().calcularLimitePrestamos(persona.getCorreo());
+
+        if (prestamosActivos >= limite) {
+            throw new BusinessException("Has alcanzado el límite de préstamos activos permitido.");
+        }
+
+        // Buscar ejemplar disponible del material
+        EjemplarDTO ejemplarDisponible = new EjemplarBO().obtenerPrimerEjemplarDisponiblePorMaterial(idMaterial);
+
+        if (ejemplarDisponible == null) {
+            throw new BusinessException("No hay ejemplares disponibles de este material.");
+        }
+
+        // Insertar nuevo préstamo
+        PrestamoDTO prestamo = new PrestamoDTO();
+        Date fechaActual = new Date();
+        prestamo.setFechaSolicitud(fechaActual);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dummyFecha = sdf.parse("1900-01-01");
+        prestamo.setFechaPrestamo(dummyFecha);
+        prestamo.setFechaDevolucion(dummyFecha);
+
+        prestamo.setPersona(persona);
+
+        int idPrestamo = this.prestamoDAO.insertar(prestamo);
+
+        // Insertar relación en PrestamoEjemplar
+        PrestamoEjemplarDTO pe = new PrestamoEjemplarDTO();
+        pe.setEstado(EstadoPrestamoEjemplar.SOLICITADO);
+        pe.setFechaRealDevolucion(null);
+
+        new PrestamoEjemplarBO().insertar(idPrestamo, ejemplarDisponible.getIdEjemplar(), pe);
+
+        // Marcar ejemplar como no disponible
+        ejemplarDisponible.setDisponible(false);
+        new EjemplarBO().modificar(
+                ejemplarDisponible.getIdEjemplar(),
+                ejemplarDisponible.getFechaAdquisicion(),
+                false,
+                ejemplarDisponible.getTipo(),
+                ejemplarDisponible.getFormatoDigital(),
+                ejemplarDisponible.getUbicacion(),
+                ejemplarDisponible.getSede().getIdSede(),
+                ejemplarDisponible.getMaterial().getIdMaterial()
+        );
+    }
+
+    public ArrayList<EjemplarDTO> listarEjemplaresPrestadosPorPersona(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<EjemplarDTO> resultado = new ArrayList<>();
+        ArrayList<PrestamoDTO> prestamos = this.listarTodos();
+        ArrayList<PrestamoEjemplarDTO> peList = new PrestamoEjemplarBO().listarTodos();
+        ArrayList<EjemplarDTO> ejemplares = new EjemplarBO().listarTodos();
+
+        for (PrestamoDTO prestamo : prestamos) {
+            if (prestamo.getPersona() != null && prestamo.getPersona().getIdPersona() == idPersona) {
+                for (PrestamoEjemplarDTO pe : peList) {
+                    if (pe.getIdPrestamo().equals(prestamo.getIdPrestamo())
+                            && (pe.getEstado() == EstadoPrestamoEjemplar.PRESTADO || pe.getEstado() == EstadoPrestamoEjemplar.ATRASADO)) {
+
+                        for (EjemplarDTO ej : ejemplares) {
+                            if (ej.getIdEjemplar().equals(pe.getIdEjemplar())) {
+                                resultado.add(ej);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return resultado;
+    }
+
 }

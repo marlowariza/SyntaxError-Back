@@ -169,4 +169,30 @@ public class EjemplarBO {
         BusinessValidator.validarId(idSede, "sede");
         BusinessValidator.validarId(idMaterial, "material");
     }
+
+    public ArrayList<EjemplarDTO> listarEjemplaresDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+
+        ArrayList<EjemplarDTO> disponibles = new ArrayList<>();
+        for (EjemplarDTO ej : this.listarTodos()) {
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial().equals(idMaterial)
+                    && Boolean.TRUE.equals(ej.getDisponible())) {
+                disponibles.add(ej);
+            }
+        }
+
+        return disponibles;
+    }
+
+    public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+
+        for (EjemplarDTO ej : this.listarEjemplaresDisponiblesPorMaterial(idMaterial)) {
+            return ej; // Devuelve el primero encontrado
+        }
+
+        return null; // Si no hay disponibles
+    }
+
 }

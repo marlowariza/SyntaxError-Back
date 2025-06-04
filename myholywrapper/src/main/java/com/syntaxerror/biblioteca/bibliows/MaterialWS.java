@@ -139,6 +139,18 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar Material por car_creadores" + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarMaterialesPorSede")
+    public ArrayList<MaterialDTO> listarMaterialesPorSede(
+            @WebParam(name = "idSede") Integer idSede
+    ) {
+        try {
+            return materialBO.listarMaterialesPorSede(idSede);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
+        }
+    }
+  
     @WebMethod(operationName = "asociarMaterialTema")
     public Integer asociarMaterialPorTema(
         @WebParam(name = "idMaterial") Integer idMaterial,
