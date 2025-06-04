@@ -15,7 +15,7 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
     private static final Logger LOGGER = Logger.getLogger(MaterialCreadorDAOImpl.class.getName());
     
     public MaterialCreadorDAOImpl() {
-        super("BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "AUTOR_IDAUTOR", "BIB_MATERIAL", "BIB_AUTOR");
+        super("BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR", "BIB_MATERIAL", "BIB_AUTOR");
     }
 
     @Override
@@ -88,17 +88,17 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
         CreadorDTO creador = new CreadorDTO();
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_AUTOR WHERE ID_AUTOR = ?";
+            String sql = "SELECT * FROM BIB_CREADOR WHERE ID_CREADOR = ?";
             this.colocarSQLenStatement(sql);
             this.statement.setInt(1, id);
             this.ejecutarConsultaEnBD();
             if (this.resultSet.next()) {
-                creador.setIdAutor(this.resultSet.getInt("ID_AUTOR"));
+                creador.setIdAutor(this.resultSet.getInt("ID_CREADOR"));
                 creador.setNombre(this.resultSet.getString("NOMBRE"));
                 creador.setPaterno(this.resultSet.getString("PATERNO"));
                 creador.setMaterno(this.resultSet.getString("MATERNO"));
                 creador.setSeudonimo(this.resultSet.getString("SEUDONIMO"));
-                creador.setTipo(TipoAutor.valueOf(this.resultSet.getString("TIPO_AUTOR")));
+                creador.setTipo(TipoAutor.valueOf(this.resultSet.getString("TIPO_CREADOR")));
                 creador.setNacionalidad(this.resultSet.getString("NACIONALIDAD"));
                 creador.setActivo(this.resultSet.getInt("ACTIVO") == 1);
             }
