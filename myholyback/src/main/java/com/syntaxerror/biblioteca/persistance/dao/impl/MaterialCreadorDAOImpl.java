@@ -15,7 +15,7 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
     private static final Logger LOGGER = Logger.getLogger(MaterialCreadorDAOImpl.class.getName());
     
     public MaterialCreadorDAOImpl() {
-        super("BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR", "BIB_MATERIAL", "BIB_AUTOR");
+        super("BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR", "BIB_MATERIAL", "BIB_CREADOR");
     }
 
     @Override
