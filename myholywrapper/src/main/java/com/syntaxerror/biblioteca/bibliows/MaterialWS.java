@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.MaterialBO;
 import com.syntaxerror.biblioteca.business.MaterialCreadorBO;
+import com.syntaxerror.biblioteca.business.MaterialTemaBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
@@ -25,12 +26,33 @@ public class MaterialWS {
 
     private final MaterialBO materialBO;
     private final MaterialCreadorBO materialCreadorBO;
+    private final MaterialTemaBO materialTemaBO;
 
     public MaterialWS() {
         materialBO = new MaterialBO();
         materialCreadorBO = new MaterialCreadorBO();
+        materialTemaBO =new MaterialTemaBO();
     }
+    
+    @WebMethod(operationName = "insertarMaterial")
+    public int insertarMaterial(
+        @WebParam(name = "titulo") String titulo,
+        @WebParam(name = "edicion") String edicion,
+        @WebParam(name = "nivel") String nivel,
+        @WebParam(name = "anioPublicacion") Integer anioPublicacion,
+        @WebParam(name = "portada") String portada,
+        @WebParam(name = "idEditorial") Integer idEditorial
+    ) {
+        try {
+            NivelDeIngles nivelDeIngles = NivelDeIngles.valueOf(nivel.toUpperCase());
+            return materialBO.insertar(titulo,edicion,nivelDeIngles,anioPublicacion,portada,idEditorial);
 
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al insertar material: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al insertar material: " + e.getMessage());
+        }
+    }
     /**
      * This is a sample web service operation
      */
@@ -128,5 +150,37 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
         }
     }
-
+  
+    @WebMethod(operationName = "asociarMaterialTema")
+    public Integer asociarMaterialPorTema(
+        @WebParam(name = "idMaterial") Integer idMaterial,
+        @WebParam(name = "idTema") Integer idTema
+    ) throws BusinessException {
+        try {
+            if (materialTemaBO.existeRelacion(idMaterial, idTema)) {
+                throw new BusinessException("La relación entre el material y el tema ya existe.");
+            }
+            return materialTemaBO.asociar(idMaterial, idTema);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al asociar material con tema: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al asociar material con tema: " + e.getMessage());
+        }
+    }
+    @WebMethod(operationName = "asociarMaterialCreador")
+    public Integer asociarMaterialPorCreador(
+            @WebParam(name = "idMaterial") Integer idMaterial,
+            @WebParam(name = "idCreador") Integer idCreador
+    ) throws BusinessException {
+        try {
+            if (materialCreadorBO.existeRelacion(idMaterial, idCreador)) {
+                throw new BusinessException("La relación entre el material y el creador ya existe.");
+            }
+            return materialCreadorBO.asociar(idMaterial, idCreador);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al asociar material con creador: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al asociar material con creador: " + e.getMessage());
+        }
+    }
 }
