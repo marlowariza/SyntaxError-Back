@@ -74,6 +74,11 @@
             <version>5.10.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>myholyback-v2.1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
     <build>
