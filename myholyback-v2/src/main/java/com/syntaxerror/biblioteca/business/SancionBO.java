@@ -93,4 +93,34 @@ public class SancionBO {
         }
         BusinessValidator.validarId(idPrestamo, "préstamo asociado");
     }
+
+    public ArrayList<SancionesDTO> listarSancionesPorPersona(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<SancionesDTO> sanciones = this.listarTodos();
+        ArrayList<SancionesDTO> resultado = new ArrayList<>();
+
+        for (SancionesDTO s : sanciones) {
+            if (s.getPrestamo() != null
+                    && s.getPrestamo().getPersona() != null
+                    && s.getPrestamo().getPersona().getIdPersona() == idPersona) {
+                resultado.add(s);
+            }
+        }
+
+        return resultado;
+    }
+    //Si no sale excepcion todo ok
+    public void verificarSancionesActivas(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<SancionesDTO> sanciones = listarSancionesPorPersona(idPersona);
+        Date hoy = new Date();
+
+        for (SancionesDTO s : sanciones) {
+            if (s.getDuracion() != null && s.getDuracion().after(hoy)) {
+                throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
+            }
+        }
+    }
 }

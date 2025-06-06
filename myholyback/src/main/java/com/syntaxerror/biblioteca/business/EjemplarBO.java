@@ -94,6 +94,30 @@ public class EjemplarBO {
         return this.ejemplarDAO.listarTodos();
     }
 
+    private void validarDatos(Boolean disponible, TipoEjemplar tipo,
+            FormatoDigital formato, String ubicacion,
+            Integer idSede, Integer idMaterial) throws BusinessException {
+
+        if (disponible == null) {
+            throw new BusinessException("Debe indicar si el ejemplar está disponible.");
+        }
+
+        if (tipo == null) {
+            throw new BusinessException("Debe especificar el tipo de ejemplar.");
+        }
+
+        if (tipo == TipoEjemplar.DIGITAL && formato == null) {
+            throw new BusinessException("Debe especificar el formato digital para ejemplares digitales.");
+        }
+
+        if (tipo == TipoEjemplar.FISICO && (ubicacion == null || ubicacion.isBlank())) {
+            throw new BusinessException("Debe especificar la ubicación para ejemplares físicos.");
+        }
+
+        BusinessValidator.validarId(idSede, "sede");
+        BusinessValidator.validarId(idMaterial, "material");
+    }
+
     public int contarTotalEjemplaresPorMaterial(int idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
 
@@ -146,30 +170,6 @@ public class EjemplarBO {
         return disponibles;
     }
 
-    private void validarDatos(Boolean disponible, TipoEjemplar tipo,
-            FormatoDigital formato, String ubicacion,
-            Integer idSede, Integer idMaterial) throws BusinessException {
-
-        if (disponible == null) {
-            throw new BusinessException("Debe indicar si el ejemplar está disponible.");
-        }
-
-        if (tipo == null) {
-            throw new BusinessException("Debe especificar el tipo de ejemplar.");
-        }
-
-        if (tipo == TipoEjemplar.DIGITAL && formato == null) {
-            throw new BusinessException("Debe especificar el formato digital para ejemplares digitales.");
-        }
-
-        if (tipo == TipoEjemplar.FISICO && (ubicacion == null || ubicacion.isBlank())) {
-            throw new BusinessException("Debe especificar la ubicación para ejemplares físicos.");
-        }
-
-        BusinessValidator.validarId(idSede, "sede");
-        BusinessValidator.validarId(idMaterial, "material");
-    }
-
     public ArrayList<EjemplarDTO> listarEjemplaresDisponiblesPorMaterial(int idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
 
@@ -185,6 +185,7 @@ public class EjemplarBO {
         return disponibles;
     }
 
+    //FALTA VER SI ES FISICO 
     public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(int idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
 

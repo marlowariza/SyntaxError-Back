@@ -117,4 +117,93 @@ public class EjemplarBO {
         BusinessValidator.validarId(idSede, "sede");
         BusinessValidator.validarId(idMaterial, "material");
     }
+
+    public int contarTotalEjemplaresPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, false, null);
+    }
+
+    public int contarEjemplaresDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, true, null);
+    }
+
+    public int contarEjemplaresFisicosDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, true, "FISICO");
+    }
+
+    public int contarEjemplaresPorSede(int idSede) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        return contarEjemplares(null, idSede, false, null);
+    }
+
+    public int contarEjemplaresDisponiblesPorSede(int idSede) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        return contarEjemplares(null, idSede, true, null);
+    }
+
+    private int contarEjemplares(Integer idMaterial, Integer idSede, boolean soloDisponibles, String tipoEjemplar) {
+        int total = 0;
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            boolean cumpleMaterial = (idMaterial == null
+                    || (ej.getMaterial() != null && ej.getMaterial().getIdMaterial() == idMaterial));
+            boolean cumpleSede = (idSede == null
+                    || (ej.getSede() != null && ej.getSede().getIdSede() == idSede));
+            boolean cumpleDisponibilidad = !soloDisponibles || Boolean.TRUE.equals(ej.getDisponible());
+            boolean cumpleTipo = (tipoEjemplar == null
+                    || (ej.getTipo() != null && tipoEjemplar.equalsIgnoreCase(ej.getTipo().name())));
+
+            if (cumpleMaterial && cumpleSede && cumpleDisponibilidad && cumpleTipo) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    public ArrayList<EjemplaresDTO> listarEjemplaresFisicosDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+
+        ArrayList<EjemplaresDTO> disponibles = new ArrayList<>();
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial() == idMaterial
+                    && Boolean.TRUE.equals(ej.getDisponible())
+                    && ej.getTipo() != null
+                    && "FISICO".equalsIgnoreCase(ej.getTipo().name())) {
+                disponibles.add(ej);
+            }
+        }
+
+        return disponibles;
+    }
+
+    public ArrayList<EjemplaresDTO> listarEjemplaresFisicosDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+
+        ArrayList<EjemplaresDTO> disponibles = new ArrayList<>();
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial() == idMaterial
+                    && ej.getSede() != null
+                    && ej.getSede().getIdSede() == idSede
+                    && Boolean.TRUE.equals(ej.getDisponible())
+                    && ej.getTipo() != null
+                    && "FISICO".equalsIgnoreCase(ej.getTipo().name())) {
+                disponibles.add(ej);
+            }
+        }
+
+        return disponibles;
+    }
+
+    public EjemplaresDTO obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+
+        ArrayList<EjemplaresDTO> disponibles = this.listarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
+        return disponibles.isEmpty() ? null : disponibles.get(0);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
+import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
 import java.util.ArrayList;
@@ -70,15 +71,11 @@ public class SedeBO {
 
     private void validarDatos(String nombre, String direccion, String distrito,
             String telefono, String correo) throws BusinessException {
-        if (nombre == null || nombre.isBlank()) {
-            throw new BusinessException("El nombre de la sede no puede estar vacío.");
-        }
-        if (direccion == null || direccion.isBlank()) {
-            throw new BusinessException("La dirección no puede estar vacía.");
-        }
-        if (distrito == null || distrito.isBlank()) {
-            throw new BusinessException("El distrito no puede estar vacío.");
-        }
+
+        BusinessValidator.validarTexto(nombre, "nombre");
+        BusinessValidator.validarTexto(direccion, "direccion");
+        BusinessValidator.validarTexto(distrito, "distrito");
+
         if (telefono == null || telefono.length() < 9) {
             throw new BusinessException("El teléfono de contacto debe tener al menos 9 dígitos.");
         }
