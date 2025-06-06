@@ -5,21 +5,21 @@ import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
 import com.syntaxerror.biblioteca.model.SancionesDTO;
-import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
-import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SancionDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamosDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SancionesDAOImpl;
 import java.util.ArrayList;
 import java.util.Date;
+import com.syntaxerror.biblioteca.persistance.dao.SancionesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PrestamosDAO;
 
 public class SancionBO {
 
-    private final SancionDAO sancionDAO;
-    private final PrestamoDAO prestamoDAO;
+    private final SancionesDAO sancionDAO;
+    private final PrestamosDAO prestamoDAO;
 
     public SancionBO() {
-        this.sancionDAO = new SancionDAOImpl();
-        this.prestamoDAO = new PrestamoDAOImpl();
+        this.sancionDAO = new SancionesDAOImpl();
+        this.prestamoDAO = new PrestamosDAOImpl();
     }
 
     public int insertar(TipoSancion tipo, Date fecha, Double monto, Date duracion, String descripcion, Integer idPrestamo) throws BusinessException {

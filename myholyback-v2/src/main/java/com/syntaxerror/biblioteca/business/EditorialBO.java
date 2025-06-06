@@ -3,16 +3,16 @@ package com.syntaxerror.biblioteca.business;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.EditorialDTO;
-import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialesDAOImpl;
 import java.util.ArrayList;
+import com.syntaxerror.biblioteca.persistance.dao.EditorialesDAO;
 
 public class EditorialBO {
 
-    private final EditorialDAO editorialDAO;
+    private final EditorialesDAO editorialDAO;
 
     public EditorialBO() {
-        this.editorialDAO = new EditorialDAOImpl();
+        this.editorialDAO = new EditorialesDAOImpl();
     }
 
     public int insertar(String nombre, String sitioWeb, String pais) throws BusinessException {

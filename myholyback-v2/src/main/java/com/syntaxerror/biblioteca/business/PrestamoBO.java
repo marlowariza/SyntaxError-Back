@@ -4,21 +4,21 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
-import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
-import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamosDAOImpl;
 import java.util.ArrayList;
 import java.util.Date;
+import com.syntaxerror.biblioteca.persistance.dao.PrestamosDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PersonasDAO;
 
 public class PrestamoBO {
 
-    private final PrestamoDAO prestamoDAO;
-    private final PersonaDAO personaDAO;
+    private final PrestamosDAO prestamoDAO;
+    private final PersonasDAO personaDAO;
 
     public PrestamoBO() {
-        this.prestamoDAO = new PrestamoDAOImpl();
-        this.personaDAO = new PersonaDAOImpl();
+        this.prestamoDAO = new PrestamosDAOImpl();
+        this.personaDAO = new PersonasDAOImpl();
     }
 
     public int insertar(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
