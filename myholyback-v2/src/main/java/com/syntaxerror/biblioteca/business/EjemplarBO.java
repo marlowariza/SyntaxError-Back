@@ -2,8 +2,8 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.EjemplarDTO;
-import com.syntaxerror.biblioteca.model.MaterialDTO;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
@@ -32,7 +32,7 @@ public class EjemplarBO {
             FormatoDigital formatoDigital, String ubicacion,
             Integer idSede, Integer idMaterial) throws BusinessException {
         validarDatos(disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setFechaAdquisicion(fechaAdquisicion);
         ejemplar.setDisponible(disponible);
         ejemplar.setTipo(tipo);
@@ -44,7 +44,7 @@ public class EjemplarBO {
 
         ejemplar.setSede(sede);
 
-        MaterialDTO material = materialDAO.obtenerPorId(idMaterial);
+        MaterialesDTO material = materialDAO.obtenerPorId(idMaterial);
         material.setIdMaterial(idMaterial);
 
         ejemplar.setMaterial(material);
@@ -57,7 +57,7 @@ public class EjemplarBO {
             Integer idSede, Integer idMaterial) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
         validarDatos(disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setIdEjemplar(idEjemplar);
         ejemplar.setFechaAdquisicion(fechaAdquisicion);
         ejemplar.setDisponible(disponible);
@@ -70,7 +70,7 @@ public class EjemplarBO {
 
         ejemplar.setSede(sede);
 
-        MaterialDTO material = materialDAO.obtenerPorId(idMaterial);
+        MaterialesDTO material = materialDAO.obtenerPorId(idMaterial);
         material.setIdMaterial(idMaterial);
 
         ejemplar.setMaterial(material);
@@ -80,17 +80,17 @@ public class EjemplarBO {
 
     public int eliminar(Integer idEjemplar) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setIdEjemplar(idEjemplar);
         return this.ejemplarDAO.eliminar(ejemplar);
     }
 
-    public EjemplarDTO obtenerPorId(Integer idEjemplar) throws BusinessException {
+    public EjemplaresDTO obtenerPorId(Integer idEjemplar) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
         return this.ejemplarDAO.obtenerPorId(idEjemplar);
     }
 
-    public ArrayList<EjemplarDTO> listarTodos() {
+    public ArrayList<EjemplaresDTO> listarTodos() {
         return this.ejemplarDAO.listarTodos();
     }
 
@@ -117,4 +117,93 @@ public class EjemplarBO {
         BusinessValidator.validarId(idSede, "sede");
         BusinessValidator.validarId(idMaterial, "material");
     }
+
+    public int contarTotalEjemplaresPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, false, null);
+    }
+
+    public int contarEjemplaresDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, true, null);
+    }
+
+    public int contarEjemplaresFisicosDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return contarEjemplares(idMaterial, null, true, "FISICO");
+    }
+
+    public int contarEjemplaresPorSede(int idSede) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        return contarEjemplares(null, idSede, false, null);
+    }
+
+    public int contarEjemplaresDisponiblesPorSede(int idSede) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        return contarEjemplares(null, idSede, true, null);
+    }
+
+    private int contarEjemplares(Integer idMaterial, Integer idSede, boolean soloDisponibles, String tipoEjemplar) {
+        int total = 0;
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            boolean cumpleMaterial = (idMaterial == null
+                    || (ej.getMaterial() != null && ej.getMaterial().getIdMaterial() == idMaterial));
+            boolean cumpleSede = (idSede == null
+                    || (ej.getSede() != null && ej.getSede().getIdSede() == idSede));
+            boolean cumpleDisponibilidad = !soloDisponibles || Boolean.TRUE.equals(ej.getDisponible());
+            boolean cumpleTipo = (tipoEjemplar == null
+                    || (ej.getTipo() != null && tipoEjemplar.equalsIgnoreCase(ej.getTipo().name())));
+
+            if (cumpleMaterial && cumpleSede && cumpleDisponibilidad && cumpleTipo) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    public ArrayList<EjemplaresDTO> listarEjemplaresFisicosDisponiblesPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+
+        ArrayList<EjemplaresDTO> disponibles = new ArrayList<>();
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial() == idMaterial
+                    && Boolean.TRUE.equals(ej.getDisponible())
+                    && ej.getTipo() != null
+                    && "FISICO".equalsIgnoreCase(ej.getTipo().name())) {
+                disponibles.add(ej);
+            }
+        }
+
+        return disponibles;
+    }
+
+    public ArrayList<EjemplaresDTO> listarEjemplaresFisicosDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+
+        ArrayList<EjemplaresDTO> disponibles = new ArrayList<>();
+        for (EjemplaresDTO ej : this.listarTodos()) {
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial() == idMaterial
+                    && ej.getSede() != null
+                    && ej.getSede().getIdSede() == idSede
+                    && Boolean.TRUE.equals(ej.getDisponible())
+                    && ej.getTipo() != null
+                    && "FISICO".equalsIgnoreCase(ej.getTipo().name())) {
+                disponibles.add(ej);
+            }
+        }
+
+        return disponibles;
+    }
+
+    public EjemplaresDTO obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+
+        ArrayList<EjemplaresDTO> disponibles = this.listarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
+        return disponibles.isEmpty() ? null : disponibles.get(0);
+    }
+
 }

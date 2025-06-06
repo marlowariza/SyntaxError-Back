@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamosDAOImpl;
@@ -28,7 +28,7 @@ public class PrestamoBO {
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
 
-        PersonaDTO persona = personaDAO.obtenerPorId(idPersona);
+        PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
         if (persona == null) {
             throw new BusinessException("La persona con ID " + idPersona + " no existe.");
         }
@@ -46,7 +46,7 @@ public class PrestamoBO {
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
 
-        PersonaDTO persona = personaDAO.obtenerPorId(idPersona);
+        PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
         if (persona == null) {
             throw new BusinessException("La persona con ID " + idPersona + " no existe.");
         }
@@ -72,16 +72,16 @@ public class PrestamoBO {
     }
 
     private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
-        if (fechaSolicitud == null || fechaPrestamo == null || fechaDevolucion == null) {
-            throw new BusinessException("Las fechas no pueden ser nulas.");
+        if (fechaSolicitud == null) {
+            throw new BusinessException("Las fechas de solicitud no puede ser nula.");
         }
 
-        if (fechaSolicitud.after(fechaPrestamo)) {
-            throw new BusinessException("La fecha de solicitud no puede ser posterior a la de préstamo.");
+        //revisar
+        if (fechaPrestamo.before(fechaSolicitud)) {
+            throw new BusinessException("La fecha de préstamo no puede ser antes  a la de solicitud.");
         }
-
         if (fechaPrestamo.after(fechaDevolucion)) {
-            throw new BusinessException("La fecha de préstamo no puede ser posterior a la de devolución.");
+            throw new BusinessException("La fecha de préstamo no puede ser después  a la de devolución.");
         }
 
         BusinessValidator.validarId(idPersona, "persona");

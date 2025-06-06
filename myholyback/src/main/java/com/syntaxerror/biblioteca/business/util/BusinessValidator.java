@@ -17,4 +17,20 @@ public class BusinessValidator {
             throw new BusinessException("El campo " + campo + " no puede estar vacío.");
         }
     }
+    
+    
+    
+    
+    //aun no estan siendo usandas (por cambiar)
+    public static void validarBoolean(Boolean valor, String campo) throws BusinessException {
+        if (valor == null) {
+            throw new BusinessException("El campo booleano " + campo + " no puede ser nulo.");
+        }
+    }
+
+    public static void validarAnio(Integer anio, int anioMinimo, int anioMaximo, String campo) throws BusinessException {
+        if (anio == null || anio < anioMinimo || anio > anioMaximo) {
+            throw new BusinessException("El campo " + campo + " debe estar entre " + anioMinimo + " y " + anioMaximo + ".");
+        }
+    }
 }

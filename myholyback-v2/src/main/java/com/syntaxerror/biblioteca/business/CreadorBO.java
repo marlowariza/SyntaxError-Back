@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.CreadorDTO;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class CreadorBO {
     public int insertar(String nombre, String paterno, String materno,
             String seudonimo, TipoCreador tipo, String nacionalidad, Boolean activo) throws BusinessException {
         validarDatos(nombre,tipo,activo);
-        CreadorDTO creador = new CreadorDTO();
+        CreadoresDTO creador = new CreadoresDTO();
 
         creador.setNombre(nombre);
         creador.setPaterno(paterno);
@@ -44,7 +41,7 @@ public class CreadorBO {
             String seudonimo, TipoCreador tipo, String nacionalidad, Boolean activo) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
         validarDatos(nombre, tipo, activo);
-        CreadorDTO creador = new CreadorDTO();
+        CreadoresDTO creador = new CreadoresDTO();
         creador.setIdCreador(idCreador);
         creador.setNombre(nombre);
         creador.setPaterno(paterno);
@@ -59,17 +56,17 @@ public class CreadorBO {
 
     public int eliminar(Integer idCreador) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
-        CreadorDTO creador = new CreadorDTO();
+        CreadoresDTO creador = new CreadoresDTO();
         creador.setIdCreador(idCreador);
         return this.creadorDAO.eliminar(creador);
     }
 
-    public CreadorDTO obtenerPorId(Integer idCreador) throws BusinessException {
+    public CreadoresDTO obtenerPorId(Integer idCreador) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
         return this.creadorDAO.obtenerPorId(idCreador);
     }
 
-    public ArrayList<CreadorDTO> listarTodos() {
+    public ArrayList<CreadoresDTO> listarTodos() {
         return this.creadorDAO.listarTodos();
     }
 
