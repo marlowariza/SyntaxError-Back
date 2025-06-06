@@ -2,17 +2,17 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.ReportesPorSedeDTO;
-import com.syntaxerror.biblioteca.persistance.dao.ReporteSedeDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.ReporteSedeDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.ReportesPorSedeDAOImpl;
 
 import java.util.ArrayList;
+import com.syntaxerror.biblioteca.persistance.dao.ReportesPorSedeDAO;
 
 public class ReporteSedeBO {
 
-    private final ReporteSedeDAO reporteDAO;
+    private final ReportesPorSedeDAO reporteDAO;
 
     public ReporteSedeBO() {
-        this.reporteDAO = new ReporteSedeDAOImpl();
+        this.reporteDAO = new ReportesPorSedeDAOImpl();
     }
 
     public void generarReporte(Integer anio, Integer mes) throws BusinessException {

@@ -5,20 +5,20 @@ import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.EditorialDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
-import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
-import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
 import java.util.List;
+import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.EditorialesDAO;
 
 public class MaterialBO {
 
-    private final MaterialDAO materialDAO;
-    private final EditorialDAO editorialDAO;
+    private final MaterialesDAO materialDAO;
+    private final EditorialesDAO editorialDAO;
 
     public MaterialBO() {
-        this.materialDAO = new MaterialDAOImpl();
-        this.editorialDAO = new EditorialDAOImpl();
+        this.materialDAO = new MaterialesDAOImpl();
+        this.editorialDAO = new EditorialesDAOImpl();
     }
 
     public int insertar(String titulo, String edicion, NivelDeIngles nivel, Integer anioPublicacion, String portada, Integer idEditorial) throws BusinessException {

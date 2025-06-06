@@ -2,16 +2,16 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.SedesDTO;
-import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
 import java.util.ArrayList;
+import com.syntaxerror.biblioteca.persistance.dao.SedesDAO;
 
 public class SedeBO {
 
-    private final SedeDAO sedeDAO;
+    private final SedesDAO sedeDAO;
 
     public SedeBO() {
-        this.sedeDAO = new SedeDAOImpl();
+        this.sedeDAO = new SedesDAOImpl();
     }
 
     public int insertar(String nombre, String direccion, String distrito, String telefonoContacto,

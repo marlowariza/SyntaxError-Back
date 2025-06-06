@@ -8,9 +8,9 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
-import com.syntaxerror.biblioteca.persistance.dao.CreadorDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.CreadorDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
 import java.util.ArrayList;
+import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
 
 /**
  *
@@ -18,10 +18,10 @@ import java.util.ArrayList;
  */
 public class CreadorBO {
 
-    private final CreadorDAO creadorDAO;
+    private final CreadoresDAO creadorDAO;
 
     public CreadorBO() {
-        this.creadorDAO = new CreadorDAOImpl();
+        this.creadorDAO = new CreadoresDAOImpl();
     }
 
     public int insertar(String nombre, String paterno, String materno,

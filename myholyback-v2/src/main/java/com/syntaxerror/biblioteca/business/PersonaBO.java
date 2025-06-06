@@ -7,22 +7,22 @@ import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
-import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
-import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import com.syntaxerror.biblioteca.persistance.dao.SedesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PersonasDAO;
 
 public class PersonaBO {
 
-    private final PersonaDAO personaDAO;
-    private final SedeDAO sedeDAO;
+    private final PersonasDAO personaDAO;
+    private final SedesDAO sedeDAO;
 
     public PersonaBO() {
-        this.personaDAO = new PersonaDAOImpl();
-        this.sedeDAO = new SedeDAOImpl();
+        this.personaDAO = new PersonasDAOImpl();
+        this.sedeDAO = new SedesDAOImpl();
     }
 
     public int insertar(String nombre, String paterno, String materno, String direccion,

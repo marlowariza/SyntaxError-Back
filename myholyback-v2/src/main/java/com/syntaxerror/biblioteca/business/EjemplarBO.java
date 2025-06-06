@@ -7,25 +7,25 @@ import com.syntaxerror.biblioteca.model.MaterialDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
-import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
-import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
-import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplaresDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
 import java.util.ArrayList;
 import java.util.Date;
+import com.syntaxerror.biblioteca.persistance.dao.SedesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.EjemplaresDAO;
 
 public class EjemplarBO {
 
-    private final EjemplarDAO ejemplarDAO;
-    private final SedeDAO sedeDAO;
-    private final MaterialDAO materialDAO;
+    private final EjemplaresDAO ejemplarDAO;
+    private final SedesDAO sedeDAO;
+    private final MaterialesDAO materialDAO;
 
     public EjemplarBO() {
-        this.ejemplarDAO = new EjemplarDAOImpl();
-        this.sedeDAO = new SedeDAOImpl();
-        this.materialDAO = new MaterialDAOImpl();
+        this.ejemplarDAO = new EjemplaresDAOImpl();
+        this.sedeDAO = new SedesDAOImpl();
+        this.materialDAO = new MaterialesDAOImpl();
     }
 
     public int insertar(Date fechaAdquisicion, Boolean disponible, TipoEjemplar tipo,
