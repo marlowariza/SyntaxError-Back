@@ -4,10 +4,13 @@ package com.syntaxerror.biblioteca.business;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
 import java.util.ArrayList;
 import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -69,6 +72,40 @@ public class CreadorBO {
     public ArrayList<CreadoresDTO> listarTodos() {
         return this.creadorDAO.listarTodos();
     }
+    
+    public void AgregarMateriales(CreadoresDTO creador, MaterialesDTO material) throws BusinessException{
+        for (MaterialesDTO temp:creador.getMateriales()) {
+            if (Objects.equals(temp.getIdMaterial(), material.getIdMaterial())){
+                throw new BusinessException(material.getTitulo()+" ya ha sido agregado.");
+            }
+        }
+        creador.addMaterial(material);
+        creadorDAO.modificar(creador);
+    }
+    
+    public void AgregarMateriales(CreadoresDTO creador, List<MaterialesDTO> material) throws BusinessException{
+        for (MaterialesDTO temp:creador.getMateriales()) {
+            AgregarMateriales(creador, temp);
+        }
+    }
+    
+    public void QuitarMateriales(CreadoresDTO creador, MaterialesDTO material) throws BusinessException{
+        for (MaterialesDTO temp:creador.getMateriales()) {
+            if (Objects.equals(temp.getIdMaterial(), material.getIdMaterial())){
+                creador.removeMaterial(material);
+                creadorDAO.modificar(creador);
+                return;
+            }
+        }
+        throw new BusinessException(material.getTitulo()+" no ha sido agregado.");
+    }
+    
+    public void QuitarMateriales(CreadoresDTO creador, List<MaterialesDTO> material) throws BusinessException{
+        for (MaterialesDTO temp:creador.getMateriales()) {
+            QuitarMateriales(creador, temp);
+        }
+    }
+    
 
     private void validarDatos(String nombre, TipoCreador tipo, Boolean activo) throws BusinessException {
         BusinessValidator.validarTexto(nombre, "nombre del creador");
