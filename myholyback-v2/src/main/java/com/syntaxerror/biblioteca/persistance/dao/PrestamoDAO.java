@@ -1,17 +1,17 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import java.util.ArrayList;
 
 public interface PrestamoDAO {
 
-    public Integer insertar(PrestamoDTO prestamo);
+    public Integer insertar(PrestamosDTO prestamo);
 
-    public PrestamoDTO obtenerPorId(Integer idPrestamo);
+    public PrestamosDTO obtenerPorId(Integer idPrestamo);
 
-    public ArrayList<PrestamoDTO> listarTodos();
+    public ArrayList<PrestamosDTO> listarTodos();
 
-    public Integer modificar(PrestamoDTO prestamo);
+    public Integer modificar(PrestamosDTO prestamo);
 
-    public Integer eliminar(PrestamoDTO prestamo);
+    public Integer eliminar(PrestamosDTO prestamo);
 }

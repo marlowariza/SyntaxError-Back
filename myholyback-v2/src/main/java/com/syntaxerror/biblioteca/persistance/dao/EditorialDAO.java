@@ -1,17 +1,17 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.EditorialDTO;
+import com.syntaxerror.biblioteca.model.EditorialesDTO;
 import java.util.ArrayList;
 
 public interface EditorialDAO {
 
-    public Integer insertar(EditorialDTO editorial);
+    public Integer insertar(EditorialesDTO editorial);
 
-    public EditorialDTO obtenerPorId(Integer idEditorial);
+    public EditorialesDTO obtenerPorId(Integer idEditorial);
 
-    public ArrayList<EditorialDTO> listarTodos();
+    public ArrayList<EditorialesDTO> listarTodos();
 
-    public Integer modificar(EditorialDTO editorial);
+    public Integer modificar(EditorialesDTO editorial);
 
-    public Integer eliminar(EditorialDTO editorial);
+    public Integer eliminar(EditorialesDTO editorial);
 }

@@ -4,7 +4,7 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
@@ -39,7 +39,7 @@ public class EjemplarBO {
         ejemplar.setFormatoDigital(formatoDigital);
         ejemplar.setUbicacion(ubicacion);
 
-        SedeDTO sede = this.sedeDAO.obtenerPorId(idSede);
+        SedesDTO sede = this.sedeDAO.obtenerPorId(idSede);
         sede.setIdSede(idSede);
 
         ejemplar.setSede(sede);
@@ -65,7 +65,7 @@ public class EjemplarBO {
         ejemplar.setFormatoDigital(formatoDigital);
         ejemplar.setUbicacion(ubicacion);
 
-        SedeDTO sede = this.sedeDAO.obtenerPorId(idSede);
+        SedesDTO sede = this.sedeDAO.obtenerPorId(idSede);
         sede.setIdSede(idSede);
 
         ejemplar.setSede(sede);

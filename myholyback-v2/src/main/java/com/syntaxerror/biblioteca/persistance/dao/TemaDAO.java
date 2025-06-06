@@ -2,27 +2,27 @@ package com.syntaxerror.biblioteca.persistance.dao;
 
 import java.util.ArrayList;
 
-import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.TemaDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 
 public interface TemaDAO {
     
-    public Integer insertar(TemaDTO tema);
+    public Integer insertar(TemasDTO tema);
 
-    public TemaDTO obtenerPorId(Integer idTema);
+    public TemasDTO obtenerPorId(Integer idTema);
 
-    public ArrayList<TemaDTO> listarTodos();
+    public ArrayList<TemasDTO> listarTodos();
 
-    public Integer modificar(TemaDTO tema);
+    public Integer modificar(TemasDTO tema);
 
-    public Integer eliminar(TemaDTO tema);
+    public Integer eliminar(TemasDTO tema);
     
     //CRUD de tabla intermedia con Material
-    public Integer asociarMaterial(MaterialDTO material);
+    public Integer asociarMaterial(MaterialesDTO material);
 
-    public Integer desasociarMaterial(MaterialDTO material);
+    public Integer desasociarMaterial(MaterialesDTO material);
 
-    public boolean existeRelacionConMaterial(MaterialDTO material);
+    public boolean existeRelacionConMaterial(MaterialesDTO material);
 
-    public ArrayList<TemaDTO> listarPorMaterial(MaterialDTO material);
+    public ArrayList<TemasDTO> listarPorMaterial(MaterialesDTO material);
 }

@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.syntaxerror.biblioteca.model.PrestamoEjemplarDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDeEjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 
 public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjemplarDAO {
-    private PrestamoEjemplarDTO prestamoEjemplar;
+    private PrestamosDeEjemplaresDTO prestamoEjemplar;
 
     public PrestamoEjemplarDAOImpl() {
         super("BIB_PRESTAMO_EJMPLAR");
@@ -60,7 +60,7 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.prestamoEjemplar = new PrestamoEjemplarDTO();
+        this.prestamoEjemplar = new PrestamosDeEjemplaresDTO();
         this.prestamoEjemplar.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
         this.prestamoEjemplar.setIdEjemplar(this.resultSet.getInt("EJEMPLAR_IDEJEMPLAR"));
         this.prestamoEjemplar.setEstado(EstadoPrestamoEjemplar.valueOf(this.resultSet.getString("ESTADO")));
@@ -80,14 +80,14 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
     }
 
     @Override
-    public Integer insertar(PrestamoEjemplarDTO prestamoEjemplar) {
+    public Integer insertar(PrestamosDeEjemplaresDTO prestamoEjemplar) {
         this.prestamoEjemplar = prestamoEjemplar;
         return super.insertar();
     }
 
     @Override
-    public PrestamoEjemplarDTO obtenerPorId(Integer idPrestamo, Integer idEjemplar) {
-        this.prestamoEjemplar = new PrestamoEjemplarDTO();
+    public PrestamosDeEjemplaresDTO obtenerPorId(Integer idPrestamo, Integer idEjemplar) {
+        this.prestamoEjemplar = new PrestamosDeEjemplaresDTO();
         this.prestamoEjemplar.setIdPrestamo(idPrestamo);
         this.prestamoEjemplar.setIdEjemplar(idEjemplar);
         super.obtenerPorId();
@@ -95,18 +95,18 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
     }
 
     @Override
-    public ArrayList<PrestamoEjemplarDTO> listarTodos() {
-        return (ArrayList<PrestamoEjemplarDTO>) super.listarTodos();
+    public ArrayList<PrestamosDeEjemplaresDTO> listarTodos() {
+        return (ArrayList<PrestamosDeEjemplaresDTO>) super.listarTodos();
     }
 
     @Override
-    public Integer modificar(PrestamoEjemplarDTO prestamoEjemplar) {
+    public Integer modificar(PrestamosDeEjemplaresDTO prestamoEjemplar) {
         this.prestamoEjemplar = prestamoEjemplar;
         return super.modificar();
     }
 
     @Override
-    public Integer eliminar(PrestamoEjemplarDTO prestamoEjemplar) {
+    public Integer eliminar(PrestamosDeEjemplaresDTO prestamoEjemplar) {
         this.prestamoEjemplar = prestamoEjemplar;
         return super.eliminar();
     }

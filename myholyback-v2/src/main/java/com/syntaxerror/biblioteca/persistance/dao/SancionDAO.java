@@ -1,17 +1,17 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.SancionDTO;
+import com.syntaxerror.biblioteca.model.SancionesDTO;
 import java.util.ArrayList;
 
 public interface SancionDAO {
 
-    public Integer insertar(SancionDTO sancion);
+    public Integer insertar(SancionesDTO sancion);
 
-    public SancionDTO obtenerPorId(Integer idSancion);
+    public SancionesDTO obtenerPorId(Integer idSancion);
 
-    public ArrayList<SancionDTO> listarTodos();
+    public ArrayList<SancionesDTO> listarTodos();
 
-    public Integer modificar(SancionDTO sancion);
+    public Integer modificar(SancionesDTO sancion);
 
-    public Integer eliminar(SancionDTO sancion);
+    public Integer eliminar(SancionesDTO sancion);
 }

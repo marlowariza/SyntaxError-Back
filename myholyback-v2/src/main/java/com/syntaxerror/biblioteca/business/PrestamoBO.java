@@ -3,7 +3,7 @@ package com.syntaxerror.biblioteca.business;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
@@ -23,7 +23,7 @@ public class PrestamoBO {
 
     public int insertar(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
         validarDatos(fechaSolicitud, fechaPrestamo, fechaDevolucion, idPersona);
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setFechaSolicitud(fechaSolicitud);
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
@@ -40,7 +40,7 @@ public class PrestamoBO {
     public int modificar(Integer idPrestamo, Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
         BusinessValidator.validarId(idPrestamo, "préstamo");
         validarDatos(fechaSolicitud, fechaPrestamo, fechaDevolucion, idPersona);
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setIdPrestamo(idPrestamo);
         prestamo.setFechaSolicitud(fechaSolicitud);
         prestamo.setFechaPrestamo(fechaPrestamo);
@@ -57,17 +57,17 @@ public class PrestamoBO {
 
     public int eliminar(Integer idPrestamo) throws BusinessException {
         BusinessValidator.validarId(idPrestamo, "préstamo");
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setIdPrestamo(idPrestamo);
         return this.prestamoDAO.eliminar(prestamo);
     }
 
-    public PrestamoDTO obtenerPorId(Integer idPrestamo) throws BusinessException {
+    public PrestamosDTO obtenerPorId(Integer idPrestamo) throws BusinessException {
         BusinessValidator.validarId(idPrestamo, "préstamo");
         return this.prestamoDAO.obtenerPorId(idPrestamo);
     }
 
-    public ArrayList<PrestamoDTO> listarTodos() {
+    public ArrayList<PrestamosDTO> listarTodos() {
         return this.prestamoDAO.listarTodos();
     }
 

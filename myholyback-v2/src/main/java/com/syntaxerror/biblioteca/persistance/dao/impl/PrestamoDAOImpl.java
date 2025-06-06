@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.Date;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
 
-    private PrestamoDTO prestamo;
+    private PrestamosDTO prestamo;
 
     public PrestamoDAOImpl() {
         super("BIB_PRESTAMO");
@@ -63,7 +63,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.prestamo = new PrestamoDTO();
+        this.prestamo = new PrestamosDTO();
         this.prestamo.setIdPrestamo(this.resultSet.getInt("ID_PRESTAMO"));
         this.prestamo.setFechaSolicitud(this.resultSet.getDate("FECHA_SOLICITUD"));
         this.prestamo.setFechaPrestamo(this.resultSet.getDate("FECHA_PRESTAMO"));
@@ -88,32 +88,32 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
     }
 
     @Override
-    public Integer insertar(PrestamoDTO prestamo) {
+    public Integer insertar(PrestamosDTO prestamo) {
         this.prestamo = prestamo;
         return super.insertar();
     }
 
     @Override
-    public PrestamoDTO obtenerPorId(Integer idPrestamo) {
-        this.prestamo = new PrestamoDTO();
+    public PrestamosDTO obtenerPorId(Integer idPrestamo) {
+        this.prestamo = new PrestamosDTO();
         this.prestamo.setIdPrestamo(idPrestamo);
         super.obtenerPorId();
         return this.prestamo;
     }
 
     @Override
-    public ArrayList<PrestamoDTO> listarTodos() {
-        return (ArrayList<PrestamoDTO>) super.listarTodos();
+    public ArrayList<PrestamosDTO> listarTodos() {
+        return (ArrayList<PrestamosDTO>) super.listarTodos();
     }
 
     @Override
-    public Integer modificar(PrestamoDTO prestamo) {
+    public Integer modificar(PrestamosDTO prestamo) {
         this.prestamo = prestamo;
         return super.modificar();
     }
 
     @Override
-    public Integer eliminar(PrestamoDTO prestamo) {
+    public Integer eliminar(PrestamosDTO prestamo) {
         this.prestamo = prestamo;
         return super.eliminar();
     }

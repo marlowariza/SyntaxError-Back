@@ -2,29 +2,29 @@ package com.syntaxerror.biblioteca.persistance.dao;
 
 import java.util.ArrayList;
 
-import com.syntaxerror.biblioteca.model.CreadorDTO;
-import com.syntaxerror.biblioteca.model.MaterialDTO;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 
 public interface CreadorDAO { //manejar relacion desde otra rama
 
-    public Integer insertar(CreadorDTO autor);
+    public Integer insertar(CreadoresDTO autor);
 
-    public CreadorDTO obtenerPorId(Integer autorId);
+    public CreadoresDTO obtenerPorId(Integer autorId);
 
-    public ArrayList<CreadorDTO> listarTodos();
+    public ArrayList<CreadoresDTO> listarTodos();
 
-    public Integer modificar(CreadorDTO autor);
+    public Integer modificar(CreadoresDTO autor);
 
-    public Integer eliminar(CreadorDTO autor);
+    public Integer eliminar(CreadoresDTO autor);
     
     
     //CRUD de tabla intermedia con Material
-    public Integer asociarMaterial(MaterialDTO material);
+    public Integer asociarMaterial(MaterialesDTO material);
 
-    public Integer desasociarMaterial(MaterialDTO material);
+    public Integer desasociarMaterial(MaterialesDTO material);
 
-    public boolean existeRelacionConMaterial(MaterialDTO material);
+    public boolean existeRelacionConMaterial(MaterialesDTO material);
 
-    public ArrayList<CreadorDTO> listarPorMaterial(MaterialDTO material);
+    public ArrayList<CreadoresDTO> listarPorMaterial(MaterialesDTO material);
     
 }

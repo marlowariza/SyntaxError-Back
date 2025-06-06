@@ -2,16 +2,16 @@ package com.syntaxerror.biblioteca.persistance.dao;
 
 import java.util.ArrayList;
 
-import com.syntaxerror.biblioteca.model.EjemplarDTO;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 
 public interface EjemplarDAO {
-    public Integer insertar(EjemplarDTO ejemplar);
+    public Integer insertar(EjemplaresDTO ejemplar);
 
-    public EjemplarDTO obtenerPorId(Integer ejemplarId);
+    public EjemplaresDTO obtenerPorId(Integer ejemplarId);
 
-    public ArrayList<EjemplarDTO> listarTodos();
+    public ArrayList<EjemplaresDTO> listarTodos();
 
-    public Integer modificar(EjemplarDTO ejemplar);
+    public Integer modificar(EjemplaresDTO ejemplar);
 
-    public Integer eliminar(EjemplarDTO ejemplar);
+    public Integer eliminar(EjemplaresDTO ejemplar);
 }

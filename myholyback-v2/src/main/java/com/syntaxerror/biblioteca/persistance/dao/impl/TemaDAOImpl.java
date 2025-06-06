@@ -6,14 +6,14 @@ import java.util.List;
 
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.TemaDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
 import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 
 public class TemaDAOImpl extends DAOImplRelacion implements TemaDAO {
 
-    private TemaDTO tema;
+    private TemasDTO tema;
     private MaterialDTO material;
 
     public TemaDAOImpl() {
@@ -66,14 +66,14 @@ public class TemaDAOImpl extends DAOImplRelacion implements TemaDAO {
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.tema = new TemaDTO();
+        this.tema = new TemasDTO();
         this.tema.setIdTema(this.resultSet.getInt("ID_TEMA"));
         this.tema.setDescripcion(this.resultSet.getString("DESCRIPCION"));
         this.tema.setCategoria(Categoria.valueOf(this.resultSet.getString("CATEGORIA")));
         
         int idPadre = resultSet.getInt("ID_TEMA_PADRE");
         if (!resultSet.wasNull()) {
-            TemaDTO padre = new TemaDTO();
+            TemasDTO padre = new TemasDTO();
             padre.setIdTema(idPadre);
             this.tema.setTemaPadre(padre);
         } else {
@@ -93,32 +93,32 @@ public class TemaDAOImpl extends DAOImplRelacion implements TemaDAO {
     }
 
     @Override
-    public Integer insertar(TemaDTO tema) {
+    public Integer insertar(TemasDTO tema) {
         this.tema = tema;
         return super.insertar();
     }
 
     @Override
-    public TemaDTO obtenerPorId(Integer idTema) {
-        this.tema = new TemaDTO();
+    public TemasDTO obtenerPorId(Integer idTema) {
+        this.tema = new TemasDTO();
         this.tema.setIdTema(idTema);
         super.obtenerPorId();
         return this.tema;
     }
 
     @Override
-    public ArrayList<TemaDTO> listarTodos() {
-        return (ArrayList<TemaDTO>) super.listarTodos();
+    public ArrayList<TemasDTO> listarTodos() {
+        return (ArrayList<TemasDTO>) super.listarTodos();
     }
 
     @Override
-    public Integer modificar(TemaDTO tema) {
+    public Integer modificar(TemasDTO tema) {
         this.tema = tema;
         return super.modificar();
     }
 
     @Override
-    public Integer eliminar(TemaDTO tema) {
+    public Integer eliminar(TemasDTO tema) {
         this.tema = tema;
         return super.eliminar();
     }
@@ -151,24 +151,24 @@ public class TemaDAOImpl extends DAOImplRelacion implements TemaDAO {
     }
 
     @Override
-    public ArrayList<TemaDTO> listarPorMaterial(MaterialDTO material) {
+    public ArrayList<TemasDTO> listarPorMaterial(MaterialDTO material) {
         this.material = material;
         this.nombreTablaIntermedia = "BIB_MATERIAL_TEMA";
         this.nombreColumnaPrimeraEntidad = "TEMA_IDTEMA";
         this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return (ArrayList<TemaDTO>) this.listarRelacionados(this.material.getIdMaterial(), "MATERIAL_IDMATERIAL");
+        return (ArrayList<TemasDTO>) this.listarRelacionados(this.material.getIdMaterial(), "MATERIAL_IDMATERIAL");
     }
 
     @Override
     protected void instanciarObjetoRelacionadoDelResultSet() throws SQLException {
-        this.tema = new TemaDTO();
+        this.tema = new TemasDTO();
         this.tema.setIdTema(this.resultSet.getInt("ID_TEMA"));
         this.tema.setDescripcion(this.resultSet.getString("DESCRIPCION"));
         this.tema.setCategoria(Categoria.valueOf(this.resultSet.getString("CATEGORIA")));
         
         int idPadre = resultSet.getInt("ID_TEMA_PADRE");
         if (!resultSet.wasNull()) {
-            TemaDTO padre = new TemaDTO();
+            TemasDTO padre = new TemasDTO();
             padre.setIdTema(idPadre);
             this.tema.setTemaPadre(padre);
         } else {

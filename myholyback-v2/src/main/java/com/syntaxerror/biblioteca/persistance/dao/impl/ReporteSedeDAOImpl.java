@@ -1,9 +1,9 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
-import com.syntaxerror.biblioteca.model.ReporteSedeDTO;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
+import com.syntaxerror.biblioteca.model.ReportesPorSedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.ReporteSedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.ReporteSedeParametros;
 import java.sql.SQLException;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
 
-    private ReporteSedeDTO reporte;
+    private ReportesPorSedeDTO reporte;
 
     public ReporteSedeDAOImpl() {
         super("BIB_REPORTE_SEDE");
@@ -59,13 +59,13 @@ public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
     }
 
     @Override
-    public ArrayList<ReporteSedeDTO> listarPorPeriodoYSede(
+    public ArrayList<ReportesPorSedeDTO> listarPorPeriodoYSede(
             Integer anio, Integer mes, Integer idSede, Integer idPrestamo, Integer idPersona) {
 
         Object parametros = new ReporteSedeParametros(anio, mes, idSede, idPrestamo, idPersona);
         String sql = this.generarSQLParaListarPorPeriodo();
 
-        return (ArrayList<ReporteSedeDTO>) super.listarTodos(sql,
+        return (ArrayList<ReportesPorSedeDTO>) super.listarTodos(sql,
                 this::incluirValorDeParametrosParaListarPorPeriodo,
                 parametros
         );
@@ -120,14 +120,14 @@ public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.reporte = new ReporteSedeDTO();
+        this.reporte = new ReportesPorSedeDTO();
 
         // Datos del reporte
         this.reporte.setAnio(this.resultSet.getInt("ANHIO"));
         this.reporte.setMes(this.resultSet.getInt("MES"));
 
         // Prestamo
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setIdPrestamo(this.resultSet.getInt("ID_PRESTAMO"));
         prestamo.setFechaSolicitud(this.resultSet.getDate("FECHA_SOLICITUD"));
         prestamo.setFechaPrestamo(this.resultSet.getDate("FECHA_PRESTAMO"));
@@ -143,7 +143,7 @@ public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
         this.reporte.setPersona(persona);
 
         // Sede
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setIdSede(this.resultSet.getInt("ID_SEDE"));
         sede.setNombre(this.resultSet.getString("NOMBRE_SEDE"));
         sede.setDireccion(this.resultSet.getString("DIRECCION"));

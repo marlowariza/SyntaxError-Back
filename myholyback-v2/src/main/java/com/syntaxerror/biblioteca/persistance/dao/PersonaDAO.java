@@ -1,17 +1,17 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import java.util.ArrayList;
 
 public interface PersonaDAO {
 
-    public Integer insertar(PersonaDTO persona);
+    public Integer insertar(PersonasDTO persona);
 
-    public PersonaDTO obtenerPorId(Integer idPersona);
+    public PersonasDTO obtenerPorId(Integer idPersona);
 
-    public ArrayList<PersonaDTO> listarTodos();
+    public ArrayList<PersonasDTO> listarTodos();
 
-    public Integer modificar(PersonaDTO persona);
+    public Integer modificar(PersonasDTO persona);
 
-    public Integer eliminar(PersonaDTO persona);
+    public Integer eliminar(PersonasDTO persona);
 }

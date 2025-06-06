@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
-import com.syntaxerror.biblioteca.model.SancionDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
+import com.syntaxerror.biblioteca.model.SancionesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
 import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
 
-    private SancionDTO sancion;
+    private SancionesDTO sancion;
 
     public SancionDAOImpl() {
         super("BIB_SANCION");
@@ -70,7 +70,7 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.sancion = new SancionDTO();
+        this.sancion = new SancionesDTO();
         this.sancion.setIdSancion(this.resultSet.getInt("ID_SANCION"));
         this.sancion.setTipo(TipoSancion.valueOf(this.resultSet.getString("TIPO")));
         this.sancion.setFecha(this.resultSet.getDate("FECHA"));
@@ -79,7 +79,7 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
         this.sancion.setDescripcion(this.resultSet.getString("DESCRIPCION"));
 
         // Crear objetos DTO básicos para las relaciones
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
         this.sancion.setPrestamo(prestamo);
     }
@@ -96,32 +96,32 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
     }
 
     @Override
-    public Integer insertar(SancionDTO sancion) {
+    public Integer insertar(SancionesDTO sancion) {
         this.sancion = sancion;
         return super.insertar();
     }
 
     @Override
-    public SancionDTO obtenerPorId(Integer idSancion) {
-        this.sancion = new SancionDTO();
+    public SancionesDTO obtenerPorId(Integer idSancion) {
+        this.sancion = new SancionesDTO();
         this.sancion.setIdSancion(idSancion);
         super.obtenerPorId();
         return this.sancion;
     }
 
     @Override
-    public ArrayList<SancionDTO> listarTodos() {
-        return (ArrayList<SancionDTO>) super.listarTodos();
+    public ArrayList<SancionesDTO> listarTodos() {
+        return (ArrayList<SancionesDTO>) super.listarTodos();
     }
 
     @Override
-    public Integer modificar(SancionDTO sancion) {
+    public Integer modificar(SancionesDTO sancion) {
         this.sancion = sancion;
         return super.modificar();
     }
 
     @Override
-    public Integer eliminar(SancionDTO sancion) {
+    public Integer eliminar(SancionesDTO sancion) {
         this.sancion = sancion;
         return super.eliminar();
     }

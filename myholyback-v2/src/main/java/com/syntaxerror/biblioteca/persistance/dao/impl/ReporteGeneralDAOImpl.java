@@ -1,9 +1,9 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import java.util.ArrayList;
-import com.syntaxerror.biblioteca.model.ReporteGeneralDTO;
+import com.syntaxerror.biblioteca.model.ReportesGeneralesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.ReporteGeneralDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.ReporteGeneralParametros;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class ReporteGeneralDAOImpl extends DAOImplBase implements ReporteGeneralDAO {
 
-    private ReporteGeneralDTO reporte;
+    private ReportesGeneralesDTO reporte;
 
     public ReporteGeneralDAOImpl() {
         super("BIB_REPORTE_GENERAL");
@@ -58,11 +58,11 @@ public class ReporteGeneralDAOImpl extends DAOImplBase implements ReporteGeneral
     }
 
     @Override
-    public ArrayList<ReporteGeneralDTO> listarPorPeriodo(Integer anio, Integer mes, Integer idPrestamo, Integer idPersona) {
+    public ArrayList<ReportesGeneralesDTO> listarPorPeriodo(Integer anio, Integer mes, Integer idPrestamo, Integer idPersona) {
         Object parametros = new ReporteGeneralParametros(anio, mes, idPrestamo, idPersona);
         String sql = this.generarSQLParaListarPorPeriodo();
 
-        return (ArrayList<ReporteGeneralDTO>) super.listarTodos(sql,
+        return (ArrayList<ReportesGeneralesDTO>) super.listarTodos(sql,
                 this::incluirValorDeParametrosParaListarPorPeriodo,
                 parametros
         );
@@ -109,13 +109,13 @@ public class ReporteGeneralDAOImpl extends DAOImplBase implements ReporteGeneral
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.reporte = new ReporteGeneralDTO();
+        this.reporte = new ReportesGeneralesDTO();
 
         this.reporte.setAnio(this.resultSet.getInt("ANHIO"));
         this.reporte.setMes(this.resultSet.getInt("MES"));
 
         // Prestamo
-        PrestamoDTO prestamo = new PrestamoDTO();
+        PrestamosDTO prestamo = new PrestamosDTO();
         prestamo.setIdPrestamo(this.resultSet.getInt("ID_PRESTAMO"));
         prestamo.setFechaSolicitud(this.resultSet.getDate("FECHA_SOLICITUD"));
         prestamo.setFechaPrestamo(this.resultSet.getDate("FECHA_PRESTAMO"));

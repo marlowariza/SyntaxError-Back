@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.ReporteSedeDTO;
+import com.syntaxerror.biblioteca.model.ReportesPorSedeDTO;
 import com.syntaxerror.biblioteca.persistance.dao.ReporteSedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.ReporteSedeDAOImpl;
 
@@ -20,7 +20,7 @@ public class ReporteSedeBO {
         this.reporteDAO.generarReportePorSede(anio, mes);
     }
 
-    public ArrayList<ReporteSedeDTO> listarPorPeriodoYSede(Integer anio, Integer mes, Integer idSede, Integer idPrestamo, Integer idPersona) throws BusinessException {
+    public ArrayList<ReportesPorSedeDTO> listarPorPeriodoYSede(Integer anio, Integer mes, Integer idSede, Integer idPrestamo, Integer idPersona) throws BusinessException {
         validarPeriodo(anio, mes);
         return this.reporteDAO.listarPorPeriodoYSede(anio, mes, idSede, idPrestamo, idPersona);
     }

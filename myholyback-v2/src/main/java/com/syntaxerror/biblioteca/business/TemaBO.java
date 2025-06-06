@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.TemaDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
 import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.TemaDAOImpl;
@@ -18,13 +18,13 @@ public class TemaBO {
 
     public int insertar(String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
         validarDatos(descripcion, categoria);
-        TemaDTO tema = new TemaDTO();
+        TemasDTO tema = new TemasDTO();
         tema.setDescripcion(descripcion);
         tema.setCategoria(categoria);
 
         if (idTemaPadre != null) {
             BusinessValidator.validarId(idTemaPadre, "tema padre");
-            TemaDTO temaPadre = new TemaDTO();
+            TemasDTO temaPadre = new TemasDTO();
             temaPadre.setIdTema(idTemaPadre);
             tema.setTemaPadre(temaPadre);
         }
@@ -35,14 +35,14 @@ public class TemaBO {
     public int modificar(Integer idTema, String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
         BusinessValidator.validarId(idTema, "tema");
         validarDatos(descripcion, categoria);
-        TemaDTO tema = new TemaDTO();
+        TemasDTO tema = new TemasDTO();
         tema.setIdTema(idTema);
         tema.setDescripcion(descripcion);
         tema.setCategoria(categoria);
 
         if (idTemaPadre != null) {
             BusinessValidator.validarId(idTemaPadre, "tema padre");
-            TemaDTO temaPadre = new TemaDTO();
+            TemasDTO temaPadre = new TemasDTO();
             temaPadre.setIdTema(idTemaPadre);
             tema.setTemaPadre(temaPadre);
         }
@@ -52,17 +52,17 @@ public class TemaBO {
 
     public int eliminar(Integer idTema) throws BusinessException {
         BusinessValidator.validarId(idTema, "tema");
-        TemaDTO tema = new TemaDTO();
+        TemasDTO tema = new TemasDTO();
         tema.setIdTema(idTema);
         return this.temaDAO.eliminar(tema);
     }
 
-    public TemaDTO obtenerPorId(Integer idTema) throws BusinessException {
+    public TemasDTO obtenerPorId(Integer idTema) throws BusinessException {
         BusinessValidator.validarId(idTema, "tema");
         return this.temaDAO.obtenerPorId(idTema);
     }
 
-    public ArrayList<TemaDTO> listarTodos() {
+    public ArrayList<TemasDTO> listarTodos() {
         return this.temaDAO.listarTodos();
     }
 

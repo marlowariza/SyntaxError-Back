@@ -1,6 +1,6 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import java.util.ArrayList;
 
 /**
@@ -9,13 +9,13 @@ import java.util.ArrayList;
  */
 public interface SedeDAO {
 
-    public Integer insertar(SedeDTO sede);
+    public Integer insertar(SedesDTO sede);
 
-    public SedeDTO obtenerPorId(Integer idSede);
+    public SedesDTO obtenerPorId(Integer idSede);
 
-    public ArrayList<SedeDTO> listarTodos();
+    public ArrayList<SedesDTO> listarTodos();
 
-    public Integer modificar(SedeDTO sede);
+    public Integer modificar(SedesDTO sede);
 
-    public Integer eliminar(SedeDTO sede);
+    public Integer eliminar(SedesDTO sede);
 }

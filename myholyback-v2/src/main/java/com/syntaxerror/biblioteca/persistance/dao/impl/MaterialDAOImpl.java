@@ -7,7 +7,7 @@ import java.util.List;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EditorialDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.TemaDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
@@ -16,7 +16,7 @@ public class MaterialDAOImpl extends DAOImplRelacion implements MaterialDAO {
 
     private MaterialDTO material;
     private CreadorDTO creador;
-    private TemaDTO tema;
+    private TemasDTO tema;
 
     public MaterialDAOImpl() {
         super("BIB_MATERIAL", "BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR");
@@ -150,7 +150,7 @@ public class MaterialDAOImpl extends DAOImplRelacion implements MaterialDAO {
     }
 
     @Override
-    public Integer asociarTema(TemaDTO tema) {
+    public Integer asociarTema(TemasDTO tema) {
         this.tema = tema;
         this.nombreTablaIntermedia = "BIB_MATERIAL_TEMA";
         this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
@@ -159,7 +159,7 @@ public class MaterialDAOImpl extends DAOImplRelacion implements MaterialDAO {
     }
 
     @Override
-    public Integer desasociarTema(TemaDTO tema) {
+    public Integer desasociarTema(TemasDTO tema) {
         this.tema = tema;
         this.nombreTablaIntermedia = "BIB_MATERIAL_TEMA";
         this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
@@ -168,7 +168,7 @@ public class MaterialDAOImpl extends DAOImplRelacion implements MaterialDAO {
     }
 
     @Override
-    public boolean existeRelacionConTema(TemaDTO tema) {
+    public boolean existeRelacionConTema(TemasDTO tema) {
         this.tema = tema;
         this.nombreTablaIntermedia = "BIB_MATERIAL_TEMA";
         this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
@@ -177,7 +177,7 @@ public class MaterialDAOImpl extends DAOImplRelacion implements MaterialDAO {
     }
 
     @Override
-    public ArrayList<MaterialDTO> listarPorTema(TemaDTO tema) {
+    public ArrayList<MaterialDTO> listarPorTema(TemasDTO tema) {
         this.tema = tema;
         this.nombreTablaIntermedia = "BIB_MATERIAL_TEMA";
         this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";

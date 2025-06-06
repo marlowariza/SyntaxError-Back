@@ -1,11 +1,11 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
-import com.syntaxerror.biblioteca.model.ReporteGeneralDTO;
+import com.syntaxerror.biblioteca.model.ReportesGeneralesDTO;
 import java.util.ArrayList;
 
 public interface ReporteGeneralDAO {
 
-    ArrayList<ReporteGeneralDTO> listarPorPeriodo(Integer anio, Integer mes, Integer idPrestamo, Integer idPersona);
+    ArrayList<ReportesGeneralesDTO> listarPorPeriodo(Integer anio, Integer mes, Integer idPrestamo, Integer idPersona);
 
     public void insertarDatosDePrueba();
 

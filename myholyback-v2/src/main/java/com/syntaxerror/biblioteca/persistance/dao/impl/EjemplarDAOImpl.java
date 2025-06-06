@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
@@ -117,7 +117,7 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         this.ejemplar.setUbicacion(this.resultSet.getString("UBICACION"));
 
         // Crear objetos DTO básicos para las relaciones
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
         this.ejemplar.setSede(sede);
 

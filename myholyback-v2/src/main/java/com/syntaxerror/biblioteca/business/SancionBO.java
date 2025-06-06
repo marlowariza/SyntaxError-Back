@@ -2,9 +2,9 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
-import com.syntaxerror.biblioteca.model.SancionDTO;
+import com.syntaxerror.biblioteca.model.SancionesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
@@ -25,11 +25,11 @@ public class SancionBO {
     public int insertar(TipoSancion tipo, Date fecha, Double monto, Date duracion, String descripcion, Integer idPrestamo) throws BusinessException {
         validarDatos(tipo, fecha, monto, duracion, descripcion, idPrestamo);
 
-        PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
+        PrestamosDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
         if (prestamo == null) {
             throw new BusinessException("El préstamo con ID " + idPrestamo + " no existe.");
         }
-        SancionDTO sancion = new SancionDTO();
+        SancionesDTO sancion = new SancionesDTO();
         sancion.setTipo(tipo);
         sancion.setFecha(fecha);
         sancion.setMonto(monto);
@@ -45,11 +45,11 @@ public class SancionBO {
         BusinessValidator.validarId(idSancion, "sanción");
         validarDatos(tipo, fecha, monto, duracion, descripcion, idPrestamo);
 
-        PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
+        PrestamosDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
         if (prestamo == null) {
             throw new BusinessException("El préstamo con ID " + idPrestamo + " no existe.");
         }
-        SancionDTO sancion = new SancionDTO();
+        SancionesDTO sancion = new SancionesDTO();
         sancion.setIdSancion(idSancion);
         sancion.setTipo(tipo);
         sancion.setFecha(fecha);
@@ -64,17 +64,17 @@ public class SancionBO {
 
     public int eliminar(Integer idSancion) throws BusinessException {
         BusinessValidator.validarId(idSancion, "sanción");
-        SancionDTO sancion = new SancionDTO();
+        SancionesDTO sancion = new SancionesDTO();
         sancion.setIdSancion(idSancion);
         return this.sancionDAO.eliminar(sancion);
     }
 
-    public SancionDTO obtenerPorId(Integer idSancion) throws BusinessException {
+    public SancionesDTO obtenerPorId(Integer idSancion) throws BusinessException {
         BusinessValidator.validarId(idSancion, "sanción");
         return this.sancionDAO.obtenerPorId(idSancion);
     }
 
-    public ArrayList<SancionDTO> listarTodos() {
+    public ArrayList<SancionesDTO> listarTodos() {
         return this.sancionDAO.listarTodos();
     }
 

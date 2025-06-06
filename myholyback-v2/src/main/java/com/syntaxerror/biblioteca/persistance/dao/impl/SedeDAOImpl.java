@@ -1,6 +1,6 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SedeDAOImpl extends DAOImplBase implements SedeDAO {
 
-    private SedeDTO sede;
+    private SedesDTO sede;
 
     public SedeDAOImpl() {
         super("BIB_BIBLIOTECA_SEDE");
@@ -77,7 +77,7 @@ public class SedeDAOImpl extends DAOImplBase implements SedeDAO {
 
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
-        this.sede = new SedeDTO();
+        this.sede = new SedesDTO();
         this.sede.setIdSede(this.resultSet.getInt("ID_SEDE"));
         this.sede.setNombre(this.resultSet.getString("NOMBRE"));
         this.sede.setDireccion(this.resultSet.getString("DIRECCION"));
@@ -100,32 +100,32 @@ public class SedeDAOImpl extends DAOImplBase implements SedeDAO {
     }
 
     @Override
-    public Integer insertar(SedeDTO sede) {
+    public Integer insertar(SedesDTO sede) {
         this.sede = sede;
         return super.insertar();
     }
 
     @Override
-    public SedeDTO obtenerPorId(Integer idSede) {
-        this.sede = new SedeDTO();
+    public SedesDTO obtenerPorId(Integer idSede) {
+        this.sede = new SedesDTO();
         this.sede.setIdSede(idSede);
         super.obtenerPorId();
         return this.sede;
     }
 
     @Override
-    public ArrayList<SedeDTO> listarTodos() {
-        return (ArrayList<SedeDTO>) super.listarTodos();
+    public ArrayList<SedesDTO> listarTodos() {
+        return (ArrayList<SedesDTO>) super.listarTodos();
     }
 
     @Override
-    public Integer modificar(SedeDTO sede) {
+    public Integer modificar(SedesDTO sede) {
         this.sede = sede;
         return super.modificar();
     }
 
     @Override
-    public Integer eliminar(SedeDTO sede) {
+    public Integer eliminar(SedesDTO sede) {
         this.sede = sede;
         return super.eliminar();
     }

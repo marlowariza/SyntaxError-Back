@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
@@ -130,7 +130,7 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         }
 
         // Relación sede
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
         this.persona.setSede(sede);
     }

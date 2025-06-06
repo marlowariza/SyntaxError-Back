@@ -3,7 +3,7 @@ package com.syntaxerror.biblioteca.business;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
@@ -49,7 +49,7 @@ public class PersonaBO {
         persona.setFechaContratoFinal(fechaContratoFinal);
         persona.setVigente(vigente != null ? vigente : true);
 
-        SedeDTO sede = sedeDAO.obtenerPorId(idSede);
+        SedesDTO sede = sedeDAO.obtenerPorId(idSede);
         if (sede == null) {
             throw new BusinessException("La sede con ID " + idSede + " no existe.");
         }
@@ -84,7 +84,7 @@ public class PersonaBO {
         persona.setFechaContratoFinal(fechaContratoFinal);
         persona.setVigente(vigente != null ? vigente : true);
 
-        SedeDTO sede = sedeDAO.obtenerPorId(idSede);
+        SedesDTO sede = sedeDAO.obtenerPorId(idSede);
         if (sede == null) {
             throw new BusinessException("La sede con ID " + idSede + " no existe.");
         }

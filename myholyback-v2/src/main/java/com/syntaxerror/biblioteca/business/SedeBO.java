@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class SedeBO {
 
         validarDatos(nombre, direccion, distrito, telefonoContacto, correoContacto);
 
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setNombre(nombre);
         sede.setDireccion(direccion);
         sede.setDistrito(distrito);
@@ -39,7 +39,7 @@ public class SedeBO {
 
         validarDatos(nombre, direccion, distrito, telefonoContacto, correoContacto);
 
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setIdSede(idSede);
         sede.setNombre(nombre);
         sede.setDireccion(direccion);
@@ -55,16 +55,16 @@ public class SedeBO {
         if (idSede == null || idSede <= 0) {
             throw new BusinessException("Debe proporcionar un ID de sede válido.");
         }
-        SedeDTO sede = new SedeDTO();
+        SedesDTO sede = new SedesDTO();
         sede.setIdSede(idSede);
         return this.sedeDAO.eliminar(sede);
     }
 
-    public SedeDTO obtenerPorId(Integer idSede) {
+    public SedesDTO obtenerPorId(Integer idSede) {
         return this.sedeDAO.obtenerPorId(idSede);
     }
 
-    public ArrayList<SedeDTO> listarTodos() {
+    public ArrayList<SedesDTO> listarTodos() {
         return this.sedeDAO.listarTodos();
     }
 
