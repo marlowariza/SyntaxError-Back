@@ -14,7 +14,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
     private PrestamoDTO prestamo;
 
     public PrestamoDAOImpl() {
-        super("BIB_PRESTAMO");
+        super("BIB_PRESTAMOS");
         this.retornarLlavePrimaria = true;
         this.prestamo = null;
     }

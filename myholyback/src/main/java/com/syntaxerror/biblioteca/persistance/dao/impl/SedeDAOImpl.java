@@ -12,7 +12,7 @@ public class SedeDAOImpl extends DAOImplBase implements SedeDAO {
     private SedeDTO sede;
 
     public SedeDAOImpl() {
-        super("BIB_BIBLIOTECA_SEDE");
+        super("BIB_BIBLIOTECA_SEDES");
         this.retornarLlavePrimaria = true;
         this.sede = null;
     }

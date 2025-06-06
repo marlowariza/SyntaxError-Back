@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.model.EditorialDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.NivelInglesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.SQLException;
@@ -14,7 +14,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     private MaterialDTO material;
 
     public MaterialDAOImpl() {
-        super("BIB_MATERIAL");
+        super("BIB_MATERIALES");
         this.retornarLlavePrimaria = true;
         this.material = null;
     }
@@ -24,9 +24,10 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.listaColumnas.add(new Columna("ID_MATERIAL", true, true));
         this.listaColumnas.add(new Columna("TITULO", false, false));
         this.listaColumnas.add(new Columna("EDICION", false, false));
-        this.listaColumnas.add(new Columna("NIVEL", false, false));
         this.listaColumnas.add(new Columna("ANHIO_PUBLICACION", false, false));
         this.listaColumnas.add(new Columna("PORTADA", false, false));
+        this.listaColumnas.add(new Columna("VIGENTE", false, false));
+        this.listaColumnas.add(new Columna("NIVEL_IDNIVEL", false, false));
         this.listaColumnas.add(new Columna("EDITORIAL_IDEDITORIAL", false, false));
     }
 
@@ -36,10 +37,11 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         //si es autoincremental, se salta el (1,ID)
         this.statement.setString(1, this.material.getTitulo());
         this.statement.setString(2, this.material.getEdicion());
-        this.statement.setString(3, this.material.getNivel().name());
-        this.statement.setInt(4, this.material.getAnioPublicacion());
-        this.statement.setString(5, this.material.getPortada());
-        this.statement.setInt(6, this.material.getEditorial().getIdEditorial());
+        this.statement.setInt(3, this.material.getAnioPublicacion());
+        this.statement.setString(4, this.material.getPortada());
+        this.statement.setInt(5, this.material.getVigente() ? 1 : 0);
+        this.statement.setInt(6, this.material.getNivel().getIdNivel());
+        this.statement.setInt(7, this.material.getEditorial().getIdEditorial());
     }
 
     @Override
@@ -47,11 +49,12 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
         this.statement.setString(1, this.material.getTitulo());
         this.statement.setString(2, this.material.getEdicion());
-        this.statement.setString(3, this.material.getNivel().name());
-        this.statement.setInt(4, this.material.getAnioPublicacion());
-        this.statement.setString(5, this.material.getPortada());
-        this.statement.setInt(6, this.material.getEditorial().getIdEditorial());
-        this.statement.setInt(7, this.material.getIdMaterial());
+        this.statement.setInt(3, this.material.getAnioPublicacion());
+        this.statement.setString(4, this.material.getPortada());
+        this.statement.setInt(5, this.material.getVigente() ? 1 : 0);
+        this.statement.setInt(6, this.material.getNivel().getIdNivel());
+        this.statement.setInt(7, this.material.getEditorial().getIdEditorial());
+        this.statement.setInt(8, this.material.getIdMaterial());
         //En modificar el ID va al ultimo
     }
 
@@ -73,11 +76,15 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material.setIdMaterial(this.resultSet.getInt("ID_MATERIAL"));
         this.material.setTitulo(this.resultSet.getString("TITULO"));
         this.material.setEdicion(this.resultSet.getString("EDICION"));
-        this.material.setNivel(NivelDeIngles.valueOf(this.resultSet.getString("NIVEL")));
         this.material.setAnioPublicacion(this.resultSet.getInt("ANHIO_PUBLICACION"));
         this.material.setPortada(this.resultSet.getString("PORTADA"));
+        this.material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
 
-        // Crear objetos DTO básicos para las relaciones
+        // Relación con NivelesIngles
+        NivelInglesDTO nivel = new NivelInglesDTO();
+        nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
+        this.material.setNivel(nivel);
+
         EditorialDTO editorial = new EditorialDTO();
         editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
         this.material.setEditorial(editorial);

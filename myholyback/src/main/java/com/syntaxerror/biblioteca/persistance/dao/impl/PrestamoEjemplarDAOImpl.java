@@ -16,7 +16,7 @@ public class PrestamoEjemplarDAOImpl extends RelacionDAOImplBase<PrestamoEjempla
     private static final Logger LOGGER = Logger.getLogger(PrestamoEjemplarDAOImpl.class.getName());
     
     public PrestamoEjemplarDAOImpl() {
-        super("BIB_PRESTAMO_EJEMPLAR", "PRESTAMO_IDPRESTAMO", "EJEMPLAR_IDEJEMPLAR", "BIB_PRESTAMO", "BIB_EJEMPLAR");
+        super("BIB_PRESTAMOS_DE_EJEMPLARES", "PRESTAMO_IDPRESTAMO", "EJEMPLAR_IDEJEMPLAR", "BIB_PRESTAMOS", "BIB_EJEMPLARES");
     }
 
     @Override

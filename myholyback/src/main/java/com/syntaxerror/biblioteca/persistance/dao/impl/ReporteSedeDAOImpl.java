@@ -17,7 +17,7 @@ public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
     private ReporteSedeDTO reporte;
 
     public ReporteSedeDAOImpl() {
-        super("BIB_REPORTE_SEDE");
+        super("BIB_REPORTES_POR_SEDE");
     }
 
     @Override
@@ -96,10 +96,10 @@ public class ReporteSedeDAOImpl extends DAOImplBase implements ReporteSedeDAO {
         sql += "p.ID_PRESTAMO, p.FECHA_SOLICITUD, p.FECHA_PRESTAMO, p.FECHA_DEVOLUCION, ";
         sql += "per.ID_PERSONA, per.NOMBRE, per.PATERNO, per.MATERNO, ";
         sql += "s.ID_SEDE, s.NOMBRE AS NOMBRE_SEDE, s.DIRECCION, s.DISTRITO, s.TELEFONO_CONTACTO, s.CORREO_CONTACTO ";
-        sql += "FROM BIB_REPORTE_SEDE r ";
-        sql += "JOIN BIB_PRESTAMO p ON p.ID_PRESTAMO = r.PRESTAMO_IDPRESTAMO ";
-        sql += "JOIN BIB_PERSONA per ON per.ID_PERSONA = r.PERSONA_IDPERSONA ";
-        sql += "JOIN BIB_BIBLIOTECA_SEDE s ON s.ID_SEDE = r.SEDE_IDSEDE ";
+        sql += "FROM BIB_REPORTES_POR_SEDE r ";
+        sql += "JOIN BIB_PRESTAMOS p ON p.ID_PRESTAMO = r.PRESTAMO_IDPRESTAMO ";
+        sql += "JOIN BIB_PERSONAS per ON per.ID_PERSONA = r.PERSONA_IDPERSONA ";
+        sql += "JOIN BIB_BIBLIOTECA_SEDES s ON s.ID_SEDE = r.SEDE_IDSEDE ";
         sql += "WHERE r.ANHIO = ? AND r.MES = ? ";
         sql += "AND (? IS NULL OR r.SEDE_IDSEDE = ?) ";
         sql += "AND (? IS NULL OR r.PRESTAMO_IDPRESTAMO = ?) ";

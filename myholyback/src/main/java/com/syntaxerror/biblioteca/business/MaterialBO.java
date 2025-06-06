@@ -6,13 +6,15 @@ import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EditorialDTO;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.NivelInglesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,21 +24,34 @@ public class MaterialBO {
     private final MaterialDAO materialDAO;
     private final EditorialDAO editorialDAO;
     private final EjemplarDAO ejemplarDAO;
+    private final NivelInglesDAO nivelDAO;
 
     public MaterialBO() {
         this.materialDAO = new MaterialDAOImpl();
         this.editorialDAO = new EditorialDAOImpl();
         this.ejemplarDAO = new EjemplarDAOImpl();
+        this.nivelDAO = new NivelInglesDAOImpl();
     }
 
-    public int insertar(String titulo, String edicion, NivelDeIngles nivel, Integer anioPublicacion, String portada, Integer idEditorial) throws BusinessException {
+    public int insertar(String titulo, String edicion,
+            Integer anioPublicacion, String portada, Boolean vigente,
+            Integer idNivel, Integer idEditorial) throws BusinessException {
+
         BusinessValidator.validarTexto(titulo, "título");
         MaterialDTO material = new MaterialDTO();
         material.setTitulo(titulo);
         material.setEdicion(edicion);
-        material.setNivel(nivel);
         material.setAnioPublicacion(anioPublicacion);
         material.setPortada(portada);
+        material.setVigente(vigente);
+
+        if (idNivel != null) {
+            NivelInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+            if (nivel == null) {
+                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+            }
+            material.setNivel(nivel);
+        }
 
         if (idEditorial != null) {
             EditorialDTO editorial = editorialDAO.obtenerPorId(idEditorial);
@@ -49,17 +64,18 @@ public class MaterialBO {
         return this.materialDAO.insertar(material);
     }
 
-    public int modificar(Integer idMaterial, String titulo, String edicion, NivelDeIngles nivel, Integer anioPublicacion, String portada,
-            Integer idEditorial) throws BusinessException {
+    public int modificar(Integer idMaterial, String titulo, String edicion,
+            Integer anioPublicacion, String portada, Boolean vigente,
+            Integer idNivel, Integer idEditorial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
         BusinessValidator.validarTexto(titulo, "título");
         MaterialDTO material = new MaterialDTO();
         material.setIdMaterial(idMaterial);
         material.setTitulo(titulo);
         material.setEdicion(edicion);
-        material.setNivel(nivel);
         material.setAnioPublicacion(anioPublicacion);
         material.setPortada(portada);
+        material.setVigente(vigente);
 
         if (idEditorial != null) {
             EditorialDTO editorial = editorialDAO.obtenerPorId(idEditorial);
@@ -67,6 +83,13 @@ public class MaterialBO {
                 throw new BusinessException("La editorial con ID " + idEditorial + " no existe.");
             }
             material.setEditorial(editorial);
+        }
+        if (idNivel != null) {
+            NivelInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+            if (nivel == null) {
+                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+            }
+            material.setNivel(nivel);
         }
 
         return this.materialDAO.modificar(material);
@@ -118,7 +141,7 @@ public class MaterialBO {
 
     public ArrayList<MaterialDTO> listarPorCaracter_Creador(String filtro) throws BusinessException {
         ArrayList<MaterialDTO> resultado = new ArrayList<>();
-
+        //en verdad filtra por autor, falta cambiar
         if (filtro == null || filtro.trim().isEmpty()) {
             return resultado;
         }

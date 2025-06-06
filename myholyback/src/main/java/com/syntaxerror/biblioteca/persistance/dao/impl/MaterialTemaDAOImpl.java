@@ -1,14 +1,15 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
+import com.syntaxerror.biblioteca.model.EditorialDTO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.syntaxerror.biblioteca.model.MaterialDTO;
+import com.syntaxerror.biblioteca.model.NivelInglesDTO;
 import com.syntaxerror.biblioteca.model.TemaDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialTemaDAO;
 
 public class MaterialTemaDAOImpl extends RelacionDAOImplBase<MaterialDTO, TemaDTO> implements MaterialTemaDAO {
@@ -16,7 +17,7 @@ public class MaterialTemaDAOImpl extends RelacionDAOImplBase<MaterialDTO, TemaDT
     private static final Logger LOGGER = Logger.getLogger(MaterialTemaDAOImpl.class.getName());
 
     public MaterialTemaDAOImpl() {
-        super("BIB_MATERIAL_TEMA", "MATERIAL_IDMATERIAL", "TEMA_IDTEMA", "BIB_MATERIAL", "BIB_TEMA");
+        super("BIB_MATERIALES_TEMAS", "MATERIAL_IDMATERIAL", "TEMA_IDTEMA", "BIB_MATERIALES", "BIB_TEMAS");
     }
 
     @Override
@@ -67,7 +68,7 @@ public class MaterialTemaDAOImpl extends RelacionDAOImplBase<MaterialDTO, TemaDT
         MaterialDTO material = new MaterialDTO();
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_MATERIAL WHERE ID_MATERIAL = ?";
+            String sql = "SELECT * FROM BIB_MATERIALES WHERE ID_MATERIAL = ?";
             this.colocarSQLenStatement(sql);
             this.statement.setInt(1, id);
             this.ejecutarConsultaEnBD();
@@ -75,8 +76,17 @@ public class MaterialTemaDAOImpl extends RelacionDAOImplBase<MaterialDTO, TemaDT
                 material.setIdMaterial(this.resultSet.getInt("ID_MATERIAL"));
                 material.setTitulo(this.resultSet.getString("TITULO"));
                 material.setEdicion(this.resultSet.getString("EDICION"));
-                material.setNivel(NivelDeIngles.valueOf(this.resultSet.getString("NIVEL")));
                 material.setAnioPublicacion(this.resultSet.getInt("ANHIO_PUBLICACION"));
+                material.setPortada(this.resultSet.getString("PORTADA"));
+                material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
+                //Agregue los objetos de las fk, no estoy seguro si van en tu dao relacion
+                NivelInglesDTO nivel = new NivelInglesDTO();
+                nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
+                material.setNivel(nivel);
+
+                EditorialDTO editorial = new EditorialDTO();
+                editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
+                material.setEditorial(editorial);
             }
         } finally {
             this.cerrarConexion();
@@ -89,7 +99,7 @@ public class MaterialTemaDAOImpl extends RelacionDAOImplBase<MaterialDTO, TemaDT
         TemaDTO tema = new TemaDTO();
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_TEMA WHERE ID_TEMA = ?";
+            String sql = "SELECT * FROM BIB_TEMAS WHERE ID_TEMA = ?";
             this.colocarSQLenStatement(sql);
             this.statement.setInt(1, id);
             this.ejecutarConsultaEnBD();

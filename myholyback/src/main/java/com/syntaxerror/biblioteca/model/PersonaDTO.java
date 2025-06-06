@@ -1,6 +1,5 @@
 package com.syntaxerror.biblioteca.model;
 
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 import java.util.Date;
@@ -8,6 +7,7 @@ import java.util.Date;
 public class PersonaDTO {
 
     private Integer idPersona;
+    private String codigo;
     private String nombre;
     private String paterno;
     private String materno;
@@ -16,19 +16,22 @@ public class PersonaDTO {
     private String correo;
     private String contrasenha;
     private TipoPersona tipo;
-    private NivelDeIngles nivel;
     private Turnos turno;
     private Date fechaContratoInicio;
     private Date fechaContratoFinal;
+    private Double deuda;
+    private Date fechaSancionFinal;
     private Boolean vigente;
-
+    private NivelInglesDTO nivel;
     private SedeDTO sede;
 
     //Constructores
-    public PersonaDTO(Integer idPersona, String nombre, String paterno, String materno, String direccion,
-            String telefono, String correo, String contrasenha, TipoPersona tipo, NivelDeIngles nivel,
-            Turnos turno, Date fechaIni, Date fechaFin, Boolean viegente, SedeDTO sede) {
+    public PersonaDTO(Integer idPersona, String codigo, String nombre, String paterno,
+            String materno, String direccion, String telefono, String correo,
+            String contrasenha, TipoPersona tipo, Turnos turno, Date fechaContratoInicio,
+            Date fechaContratoFinal, Double deuda, Date fechaSancionFinal, Boolean vigente, NivelInglesDTO nivel, SedeDTO sede) {
         this.idPersona = idPersona;
+        this.codigo = codigo;
         this.nombre = nombre;
         this.paterno = paterno;
         this.materno = materno;
@@ -37,16 +40,19 @@ public class PersonaDTO {
         this.correo = correo;
         this.contrasenha = contrasenha;
         this.tipo = tipo;
-        this.nivel = nivel;
         this.turno = turno;
-        this.fechaContratoInicio = fechaIni;
-        this.fechaContratoFinal = fechaFin;
-        this.vigente = viegente;
+        this.fechaContratoInicio = fechaContratoInicio;
+        this.fechaContratoFinal = fechaContratoFinal;
+        this.deuda = deuda;
+        this.fechaSancionFinal = fechaSancionFinal;
+        this.vigente = vigente;
+        this.nivel = nivel;
         this.sede = sede;
     }
 
     public PersonaDTO() {
         this.idPersona = null;
+        this.codigo = null;
         this.nombre = null;
         this.paterno = null;
         this.materno = null;
@@ -55,11 +61,13 @@ public class PersonaDTO {
         this.correo = null;
         this.contrasenha = null;
         this.tipo = null;
-        this.nivel = null;
         this.turno = null;
         this.fechaContratoInicio = null;
         this.fechaContratoFinal = null;
+        this.deuda = null;
+        this.fechaSancionFinal = null;
         this.vigente = null;
+        this.nivel = null;
         this.sede = null;
     }
 
@@ -154,14 +162,6 @@ public class PersonaDTO {
         this.tipo = tipo;
     }
 
-    public NivelDeIngles getNivel() {
-        return nivel;
-    }
-
-    public void setNivel(NivelDeIngles nivel) {
-        this.nivel = nivel;
-    }
-
     public Turnos getTurno() {
         return turno;
     }
@@ -192,6 +192,38 @@ public class PersonaDTO {
 
     public void setVigente(Boolean vigente) {
         this.vigente = vigente;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public Double getDeuda() {
+        return deuda;
+    }
+
+    public void setDeuda(Double deuda) {
+        this.deuda = deuda;
+    }
+
+    public Date getFechaSancionFinal() {
+        return fechaSancionFinal;
+    }
+
+    public void setFechaSancionFinal(Date fechaSancionFinal) {
+        this.fechaSancionFinal = fechaSancionFinal;
+    }
+
+    public NivelInglesDTO getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(NivelInglesDTO nivel) {
+        this.nivel = nivel;
     }
 
 }

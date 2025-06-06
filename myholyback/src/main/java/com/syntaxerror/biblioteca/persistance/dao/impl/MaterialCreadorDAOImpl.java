@@ -6,16 +6,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.syntaxerror.biblioteca.model.CreadorDTO;
+import com.syntaxerror.biblioteca.model.EditorialDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.NivelInglesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoAutor;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialCreadorDAO;
 
 public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, CreadorDTO> implements MaterialCreadorDAO {
+
     private static final Logger LOGGER = Logger.getLogger(MaterialCreadorDAOImpl.class.getName());
-    
+
     public MaterialCreadorDAOImpl() {
-        super("BIB_MATERIAL_CREADOR", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR", "BIB_MATERIAL", "BIB_CREADOR");
+        super("BIB_MATERIALES_CREADORES", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR", "BIB_MATERIALES", "BIB_CREADORES");
     }
 
     @Override
@@ -66,7 +68,7 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
         MaterialDTO material = new MaterialDTO();
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_MATERIAL WHERE ID_MATERIAL = ?";
+            String sql = "SELECT * FROM BIB_MATERIALES WHERE ID_MATERIAL = ?";
             this.colocarSQLenStatement(sql);
             this.statement.setInt(1, id);
             this.ejecutarConsultaEnBD();
@@ -74,8 +76,19 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
                 material.setIdMaterial(this.resultSet.getInt("ID_MATERIAL"));
                 material.setTitulo(this.resultSet.getString("TITULO"));
                 material.setEdicion(this.resultSet.getString("EDICION"));
-                material.setNivel(NivelDeIngles.valueOf(this.resultSet.getString("NIVEL")));
                 material.setAnioPublicacion(this.resultSet.getInt("ANHIO_PUBLICACION"));
+
+                material.setPortada(this.resultSet.getString("PORTADA"));
+                material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
+                //Agregue los objetos de las fk, no estoy seguro si van en tu dao relacion
+                NivelInglesDTO nivel = new NivelInglesDTO();
+                nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
+                material.setNivel(nivel);
+
+                EditorialDTO editorial = new EditorialDTO();
+                editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
+                material.setEditorial(editorial);
+
             }
         } finally {
             this.cerrarConexion();
@@ -88,7 +101,7 @@ public class MaterialCreadorDAOImpl extends RelacionDAOImplBase<MaterialDTO, Cre
         CreadorDTO creador = new CreadorDTO();
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_CREADOR WHERE ID_CREADOR = ?";
+            String sql = "SELECT * FROM BIB_CREADORES WHERE ID_CREADOR = ?";
             this.colocarSQLenStatement(sql);
             this.statement.setInt(1, id);
             this.ejecutarConsultaEnBD();

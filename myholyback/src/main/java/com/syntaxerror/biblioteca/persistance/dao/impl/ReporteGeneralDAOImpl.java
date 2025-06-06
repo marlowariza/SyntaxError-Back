@@ -16,7 +16,7 @@ public class ReporteGeneralDAOImpl extends DAOImplBase implements ReporteGeneral
     private ReporteGeneralDTO reporte;
 
     public ReporteGeneralDAOImpl() {
-        super("BIB_REPORTE_GENERAL");
+        super("BIB_REPORTES_GENERALES");
     }
 
     @Override
@@ -90,9 +90,9 @@ public class ReporteGeneralDAOImpl extends DAOImplBase implements ReporteGeneral
         sql += "r.MES, ";
         sql += "p.ID_PRESTAMO, p.FECHA_SOLICITUD, p.FECHA_PRESTAMO, p.FECHA_DEVOLUCION, ";
         sql += "per.ID_PERSONA, per.NOMBRE, per.PATERNO, per.MATERNO ";
-        sql += "FROM BIB_REPORTE_GENERAL r ";
-        sql += "JOIN BIB_PRESTAMO p ON p.ID_PRESTAMO = r.PRESTAMO_IDPRESTAMO ";
-        sql += "JOIN BIB_PERSONA per ON per.ID_PERSONA = r.PERSONA_IDPERSONA ";
+        sql += "FROM BIB_REPORTES_GENERALES r ";
+        sql += "JOIN BIB_PRESTAMOS p ON p.ID_PRESTAMO = r.PRESTAMO_IDPRESTAMO ";
+        sql += "JOIN BIB_PERSONAS per ON per.ID_PERSONA = r.PERSONA_IDPERSONA ";
         sql += "WHERE r.ANHIO = ? AND r.MES = ? ";
         sql += "AND (? IS NULL OR r.PRESTAMO_IDPRESTAMO = ?) ";
         sql += "AND (? IS NULL OR r.PERSONA_IDPERSONA = ?) ";

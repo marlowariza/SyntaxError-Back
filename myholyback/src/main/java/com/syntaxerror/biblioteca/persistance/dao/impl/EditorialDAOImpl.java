@@ -12,7 +12,7 @@ public class EditorialDAOImpl extends DAOImplBase implements EditorialDAO {
     private EditorialDTO editorial;
 
     public EditorialDAOImpl() {
-        super("BIB_EDITORIAL");
+        super("BIB_EDITORIALES");
         this.retornarLlavePrimaria = true;
         this.editorial = null;
     }
