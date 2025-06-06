@@ -18,7 +18,7 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
     private EjemplarDTO ejemplar;
 
     public EjemplarDAOImpl() {
-        super("BIB_EJEMPLAR");
+        super("BIB_EJEMPLARES");
         this.retornarLlavePrimaria = true;
         this.ejemplar = null;
     }

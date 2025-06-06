@@ -7,7 +7,7 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import jakarta.xml.ws.WebServiceException;
@@ -31,21 +31,21 @@ public class MaterialWS {
     public MaterialWS() {
         materialBO = new MaterialBO();
         materialCreadorBO = new MaterialCreadorBO();
-        materialTemaBO =new MaterialTemaBO();
+        materialTemaBO = new MaterialTemaBO();
     }
-    
+
     @WebMethod(operationName = "insertarMaterial")
     public int insertarMaterial(
-        @WebParam(name = "titulo") String titulo,
-        @WebParam(name = "edicion") String edicion,
-        @WebParam(name = "nivel") String nivel,
-        @WebParam(name = "anioPublicacion") Integer anioPublicacion,
-        @WebParam(name = "portada") String portada,
-        @WebParam(name = "idEditorial") Integer idEditorial
+            @WebParam(name = "titulo") String titulo,
+            @WebParam(name = "edicion") String edicion,
+            @WebParam(name = "anioPublicacion") Integer anioPublicacion,
+            @WebParam(name = "portada") String portada,
+            @WebParam(name = "vigente") Boolean vigente,
+            @WebParam(name = "nivel") Integer idNivel,
+            @WebParam(name = "idEditorial") Integer idEditorial
     ) {
         try {
-            NivelDeIngles nivelDeIngles = NivelDeIngles.valueOf(nivel.toUpperCase());
-            return materialBO.insertar(titulo,edicion,nivelDeIngles,anioPublicacion,portada,idEditorial);
+            return materialBO.insertar(titulo, edicion, anioPublicacion, portada, vigente, idNivel, idEditorial);
 
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar material: " + e.getMessage());
@@ -53,6 +53,7 @@ public class MaterialWS {
             throw new WebServiceException("Error inesperado al insertar material: " + e.getMessage());
         }
     }
+
     /**
      * This is a sample web service operation
      */
@@ -81,13 +82,14 @@ public class MaterialWS {
             @WebParam(name = "idMaterial") Integer idMaterial,
             @WebParam(name = "titulo") String titulo,
             @WebParam(name = "edicion") String edicion,
-            @WebParam(name = "nivel") NivelDeIngles nivel,
             @WebParam(name = "anioPublicacion") Integer anioPublicacion,
             @WebParam(name = "portada") String portada,
+            @WebParam(name = "vigente") Boolean vigente,
+            @WebParam(name = "nivel") Integer idNivel,
             @WebParam(name = "idEditorial") Integer idEditorial
     ) {
         try {
-            return materialBO.modificar(idMaterial, titulo, edicion, nivel, anioPublicacion, portada, idEditorial);
+            return materialBO.modificar(idMaterial, titulo, edicion, anioPublicacion, portada, vigente, idNivel, idEditorial);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar material: " + e.getMessage());
         }
@@ -150,11 +152,11 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
         }
     }
-  
+
     @WebMethod(operationName = "asociarMaterialTema")
     public Integer asociarMaterialPorTema(
-        @WebParam(name = "idMaterial") Integer idMaterial,
-        @WebParam(name = "idTema") Integer idTema
+            @WebParam(name = "idMaterial") Integer idMaterial,
+            @WebParam(name = "idTema") Integer idTema
     ) throws BusinessException {
         try {
             if (materialTemaBO.existeRelacion(idMaterial, idTema)) {
@@ -167,6 +169,7 @@ public class MaterialWS {
             throw new WebServiceException("Error inesperado al asociar material con tema: " + e.getMessage());
         }
     }
+
     @WebMethod(operationName = "asociarMaterialCreador")
     public Integer asociarMaterialPorCreador(
             @WebParam(name = "idMaterial") Integer idMaterial,

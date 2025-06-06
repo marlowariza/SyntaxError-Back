@@ -16,7 +16,7 @@ public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
     private CreadorDTO creador;
 
     public CreadorDAOImpl() {
-        super("BIB_CREADOR");
+        super("BIB_CREADORES");
         this.retornarLlavePrimaria = true;
         this.creador = null;
     }

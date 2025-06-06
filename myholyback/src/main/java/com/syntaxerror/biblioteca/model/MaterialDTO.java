@@ -1,14 +1,14 @@
 package com.syntaxerror.biblioteca.model;
 
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
-
 public class MaterialDTO {
+
     private Integer idMaterial;
     private String titulo;
     private String edicion;
-    private NivelDeIngles nivel;
     private Integer anioPublicacion;
     private String portada;
+    private Boolean vigente;
+    private NivelInglesDTO nivel;
     private EditorialDTO editorial;
 
     // Constructores
@@ -16,21 +16,22 @@ public class MaterialDTO {
         this.idMaterial = null;
         this.titulo = null;
         this.edicion = null;
-        this.nivel = null;
         this.anioPublicacion = null;
         this.portada = null;
+        this.vigente = null;
+        this.nivel = null;
         this.editorial = null;
 
     }
 
-    public MaterialDTO(Integer idMaterial, String titulo, String edicion, NivelDeIngles nivel, Integer anioPublicacion,
-            String portada, EditorialDTO editorial) {
+    public MaterialDTO(Integer idMaterial, String titulo, String edicion, Integer anioPublicacion, String portada, Boolean vigente, NivelInglesDTO nivel, EditorialDTO editorial) {
         this.idMaterial = idMaterial;
         this.titulo = titulo;
         this.edicion = edicion;
-        this.nivel = nivel;
         this.anioPublicacion = anioPublicacion;
         this.portada = portada;
+        this.vigente = vigente;
+        this.nivel = nivel;
         this.editorial = editorial;
     }
 
@@ -38,9 +39,10 @@ public class MaterialDTO {
         this.idMaterial = material.idMaterial;
         this.titulo = material.titulo;
         this.edicion = material.edicion;
-        this.nivel = material.nivel;
         this.anioPublicacion = material.anioPublicacion;
         this.portada = material.portada;
+        this.vigente = material.vigente;
+        this.nivel = material.nivel;
         this.editorial = material.editorial;
 
     }
@@ -69,11 +71,19 @@ public class MaterialDTO {
         this.edicion = edicion;
     }
 
-    public NivelDeIngles getNivel() {
+    public Boolean getVigente() {
+        return vigente;
+    }
+
+    public void setVigente(Boolean vigente) {
+        this.vigente = vigente;
+    }
+
+    public NivelInglesDTO getNivel() {
         return nivel;
     }
 
-    public void setNivel(NivelDeIngles nivel) {
+    public void setNivel(NivelInglesDTO nivel) {
         this.nivel = nivel;
     }
 
@@ -92,7 +102,7 @@ public class MaterialDTO {
     public void setEditorial(EditorialDTO editorial) {
         this.editorial = editorial;
     }
-    
+
     public String getPortada() {
         return portada;
     }

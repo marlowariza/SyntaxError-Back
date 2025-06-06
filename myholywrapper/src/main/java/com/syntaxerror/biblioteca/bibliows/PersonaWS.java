@@ -3,7 +3,6 @@ package com.syntaxerror.biblioteca.bibliows;
 import com.syntaxerror.biblioteca.business.PersonaBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 
@@ -44,6 +43,7 @@ public class PersonaWS {
 
     @WebMethod(operationName = "insertarPersona")
     public int insertarPersona(
+            @WebParam(name = "codigo") String codigo,
             @WebParam(name = "nombre") String nombre,
             @WebParam(name = "paterno") String paterno,
             @WebParam(name = "materno") String materno,
@@ -52,16 +52,18 @@ public class PersonaWS {
             @WebParam(name = "correo") String correo,
             @WebParam(name = "contrasenha") String contrasenha,
             @WebParam(name = "tipo") TipoPersona tipo,
-            @WebParam(name = "nivel") NivelDeIngles nivel,
             @WebParam(name = "turno") Turnos turno,
             @WebParam(name = "fechaContratoInicio") Date fechaContratoInicio,
             @WebParam(name = "fechaContratoFinal") Date fechaContratoFinal,
+            @WebParam(name = "deuda") Double deuda,
+            @WebParam(name = "fechaSancionFinal") Date fechaSancionFinal,
             @WebParam(name = "vigente") Boolean vigente,
+            @WebParam(name = "idNivel") Integer idNivel,
             @WebParam(name = "idSede") Integer idSede
     ) {
         try {
-            return personaBO.insertar(nombre, paterno, materno, direccion, telefono, correo, contrasenha,
-                    tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, vigente, idSede);
+            return personaBO.insertar(codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
+                    tipo, turno, fechaContratoInicio, fechaContratoFinal, deuda, fechaSancionFinal, vigente, idNivel, idSede);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar persona: " + e.getMessage());
         }
@@ -70,6 +72,7 @@ public class PersonaWS {
     @WebMethod(operationName = "modificarPersona")
     public int modificarPersona(
             @WebParam(name = "idPersona") Integer idPersona,
+            @WebParam(name = "codigo") String codigo,
             @WebParam(name = "nombre") String nombre,
             @WebParam(name = "paterno") String paterno,
             @WebParam(name = "materno") String materno,
@@ -78,16 +81,18 @@ public class PersonaWS {
             @WebParam(name = "correo") String correo,
             @WebParam(name = "contrasenha") String contrasenha,
             @WebParam(name = "tipo") TipoPersona tipo,
-            @WebParam(name = "nivel") NivelDeIngles nivel,
             @WebParam(name = "turno") Turnos turno,
             @WebParam(name = "fechaContratoInicio") Date fechaContratoInicio,
             @WebParam(name = "fechaContratoFinal") Date fechaContratoFinal,
+            @WebParam(name = "deuda") Double deuda,
+            @WebParam(name = "fechaSancionFinal") Date fechaSancionFinal,
             @WebParam(name = "vigente") Boolean vigente,
+            @WebParam(name = "idNivel") Integer idNivel,
             @WebParam(name = "idSede") Integer idSede
     ) {
         try {
-            return personaBO.modificar(idPersona, nombre, paterno, materno, direccion, telefono, correo,
-                    contrasenha, tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, vigente, idSede);
+            return personaBO.modificar(idPersona,codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
+                    tipo, turno, fechaContratoInicio, fechaContratoFinal, deuda, fechaSancionFinal, vigente, idNivel, idSede);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar persona: " + e.getMessage());
         }

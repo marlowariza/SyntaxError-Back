@@ -5,7 +5,7 @@
 package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.model.PersonaDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 import java.util.ArrayList;

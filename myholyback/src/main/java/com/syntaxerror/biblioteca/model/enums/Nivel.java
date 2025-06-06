@@ -1,6 +1,6 @@
 package com.syntaxerror.biblioteca.model.enums;
 
 
-public enum NivelDeIngles {
+public enum Nivel {
     BASICO,INTERMEDIO,AVANZADO
 }

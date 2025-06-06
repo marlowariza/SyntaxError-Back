@@ -15,7 +15,7 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
     private SancionDTO sancion;
 
     public SancionDAOImpl() {
-        super("BIB_SANCION");
+        super("BIB_SANCIONES");
         this.retornarLlavePrimaria = true;
         this.sancion = null;
     }

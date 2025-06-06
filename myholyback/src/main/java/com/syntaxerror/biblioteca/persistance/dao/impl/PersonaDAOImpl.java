@@ -1,8 +1,9 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
+import com.syntaxerror.biblioteca.model.NivelInglesDTO;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.SedeDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
@@ -16,7 +17,7 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
     private PersonaDTO persona;
 
     public PersonaDAOImpl() {
-        super("BIB_PERSONA");
+        super("BIB_PERSONAS");
         this.retornarLlavePrimaria = true;
         this.persona = null;
     }
@@ -24,6 +25,7 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
     @Override
     protected void configurarListaDeColumnas() {
         this.listaColumnas.add(new Columna("ID_PERSONA", true, true));
+        this.listaColumnas.add(new Columna("CODIGO", false, false));
         this.listaColumnas.add(new Columna("NOMBRE", false, false));
         this.listaColumnas.add(new Columna("PATERNO", false, false));
         this.listaColumnas.add(new Columna("MATERNO", false, false));
@@ -32,59 +34,65 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         this.listaColumnas.add(new Columna("CORREO", false, false));
         this.listaColumnas.add(new Columna("CONTRASENHA", false, false));
         this.listaColumnas.add(new Columna("TIPO_PERSONA", false, false));
-        this.listaColumnas.add(new Columna("NIVEL", false, false));
         this.listaColumnas.add(new Columna("TURNO", false, false));
         this.listaColumnas.add(new Columna("FECHA_CONTRATO_INI", false, false));
         this.listaColumnas.add(new Columna("FECHA_CONTRATO_FIN", false, false));
+        this.listaColumnas.add(new Columna("DEUDA_ACUMULADA", false, false));
+        this.listaColumnas.add(new Columna("FECHA_SANCION_FIN", false, false));
         this.listaColumnas.add(new Columna("VIGENTE", false, false));
+        this.listaColumnas.add(new Columna("NIVEL_IDNIVEL", false, false));
         this.listaColumnas.add(new Columna("SEDE_IDSEDE", false, false));
     }
 
     @Override
     protected void incluirValorDeParametrosParaInsercion() throws SQLException {
-        this.statement.setString(1, this.persona.getNombre());
-        this.statement.setString(2, this.persona.getPaterno());
-        this.statement.setString(3, this.persona.getMaterno());
-        this.statement.setString(4, this.persona.getDireccion());
-        this.statement.setString(5, this.persona.getTelefono());
-        this.statement.setString(6, this.persona.getCorreo());
-        this.statement.setString(7, this.persona.getContrasenha());
-        this.statement.setString(8, this.persona.getTipo().name());
+        this.statement.setString(1, this.persona.getCodigo());
+        this.statement.setString(2, this.persona.getNombre());
+        this.statement.setString(3, this.persona.getPaterno());
+        this.statement.setString(4, this.persona.getMaterno());
+        this.statement.setString(5, this.persona.getDireccion());
+        this.statement.setString(6, this.persona.getTelefono());
+        this.statement.setString(7, this.persona.getCorreo());
+        this.statement.setString(8, this.persona.getContrasenha());
+        this.statement.setString(9, this.persona.getTipo().name());
 
-        // NIVEL solo si es LECTOR
-        if (this.persona.getTipo() == TipoPersona.LECTOR) {
-            if (this.persona.getNivel() == null) {
-                throw new SQLException("Los lectores deben tener un nivel de inglés.");
-            }
-            this.statement.setString(9, this.persona.getNivel().name());
-
-            this.statement.setNull(10, java.sql.Types.VARCHAR); // TURNO
-            this.statement.setNull(11, java.sql.Types.DATE);    // FECHA_CONTRATO_INI
-            this.statement.setNull(12, java.sql.Types.DATE);    // FECHA_CONTRATO_FIN
-            this.statement.setNull(13, java.sql.Types.INTEGER); // VIGENTE
-        } // BIBLIOTECARIO
-        else if (this.persona.getTipo() == TipoPersona.BIBLIOTECARIO) {
-            this.statement.setNull(9, java.sql.Types.VARCHAR); // NIVEL
-
-            if (this.persona.getTurno() == null || this.persona.getFechaContratoInicio() == null || this.persona.getFechaContratoFinal() == null || this.persona.getVigente() == null) {
-                throw new SQLException("Los bibliotecarios deben tener turno, fechas de contrato y estado de vigencia.");
-            }
-
+        if (this.persona.getTurno() != null) {
             this.statement.setString(10, this.persona.getTurno().name());
-            this.statement.setDate(11, new java.sql.Date(this.persona.getFechaContratoInicio().getTime()));
-            this.statement.setDate(12, new java.sql.Date(this.persona.getFechaContratoFinal().getTime()));
-            this.statement.setInt(13, this.persona.getVigente() ? 1 : 0);
         } else {
-            throw new SQLException("Tipo de persona no reconocido.");
+            this.statement.setNull(10, java.sql.Types.VARCHAR);
         }
 
-        this.statement.setInt(14, this.persona.getSede().getIdSede());
+        this.statement.setDate(11, this.persona.getFechaContratoInicio() != null
+                ? new java.sql.Date(this.persona.getFechaContratoInicio().getTime())
+                : null);
+        this.statement.setDate(12, this.persona.getFechaContratoFinal() != null
+                ? new java.sql.Date(this.persona.getFechaContratoFinal().getTime())
+                : null);
+
+        this.statement.setDouble(13, this.persona.getDeuda() != null
+                ? this.persona.getDeuda() : 0.0);
+
+        if (this.persona.getFechaSancionFinal() != null) {
+            this.statement.setDate(14, new java.sql.Date(this.persona.getFechaSancionFinal().getTime()));
+        } else {
+            this.statement.setNull(14, java.sql.Types.DATE);
+        }
+
+        this.statement.setInt(15, this.persona.getVigente() != null && this.persona.getVigente() ? 1 : 0);
+
+        if (this.persona.getNivel() != null) {
+            this.statement.setInt(16, this.persona.getNivel().getIdNivel());
+        } else {
+            this.statement.setNull(16, java.sql.Types.INTEGER);
+        }
+
+        this.statement.setInt(17, this.persona.getSede().getIdSede());
     }
 
     @Override
     protected void incluirValorDeParametrosParaModificacion() throws SQLException {
         incluirValorDeParametrosParaInsercion(); // mismos campos que inserción
-        this.statement.setInt(15, this.persona.getIdPersona());
+        this.statement.setInt(18, this.persona.getIdPersona());
         //En modificar el ID va al ultimo
     }
 
@@ -103,7 +111,9 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
     @Override
     protected void instanciarObjetoDelResultSet() throws SQLException {
         this.persona = new PersonaDTO();
+
         this.persona.setIdPersona(this.resultSet.getInt("ID_PERSONA"));
+        this.persona.setCodigo(this.resultSet.getString("CODIGO"));
         this.persona.setNombre(this.resultSet.getString("NOMBRE"));
         this.persona.setPaterno(this.resultSet.getString("PATERNO"));
         this.persona.setMaterno(this.resultSet.getString("MATERNO"));
@@ -111,22 +121,22 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         this.persona.setTelefono(this.resultSet.getString("TELEFONO"));
         this.persona.setCorreo(this.resultSet.getString("CORREO"));
         this.persona.setContrasenha(this.resultSet.getString("CONTRASENHA"));
+        this.persona.setTipo(TipoPersona.valueOf(this.resultSet.getString("TIPO_PERSONA")));
 
-        TipoPersona tipo = TipoPersona.valueOf(this.resultSet.getString("TIPO_PERSONA"));
-        this.persona.setTipo(tipo);
+        String turnoStr = this.resultSet.getString("TURNO");
+        this.persona.setTurno(turnoStr != null ? Turnos.valueOf(turnoStr) : null);
 
-        if (tipo == TipoPersona.LECTOR) {
-            this.persona.setNivel(NivelDeIngles.valueOf(this.resultSet.getString("NIVEL")));
-            this.persona.setTurno(null);
-            this.persona.setFechaContratoInicio(null);
-            this.persona.setFechaContratoFinal(null);
-            this.persona.setVigente(null);
-        } else if (tipo == TipoPersona.BIBLIOTECARIO) {
-            this.persona.setNivel(null);
-            this.persona.setTurno(Turnos.valueOf(this.resultSet.getString("TURNO")));
-            this.persona.setFechaContratoInicio(this.resultSet.getDate("FECHA_CONTRATO_INI"));
-            this.persona.setFechaContratoFinal(this.resultSet.getDate("FECHA_CONTRATO_FIN"));
-            this.persona.setVigente(this.resultSet.getInt("VIGENTE") == 1);
+        this.persona.setFechaContratoInicio(this.resultSet.getDate("FECHA_CONTRATO_INI"));
+        this.persona.setFechaContratoFinal(this.resultSet.getDate("FECHA_CONTRATO_FIN"));
+        this.persona.setDeuda(this.resultSet.getDouble("DEUDA_ACUMULADA"));
+        this.persona.setFechaSancionFinal(this.resultSet.getDate("FECHA_SANCION_FIN"));
+        this.persona.setVigente(this.resultSet.getInt("VIGENTE") == 1);
+
+        int idNivel = this.resultSet.getInt("NIVEL_IDNIVEL");
+        if (!this.resultSet.wasNull()) {
+            NivelInglesDTO nivel = new NivelInglesDTO();
+            nivel.setIdNivel(idNivel);
+            this.persona.setNivel(nivel);
         }
 
         // Relación sede

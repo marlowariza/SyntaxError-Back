@@ -13,7 +13,7 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
     private TemaDTO tema;
 
     public TemaDAOImpl() {
-        super("BIB_TEMA");
+        super("BIB_TEMAS");
         this.retornarLlavePrimaria = true;
         this.tema = null;
     }
