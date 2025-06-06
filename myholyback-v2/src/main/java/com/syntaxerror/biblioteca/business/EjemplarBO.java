@@ -2,8 +2,8 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.EjemplarDTO;
-import com.syntaxerror.biblioteca.model.MaterialDTO;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
@@ -32,7 +32,7 @@ public class EjemplarBO {
             FormatoDigital formatoDigital, String ubicacion,
             Integer idSede, Integer idMaterial) throws BusinessException {
         validarDatos(disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setFechaAdquisicion(fechaAdquisicion);
         ejemplar.setDisponible(disponible);
         ejemplar.setTipo(tipo);
@@ -44,7 +44,7 @@ public class EjemplarBO {
 
         ejemplar.setSede(sede);
 
-        MaterialDTO material = materialDAO.obtenerPorId(idMaterial);
+        MaterialesDTO material = materialDAO.obtenerPorId(idMaterial);
         material.setIdMaterial(idMaterial);
 
         ejemplar.setMaterial(material);
@@ -57,7 +57,7 @@ public class EjemplarBO {
             Integer idSede, Integer idMaterial) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
         validarDatos(disponible, tipo, formatoDigital, ubicacion, idSede, idMaterial);
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setIdEjemplar(idEjemplar);
         ejemplar.setFechaAdquisicion(fechaAdquisicion);
         ejemplar.setDisponible(disponible);
@@ -70,7 +70,7 @@ public class EjemplarBO {
 
         ejemplar.setSede(sede);
 
-        MaterialDTO material = materialDAO.obtenerPorId(idMaterial);
+        MaterialesDTO material = materialDAO.obtenerPorId(idMaterial);
         material.setIdMaterial(idMaterial);
 
         ejemplar.setMaterial(material);
@@ -80,17 +80,17 @@ public class EjemplarBO {
 
     public int eliminar(Integer idEjemplar) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
-        EjemplarDTO ejemplar = new EjemplarDTO();
+        EjemplaresDTO ejemplar = new EjemplaresDTO();
         ejemplar.setIdEjemplar(idEjemplar);
         return this.ejemplarDAO.eliminar(ejemplar);
     }
 
-    public EjemplarDTO obtenerPorId(Integer idEjemplar) throws BusinessException {
+    public EjemplaresDTO obtenerPorId(Integer idEjemplar) throws BusinessException {
         BusinessValidator.validarId(idEjemplar, "ejemplar");
         return this.ejemplarDAO.obtenerPorId(idEjemplar);
     }
 
-    public ArrayList<EjemplarDTO> listarTodos() {
+    public ArrayList<EjemplaresDTO> listarTodos() {
         return this.ejemplarDAO.listarTodos();
     }
 

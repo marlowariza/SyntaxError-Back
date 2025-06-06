@@ -2,9 +2,9 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
-import com.syntaxerror.biblioteca.model.enums.NivelDeIngles;
+import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
@@ -25,16 +25,17 @@ public class PersonaBO {
         this.sedeDAO = new SedesDAOImpl();
     }
 
-    public int insertar(String nombre, String paterno, String materno, String direccion,
+    public int insertar(String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelDeIngles nivel, Turnos turno,
+            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
             Date fechaContratoInicio, Date fechaContratoFinal,
-            Boolean vigente, Integer idSede) throws BusinessException {
+            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idSede) throws BusinessException {
 
-        validarDatos(nombre, paterno, materno, direccion, telefono, correo, contrasenha,
+        validarDatos(codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
                 tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, idSede);
 
-        PersonaDTO persona = new PersonaDTO();
+        PersonasDTO persona = new PersonasDTO();
+        persona.setCodigo(codigo);
         persona.setNombre(nombre);
         persona.setPaterno(paterno);
         persona.setMaterno(materno);
@@ -47,6 +48,8 @@ public class PersonaBO {
         persona.setTurno(turno);
         persona.setFechaContratoInicio(fechaContratoInicio);
         persona.setFechaContratoFinal(fechaContratoFinal);
+        persona.setDeuda(deuda != null ? deuda : 0.0);
+        persona.setFechaSancionFinal(fechaSancionFinal);
         persona.setVigente(vigente != null ? vigente : true);
 
         SedesDTO sede = sedeDAO.obtenerPorId(idSede);
@@ -58,18 +61,19 @@ public class PersonaBO {
         return this.personaDAO.insertar(persona);
     }
 
-    public int modificar(Integer idPersona, String nombre, String paterno, String materno, String direccion,
+    public int modificar(Integer idPersona, String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelDeIngles nivel, Turnos turno,
+            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
             Date fechaContratoInicio, Date fechaContratoFinal,
-            Boolean vigente, Integer idSede) throws BusinessException {
+            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idSede) throws BusinessException {
 
         BusinessValidator.validarId(idPersona, "persona");
-        validarDatos(nombre, paterno, materno, direccion, telefono, correo, contrasenha,
+        validarDatos(codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
                 tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, idSede);
 
-        PersonaDTO persona = new PersonaDTO();
+        PersonasDTO persona = new PersonasDTO();
         persona.setIdPersona(idPersona);
+        persona.setCodigo(codigo);
         persona.setNombre(nombre);
         persona.setPaterno(paterno);
         persona.setMaterno(materno);
@@ -82,6 +86,8 @@ public class PersonaBO {
         persona.setTurno(turno);
         persona.setFechaContratoInicio(fechaContratoInicio);
         persona.setFechaContratoFinal(fechaContratoFinal);
+        persona.setDeuda(deuda != null ? deuda : 0.0);
+        persona.setFechaSancionFinal(fechaSancionFinal);
         persona.setVigente(vigente != null ? vigente : true);
 
         SedesDTO sede = sedeDAO.obtenerPorId(idSede);
@@ -94,25 +100,26 @@ public class PersonaBO {
 
     public int eliminar(Integer idPersona) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
-        PersonaDTO persona = new PersonaDTO();
+        PersonasDTO persona = new PersonasDTO();
         persona.setIdPersona(idPersona);
         return this.personaDAO.eliminar(persona);
     }
 
-    public PersonaDTO obtenerPorId(Integer idPersona) throws BusinessException {
+    public PersonasDTO obtenerPorId(Integer idPersona) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
         return this.personaDAO.obtenerPorId(idPersona);
     }
 
-    public ArrayList<PersonaDTO> listarTodos() {
+    public ArrayList<PersonasDTO> listarTodos() {
         return this.personaDAO.listarTodos();
     }
 
-    private void validarDatos(String nombre, String paterno, String materno, String direccion,
+    private void validarDatos(String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelDeIngles nivel, Turnos turno,
+            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
             Date fechaIni, Date fechaFin, Integer idSede) throws BusinessException {
 
+        BusinessValidator.validarTexto(codigo, "código");
         BusinessValidator.validarTexto(nombre, "nombre");
         BusinessValidator.validarTexto(paterno, "apellido paterno");
         BusinessValidator.validarTexto(materno, "apellido materno");
@@ -136,7 +143,7 @@ public class PersonaBO {
             throw new BusinessException("Debe asignarse una sede válida.");
         }
 
-        if (tipo == TipoPersona.BIBLIOTECARIO) {
+        if (tipo == TipoPersona.ADMINISTRADOR) {
             if (turno == null) {
                 throw new BusinessException("Debe asignarse un turno al bibliotecario.");
             }
@@ -147,11 +154,10 @@ public class PersonaBO {
                 throw new BusinessException("La fecha de inicio no puede ser posterior a la fecha de fin.");
             }
         }
-        if (tipo == TipoPersona.LECTOR) {
+        if (tipo == TipoPersona.PROFESOR || tipo == TipoPersona.ESTUDIANTE) {
             if (nivel == null) {
                 throw new BusinessException("Debe asignarse un nivel de inglés al lector.");
             }
         }
-
     }
 }

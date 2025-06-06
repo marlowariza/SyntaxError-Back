@@ -6,11 +6,13 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.CreadorDTO;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
 import java.util.ArrayList;
 import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
+import java.util.List;
 
 /**
  *
@@ -18,17 +20,20 @@ import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
  */
 public class CreadorBO {
 
-    private final CreadoresDAO creadorDAO;
+    private final CreadoresDAO creadoresDAO;
 
     public CreadorBO() {
-        this.creadorDAO = new CreadoresDAOImpl();
+        this.creadoresDAO = new CreadoresDAOImpl();
     }
-
+    
+    
     public int insertar(String nombre, String paterno, String materno,
-            String seudonimo, TipoCreador tipo, String nacionalidad, Boolean activo) throws BusinessException {
+            String seudonimo, TipoCreador tipo, String nacionalidad,
+            Boolean activo,List<MaterialesDTO> materiales) throws BusinessException {
         validarDatos(nombre,tipo,activo);
-        CreadorDTO creador = new CreadorDTO();
-
+        
+        CreadoresDTO creador = new CreadoresDTO();
+        
         creador.setNombre(nombre);
         creador.setPaterno(paterno);
         creador.setMaterno(materno);
@@ -36,15 +41,18 @@ public class CreadorBO {
         creador.setTipo(tipo);
         creador.setNacionalidad(nacionalidad);
         creador.setActivo(activo);
-
-        return this.creadorDAO.insertar(creador);
+        creador.setMateriales(materiales);
+        return this.creadoresDAO.insertar(creador);
     }
 
     public int modificar(Integer idCreador, String nombre, String paterno, String materno,
-            String seudonimo, TipoCreador tipo, String nacionalidad, Boolean activo) throws BusinessException {
+            String seudonimo, TipoCreador tipo, String nacionalidad,
+            Boolean activo,List<MaterialesDTO> materiales) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
         validarDatos(nombre, tipo, activo);
-        CreadorDTO creador = new CreadorDTO();
+        
+        CreadoresDTO creador = new CreadoresDTO();
+        
         creador.setIdCreador(idCreador);
         creador.setNombre(nombre);
         creador.setPaterno(paterno);
@@ -53,24 +61,25 @@ public class CreadorBO {
         creador.setTipo(tipo);
         creador.setNacionalidad(nacionalidad);
         creador.setActivo(activo);
+        creador.setMateriales(materiales);
 
-        return this.creadorDAO.modificar(creador);
+        return this.creadoresDAO.modificar(creador);
     }
 
     public int eliminar(Integer idCreador) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
-        CreadorDTO creador = new CreadorDTO();
+        CreadoresDTO creador = new CreadoresDTO();
         creador.setIdCreador(idCreador);
-        return this.creadorDAO.eliminar(creador);
+        return this.creadoresDAO.eliminar(creador);
     }
 
-    public CreadorDTO obtenerPorId(Integer idCreador) throws BusinessException {
+    public CreadoresDTO obtenerPorId(Integer idCreador) throws BusinessException {
         BusinessValidator.validarId(idCreador, "creador");
-        return this.creadorDAO.obtenerPorId(idCreador);
+        return this.creadoresDAO.obtenerPorId(idCreador);
     }
 
-    public ArrayList<CreadorDTO> listarTodos() {
-        return this.creadorDAO.listarTodos();
+    public ArrayList<CreadoresDTO> listarTodos() {
+        return this.creadoresDAO.listarTodos();
     }
 
     private void validarDatos(String nombre, TipoCreador tipo, Boolean activo) throws BusinessException {

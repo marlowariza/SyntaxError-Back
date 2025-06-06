@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamosDAOImpl;
@@ -28,7 +28,7 @@ public class PrestamoBO {
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
 
-        PersonaDTO persona = personaDAO.obtenerPorId(idPersona);
+        PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
         if (persona == null) {
             throw new BusinessException("La persona con ID " + idPersona + " no existe.");
         }
@@ -46,7 +46,7 @@ public class PrestamoBO {
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
 
-        PersonaDTO persona = personaDAO.obtenerPorId(idPersona);
+        PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
         if (persona == null) {
             throw new BusinessException("La persona con ID " + idPersona + " no existe.");
         }
