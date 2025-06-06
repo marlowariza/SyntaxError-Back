@@ -9,6 +9,8 @@ import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
 import java.util.ArrayList;
 import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
+import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,9 +21,11 @@ import java.util.Objects;
 public class CreadorBO {
 
     private final CreadoresDAO creadorDAO;
+    private final MaterialesDAO materialDAO;
 
     public CreadorBO() {
         this.creadorDAO = new CreadoresDAOImpl();
+        this.materialDAO = new MaterialesDAOImpl();
     }
 
     public int insertar(String nombre, String paterno, String materno,
@@ -68,45 +72,47 @@ public class CreadorBO {
         BusinessValidator.validarId(idCreador, "creador");
         return this.creadorDAO.obtenerPorId(idCreador);
     }
-
-    public ArrayList<CreadoresDTO> listarTodos() {
-        return this.creadorDAO.listarTodos();
-    }
     
-    public void AgregarMateriales(CreadoresDTO creador, MaterialesDTO material) throws BusinessException{
+    public void AgregarMaterialACreador(Integer idCreador, Integer idMaterial) throws BusinessException{
+        
+        CreadoresDTO creador = creadorDAO.obtenerPorId(idCreador);
+        
         for (MaterialesDTO temp:creador.getMateriales()) {
-            if (Objects.equals(temp.getIdMaterial(), material.getIdMaterial())){
-                throw new BusinessException(material.getTitulo()+" ya ha sido agregado.");
+            if (Objects.equals(temp.getIdMaterial(), idMaterial)){
+                throw new BusinessException(temp.getTitulo()+" ya ha sido previamente agregado.");
             }
         }
-        creador.addMaterial(material);
+        
+        MaterialesDTO materialNuevo = materialDAO.obtenerPorId(idMaterial);
+        creador.addMaterial(materialNuevo);
         creadorDAO.modificar(creador);
     }
     
-    public void AgregarMateriales(CreadoresDTO creador, List<MaterialesDTO> material) throws BusinessException{
-        for (MaterialesDTO temp:creador.getMateriales()) {
-            AgregarMateriales(creador, temp);
-        }
-    }
     
-    public void QuitarMateriales(CreadoresDTO creador, MaterialesDTO material) throws BusinessException{
+    public void QuitarMateriales(Integer idCreador, Integer idMaterial) throws BusinessException{
+        
+        CreadoresDTO creador = creadorDAO.obtenerPorId(idCreador);
+        MaterialesDTO materialAEliminar = materialDAO.obtenerPorId(idMaterial);
+                        
         for (MaterialesDTO temp:creador.getMateriales()) {
-            if (Objects.equals(temp.getIdMaterial(), material.getIdMaterial())){
-                creador.removeMaterial(material);
+            if (Objects.equals(temp.getIdMaterial(), idMaterial)){
+                creador.removeMaterial(materialAEliminar);
                 creadorDAO.modificar(creador);
                 return;
             }
         }
-        throw new BusinessException(material.getTitulo()+" no ha sido agregado.");
+        throw new BusinessException(materialAEliminar.getTitulo()+" no ha sido previamente agregado.");
     }
     
-    public void QuitarMateriales(CreadoresDTO creador, List<MaterialesDTO> material) throws BusinessException{
-        for (MaterialesDTO temp:creador.getMateriales()) {
-            QuitarMateriales(creador, temp);
-        }
+    public int ContarMaterialesPorCreador(Integer creadorId){
+        CreadoresDTO creador = creadorDAO.obtenerPorId(creadorId);
+        return creador.getMateriales().size();
     }
     
-
+    public ArrayList<CreadoresDTO> listarTodos() {
+        return this.creadorDAO.listarTodos();
+    }
+    
     private void validarDatos(String nombre, TipoCreador tipo, Boolean activo) throws BusinessException {
         BusinessValidator.validarTexto(nombre, "nombre del creador");
 
