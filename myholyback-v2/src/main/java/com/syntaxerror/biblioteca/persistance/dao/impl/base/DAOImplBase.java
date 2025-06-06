@@ -1,4 +1,4 @@
-package com.syntaxerror.biblioteca.persistance.dao.impl;
+package com.syntaxerror.biblioteca.persistance.dao.impl.base;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

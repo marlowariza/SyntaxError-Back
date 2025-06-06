@@ -1,29 +1,32 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
-import com.syntaxerror.biblioteca.model.CreadoresDTO;
-import com.syntaxerror.biblioteca.model.EditorialesDTO;
-import com.syntaxerror.biblioteca.model.MaterialesDTO;
-import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialesTemasDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadoresMaterialesDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.EditorialesDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 
-public class MaterialesDAOImpl extends DAOImplRelacion implements MaterialesDAO {
+public class MaterialesDAOImpl extends DAOImplBase implements MaterialesDAO {
 
     private MaterialesDTO material;
-    private CreadoresDTO creador;
-    private TemasDTO tema;
+    private CreadoresMaterialesDAO creadoresMaterialesDAO;
+    private MaterialesTemasDAO materialesTemasDAO;
 
     public MaterialesDAOImpl() {
-        super("BIB_MATERIALES", "BIB_MATERIALES_CREADORES", "MATERIAL_IDMATERIAL", "CREADOR_IDCREADOR");
+        super("BIB_MATERIALES");
         this.retornarLlavePrimaria = true;
         this.material = null;
-        this.creador = null;
-        this.tema = null;
+        this.creadoresMaterialesDAO = new CreadoresMaterialesDAO();
+        this.materialesTemasDAO = new MaterialesTemasDAO();
     }
 
     @Override
@@ -89,6 +92,10 @@ public class MaterialesDAOImpl extends DAOImplRelacion implements MaterialesDAO 
         EditorialesDTO editorial = new EditorialesDTO();
         editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
         this.material.setEditorial(editorial);
+        
+        // Cargar relaciones
+        this.material.setCreadores(creadoresMaterialesDAO.listarPorMaterial(this.material.getIdMaterial()));
+        this.material.setTemas(materialesTemasDAO.listarPorMaterial(this.material.getIdMaterial()));
     }
 
     @Override
@@ -105,7 +112,22 @@ public class MaterialesDAOImpl extends DAOImplRelacion implements MaterialesDAO 
     @Override
     public Integer insertar(MaterialesDTO material) {
         this.material = material;
-        return super.insertar();
+        Integer idMaterial = super.insertar();
+        if (idMaterial != null && idMaterial > 0) {
+            // Insertar relaciones con creadores
+            if (material.getCreadores() != null) {
+                for (CreadoresDTO creador : material.getCreadores()) {
+                    creadoresMaterialesDAO.asociarMaterial(creador.getIdCreador(), idMaterial);
+                }
+            }
+            // Insertar relaciones con temas
+            if (material.getTemas() != null) {
+                for (TemasDTO tema : material.getTemas()) {
+                    materialesTemasDAO.asociarTema(idMaterial, tema.getIdTema());
+                }
+            }
+        }
+        return idMaterial;
     }
 
     @Override
@@ -124,96 +146,33 @@ public class MaterialesDAOImpl extends DAOImplRelacion implements MaterialesDAO 
     @Override
     public Integer modificar(MaterialesDTO material) {
         this.material = material;
-        return super.modificar();
+        Integer resultado = super.modificar();
+        if (resultado != null && resultado > 0) {
+            // Eliminar y recrear relaciones con creadores
+            creadoresMaterialesDAO.eliminarAsociacionesMateriales(material.getIdMaterial());
+            if (material.getCreadores() != null) {
+                for (CreadoresDTO creador : material.getCreadores()) {
+                    creadoresMaterialesDAO.asociarMaterial(creador.getIdCreador(), material.getIdMaterial());
+                }
+            }
+            
+            // Eliminar y recrear relaciones con temas
+            materialesTemasDAO.eliminarAsociacionesTemas(material.getIdMaterial());
+            if (material.getTemas() != null) {
+                for (TemasDTO tema : material.getTemas()) {
+                    materialesTemasDAO.asociarTema(material.getIdMaterial(), tema.getIdTema());
+                }
+            }
+        }
+        return resultado;
     }
 
     @Override
     public Integer eliminar(MaterialesDTO material) {
         this.material = material;
+        // Primero eliminar las relaciones
+        creadoresMaterialesDAO.eliminarAsociacionesMateriales(material.getIdMaterial());
+        materialesTemasDAO.eliminarAsociacionesTemas(material.getIdMaterial());
         return super.eliminar();
-    }
-
-    @Override
-    public Integer asociarCreador(CreadoresDTO creador) {
-        this.creador = creador;
-        return this.asociar(this.material.getIdMaterial(), this.creador.getIdCreador());
-    }
-
-    @Override
-    public Integer desasociarCreador(CreadoresDTO creador) {
-        this.creador = creador;
-        return this.desasociar(this.material.getIdMaterial(), this.creador.getIdCreador());
-    }
-
-    @Override
-    public boolean existeRelacionConCreador(CreadoresDTO creador) {
-        this.creador = creador;
-        return this.existeRelacion(this.material.getIdMaterial(), this.creador.getIdCreador());
-    }
-
-    @Override
-    public ArrayList<MaterialesDTO> listarPorCreador(CreadoresDTO creador) {
-        this.creador = creador;
-        return (ArrayList<MaterialesDTO>) this.listarRelacionados(this.creador.getIdCreador(), "CREADOR_IDCREADOR");
-    }
-
-    @Override
-    public Integer asociarTema(TemasDTO tema) {
-        this.tema = tema;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
-        this.nombreColumnaSegundaEntidad = "TEMA_IDTEMA";
-        return this.asociar(this.material.getIdMaterial(), this.tema.getIdTema());
-    }
-
-    @Override
-    public Integer desasociarTema(TemasDTO tema) {
-        this.tema = tema;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
-        this.nombreColumnaSegundaEntidad = "TEMA_IDTEMA";
-        return this.desasociar(this.material.getIdMaterial(), this.tema.getIdTema());
-    }
-
-    @Override
-    public boolean existeRelacionConTema(TemasDTO tema) {
-        this.tema = tema;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
-        this.nombreColumnaSegundaEntidad = "TEMA_IDTEMA";
-        return this.existeRelacion(this.material.getIdMaterial(), this.tema.getIdTema());
-    }
-
-    @Override
-    public ArrayList<MaterialesDTO> listarPorTema(TemasDTO tema) {
-        this.tema = tema;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "MATERIAL_IDMATERIAL";
-        this.nombreColumnaSegundaEntidad = "TEMA_IDTEMA";
-        return (ArrayList<MaterialesDTO>) this.listarRelacionados(this.tema.getIdTema(), "TEMA_IDTEMA");
-    }
-
-    @Override
-    protected void instanciarObjetoRelacionadoDelResultSet() throws SQLException {
-        this.material = new MaterialesDTO();
-        this.material.setIdMaterial(this.resultSet.getInt("ID_MATERIAL"));
-        this.material.setTitulo(this.resultSet.getString("TITULO"));
-        this.material.setEdicion(this.resultSet.getString("EDICION"));
-        this.material.setAnioPublicacion(this.resultSet.getInt("ANHIO_PUBLICACION"));
-        this.material.setPortada(this.resultSet.getString("PORTADA"));
-        this.material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
-
-        NivelesInglesDTO nivel = new NivelesInglesDTO();
-        nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
-        this.material.setNivel(nivel);
-
-        EditorialesDTO editorial = new EditorialesDTO();
-        editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
-        this.material.setEditorial(editorial);
-    }
-
-    @Override
-    protected Object obtenerObjetoRelacionado() {
-        return this.material;
     }
 }

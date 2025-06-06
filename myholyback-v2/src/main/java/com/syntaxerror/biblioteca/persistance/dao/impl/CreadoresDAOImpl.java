@@ -1,26 +1,27 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
-import com.syntaxerror.biblioteca.model.CreadoresDTO;
-import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadoresMaterialesDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
-import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 
-public class CreadoresDAOImpl extends DAOImplRelacion implements CreadoresDAO {
+public class CreadoresDAOImpl extends DAOImplBase implements CreadoresDAO {
 
     private CreadoresDTO creador;
-    private MaterialesDTO material;
+    private CreadoresMaterialesDAO creadoresMaterialesDAO;
 
     public CreadoresDAOImpl() {
-        super("BIB_CREADORES", "BIB_MATERIALES_CREADORES","CREADOR_IDCREADOR","MATERIAL_IDMATERIAL");
+        super("BIB_CREADORES");
         this.retornarLlavePrimaria = true;
         this.creador = null;
-        this.material = null;
+        this.creadoresMaterialesDAO = new CreadoresMaterialesDAO();
     }
 
     @Override
@@ -79,6 +80,9 @@ public class CreadoresDAOImpl extends DAOImplRelacion implements CreadoresDAO {
         this.creador.setTipo(TipoCreador.valueOf(this.resultSet.getString("TIPO_CREADOR")));
         this.creador.setNacionalidad(this.resultSet.getString("NACIONALIDAD"));
         this.creador.setActivo(this.resultSet.getInt("ACTIVO") == 1);
+        
+        // Cargar los materiales asociados
+        this.creador.setMateriales(creadoresMaterialesDAO.listarPorCreador(this.creador.getIdCreador()));
     }
 
     @Override
@@ -95,7 +99,13 @@ public class CreadoresDAOImpl extends DAOImplRelacion implements CreadoresDAO {
     @Override
     public Integer insertar(CreadoresDTO creador) {
         this.creador = creador;
-        return super.insertar();
+        Integer idCreador = super.insertar();
+        if (idCreador != null && creador.getMateriales() != null) {
+            for (MaterialesDTO material : creador.getMateriales()) {
+                creadoresMaterialesDAO.asociarMaterial(idCreador, material.getIdMaterial());
+            }
+        }
+        return idCreador;
     }
 
     @Override
@@ -114,66 +124,23 @@ public class CreadoresDAOImpl extends DAOImplRelacion implements CreadoresDAO {
     @Override
     public Integer modificar(CreadoresDTO creador) {
         this.creador = creador;
-        return super.modificar();
+        Integer resultado = super.modificar();
+        if (resultado != null && resultado > 0 && creador.getMateriales() != null) {
+            // Eliminar todas las asociaciones existentes
+            creadoresMaterialesDAO.eliminarAsociacionesMateriales(creador.getIdCreador());
+            // Crear las nuevas asociaciones
+            for (MaterialesDTO material : creador.getMateriales()) {
+                creadoresMaterialesDAO.asociarMaterial(creador.getIdCreador(), material.getIdMaterial());
+            }
+        }
+        return resultado;
     }
 
     @Override
     public Integer eliminar(CreadoresDTO creador) {
         this.creador = creador;
+        // Primero eliminar las asociaciones con materiales
+        creadoresMaterialesDAO.eliminarAsociacionesMateriales(creador.getIdCreador());
         return super.eliminar();
-    }
-
-    @Override
-    public Integer asociarMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_CREADORES";
-        this.nombreColumnaPrimeraEntidad = "CREADOR_IDCREADOR";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.asociar(this.creador.getIdCreador(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public Integer desasociarMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_CREADORES";
-        this.nombreColumnaPrimeraEntidad = "CREADOR_IDCREADOR";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.desasociar(this.creador.getIdCreador(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public boolean existeRelacionConMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_CREADORES";
-        this.nombreColumnaPrimeraEntidad = "CREADOR_IDCREADOR";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.existeRelacion(this.creador.getIdCreador(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public ArrayList<CreadoresDTO> listarPorMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_CREADORES";
-        this.nombreColumnaPrimeraEntidad = "CREADOR_IDCREADOR";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return (ArrayList<CreadoresDTO>) this.listarRelacionados(this.material.getIdMaterial(), "MATERIAL_IDMATERIAL");
-    }
-
-    @Override
-    protected void instanciarObjetoRelacionadoDelResultSet() throws SQLException {
-        this.creador = new CreadoresDTO();
-        this.creador.setIdCreador(this.resultSet.getInt("ID_CREADOR"));
-        this.creador.setNombre(this.resultSet.getString("NOMBRE"));
-        this.creador.setPaterno(this.resultSet.getString("PATERNO"));
-        this.creador.setMaterno(this.resultSet.getString("MATERNO"));
-        this.creador.setSeudonimo(this.resultSet.getString("SEUDONIMO"));
-        this.creador.setTipo(TipoCreador.valueOf(this.resultSet.getString("TIPO_CREADOR")));
-        this.creador.setNacionalidad(this.resultSet.getString("NACIONALIDAD"));
-        this.creador.setActivo(this.resultSet.getInt("ACTIVO") == 1);
-    }
-
-    @Override
-    protected Object obtenerObjetoRelacionado() {
-        return this.creador;
     }
 }

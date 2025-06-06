@@ -1,25 +1,28 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
-import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialesTemasDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
-import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.TemasDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
+import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
 
-public class TemasDAOImpl extends DAOImplRelacion implements TemasDAO {
+public class TemasDAOImpl extends DAOImplBase implements TemasDAO {
 
     private TemasDTO tema;
-    private MaterialesDTO material;
+    private MaterialesTemasDAO materialesTemasDAO;
 
     public TemasDAOImpl() {
-        super("BIB_TEMAS", "BIB_MATERIALES_TEMAS", "TEMA_IDTEMA", "MATERIAL_IDMATERIAL");
+        super("BIB_TEMAS");
         this.retornarLlavePrimaria = true;
         this.tema = null;
-        this.material = null;
+        this.materialesTemasDAO = new MaterialesTemasDAO();
     }
 
     @Override
@@ -78,6 +81,11 @@ public class TemasDAOImpl extends DAOImplRelacion implements TemasDAO {
         } else {
             this.tema.setTemaPadre(null);
         }
+        
+        // Cargar materiales asociados
+        if (this.tema.getIdTema() != null) {
+            this.tema.setMateriales(materialesTemasDAO.listarPorTema(this.tema.getIdTema()));
+        }
     }
 
     @Override
@@ -94,7 +102,13 @@ public class TemasDAOImpl extends DAOImplRelacion implements TemasDAO {
     @Override
     public Integer insertar(TemasDTO tema) {
         this.tema = tema;
-        return super.insertar();
+        Integer idTema = super.insertar();
+        if (idTema != null && tema.getMateriales() != null) {
+            for (MaterialesDTO material : tema.getMateriales()) {
+                materialesTemasDAO.asociarTema(idTema, material.getIdMaterial());
+            }
+        }
+        return idTema;
     }
 
     @Override
@@ -113,70 +127,23 @@ public class TemasDAOImpl extends DAOImplRelacion implements TemasDAO {
     @Override
     public Integer modificar(TemasDTO tema) {
         this.tema = tema;
-        return super.modificar();
+        Integer resultado = super.modificar();
+        if (resultado != null && tema.getMateriales() != null) {
+            // Eliminar todas las asociaciones existentes
+            materialesTemasDAO.eliminarAsociacionesTemas(tema.getIdTema());
+            // Crear las nuevas asociaciones
+            for (MaterialesDTO material : tema.getMateriales()) {
+                materialesTemasDAO.asociarTema(tema.getIdTema(), material.getIdMaterial());
+            }
+        }
+        return resultado;
     }
 
     @Override
     public Integer eliminar(TemasDTO tema) {
         this.tema = tema;
+        // Primero eliminar las asociaciones con materiales
+        materialesTemasDAO.eliminarAsociacionesTemas(tema.getIdTema());
         return super.eliminar();
-    }
-
-    @Override
-    public Integer asociarMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "TEMA_IDTEMA";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.asociar(this.tema.getIdTema(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public Integer desasociarMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "TEMA_IDTEMA";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.desasociar(this.tema.getIdTema(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public boolean existeRelacionConMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "TEMA_IDTEMA";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return this.existeRelacion(this.tema.getIdTema(), this.material.getIdMaterial());
-    }
-
-    @Override
-    public ArrayList<TemasDTO> listarPorMaterial(MaterialesDTO material) {
-        this.material = material;
-        this.nombreTablaIntermedia = "BIB_MATERIALES_TEMAS";
-        this.nombreColumnaPrimeraEntidad = "TEMA_IDTEMA";
-        this.nombreColumnaSegundaEntidad = "MATERIAL_IDMATERIAL";
-        return (ArrayList<TemasDTO>) this.listarRelacionados(this.material.getIdMaterial(), "MATERIAL_IDMATERIAL");
-    }
-
-    @Override
-    protected void instanciarObjetoRelacionadoDelResultSet() throws SQLException {
-        this.tema = new TemasDTO();
-        this.tema.setIdTema(this.resultSet.getInt("ID_TEMA"));
-        this.tema.setDescripcion(this.resultSet.getString("DESCRIPCION"));
-        this.tema.setCategoria(Categoria.valueOf(this.resultSet.getString("CATEGORIA")));
-
-        int idPadre = resultSet.getInt("ID_TEMA_PADRE");
-        if (!resultSet.wasNull()) {
-            TemasDTO padre = new TemasDTO();
-            padre.setIdTema(idPadre);
-            this.tema.setTemaPadre(padre);
-        } else {
-            this.tema.setTemaPadre(null);
-        }
-    }
-
-    @Override
-    protected Object obtenerObjetoRelacionado() {
-        return this.tema;
     }
 }

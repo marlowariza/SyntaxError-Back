@@ -1,5 +1,6 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;

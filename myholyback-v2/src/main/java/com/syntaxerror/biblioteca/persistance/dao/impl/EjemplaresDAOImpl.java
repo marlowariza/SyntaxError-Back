@@ -1,6 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;

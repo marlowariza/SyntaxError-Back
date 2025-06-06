@@ -1,5 +1,6 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.model.SancionesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;

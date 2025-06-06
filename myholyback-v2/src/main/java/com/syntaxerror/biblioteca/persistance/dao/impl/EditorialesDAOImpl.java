@@ -1,6 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.EditorialesDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.SQLException;

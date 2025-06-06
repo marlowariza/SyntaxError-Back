@@ -1,5 +1,6 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import java.util.ArrayList;
