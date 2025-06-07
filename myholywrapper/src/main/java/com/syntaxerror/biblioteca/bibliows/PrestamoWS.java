@@ -153,5 +153,24 @@ public class PrestamoWS {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
+    @WebMethod(operationName = "listarPrestamosSolicitados")
+    public ArrayList<PrestamoDTO> listarPrestamosSolicitados() {
+        return prestamoBO.listarPrestamosSolicitados();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosAtrasados")
+    public ArrayList<PrestamoDTO> listarPrestamosAtrasados() {
+        return prestamoBO.listarPrestamosAtrasados();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosDevueltos")
+    public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
+        return prestamoBO.listarPrestamosDevueltos();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosNoCulminados")
+    public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
+        return prestamoBO.listarPrestamosNoCulminados();
+    }
 
 }
