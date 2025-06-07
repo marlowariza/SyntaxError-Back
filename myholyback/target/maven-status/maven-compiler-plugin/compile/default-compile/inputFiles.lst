@@ -46,9 +46,11 @@ D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerr
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\util\BusinessException.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\MaterialCreadorBO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\ReporteSedeDAOImpl.java
+D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\NivelInglesDAOImpl.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\SedeDAOImpl.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\CreadorBO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\enums\TipoPersona.java
+D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\NivelInglesBO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\SedeDTO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\util\ReporteGeneralParametros.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\ReporteGeneralDAO.java
@@ -59,11 +61,11 @@ D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerr
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\enums\TipoAutor.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\MaterialDAO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\PersonaDAO.java
+D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\NivelInglesDTO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\EditorialDTO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\EjemplarDAOImpl.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\util\Tipo_Operacion.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\ReporteGeneralDAOImpl.java
-D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\enums\NivelDeIngles.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\MaterialBO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\EditorialBO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\business\PrestamoEjemplarBO.java
@@ -72,3 +74,5 @@ D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerr
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\EditorialDAO.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\enums\Turnos.java
 D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\impl\DAOImplBase.java
+D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\model\enums\Nivel.java
+D:\Descargas\programitas\SyntaxError-Back\myholyback\src\main\java\com\syntaxerror\biblioteca\persistance\dao\NivelInglesDAO.java

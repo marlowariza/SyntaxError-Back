@@ -200,4 +200,47 @@ public class PrestamoEjemplarDAOImpl extends RelacionDAOImplBase<PrestamoEjempla
     protected PrestamoEjemplarDTO obtenerEntidad2(Integer id) throws SQLException {
         return obtenerPorIds(null, id);
     }
+    @Override
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosDevueltos() {
+        return new ArrayList<>(listarPorEstado(EstadoPrestamoEjemplar.DEVUELTO));
+    }
+    
+    @Override
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosAtrasados(){
+        return new ArrayList<>(listarPorEstado(EstadoPrestamoEjemplar.ATRASADO));
+    }
+    
+    @Override
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosSolicitados(){
+        return new ArrayList<>(listarPorEstado(EstadoPrestamoEjemplar.SOLICITADO));
+    }
+    
+    @Override
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosNoCulminados(){
+        return new ArrayList<>(listarPorEstado(EstadoPrestamoEjemplar.PRESTADO));
+    }
+    
+    private List<PrestamoEjemplarDTO> listarPorEstado(EstadoPrestamoEjemplar estado) {
+        List<PrestamoEjemplarDTO> resultados = new ArrayList<>();
+        try {
+            this.abrirConexion();
+            String sql = String.format("SELECT * FROM %s WHERE %s = ?", nombreTabla, "ESTADO");
+            this.colocarSQLenStatement(sql);
+            this.statement.setString(1, estado.name());
+            this.ejecutarConsultaEnBD();
+            while (this.resultSet.next()) {
+                resultados.add(mapearResultSetADTO());
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+        }
+        return resultados;
+    }
+
 }

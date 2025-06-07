@@ -135,15 +135,13 @@ public class PersonaBO {
 
     public PersonaDTO obtenerPorCredenciales(String identificador, String contrasenha) throws BusinessException {
         validarCredenciales(identificador, contrasenha);
-
-        String contraCifrada = Cifrado.cifrarMD5(contrasenha);
         ArrayList<PersonaDTO> listaPersonas = new PersonaBO().listarTodos();
 
         for (PersonaDTO p : listaPersonas) {
             boolean coincideIdentificador = identificador.equalsIgnoreCase(p.getCorreo())
                     || identificador.equalsIgnoreCase(p.getCodigo());
 
-            if (coincideIdentificador && p.getContrasenha().equals(contraCifrada)) {
+            if (coincideIdentificador && p.getContrasenha().equals(contrasenha)) {
                 if (Boolean.FALSE.equals(p.getVigente())) {
                     throw new BusinessException("El usuario no está vigente.");
                 }

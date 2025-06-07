@@ -38,7 +38,6 @@ com\syntaxerror\biblioteca\business\SancionBO.class
 com\syntaxerror\biblioteca\model\PersonaDTO.class
 com\syntaxerror\biblioteca\persistance\dao\impl\PrestamoDAOImpl.class
 com\syntaxerror\biblioteca\ProyectoSyntaxErrorBiblioteca.class
-com\syntaxerror\biblioteca\model\enums\NivelDeIngles.class
 com\syntaxerror\biblioteca\model\enums\TipoAutor.class
 com\syntaxerror\biblioteca\persistance\dao\impl\DAOImplBase.class
 com\syntaxerror\biblioteca\model\enums\FormatoDigital.class
