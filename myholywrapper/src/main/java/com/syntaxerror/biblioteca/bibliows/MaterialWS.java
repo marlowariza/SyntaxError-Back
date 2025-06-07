@@ -7,6 +7,7 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.CreadorDTO;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.MaterialDTO;
+import com.syntaxerror.biblioteca.model.TemaDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
@@ -72,6 +73,16 @@ public class MaterialWS {
     ) {
         try {
             return materialCreadorBO.listarCreadoresPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
+        }
+    }
+    @WebMethod(operationName = "listarCreadoresPorMaterial")
+    public ArrayList<TemaDTO> listarTemasPorMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial
+    ) {
+        try {
+            return materialTemaBO.listarTemasPorMaterial(idMaterial);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
         }
