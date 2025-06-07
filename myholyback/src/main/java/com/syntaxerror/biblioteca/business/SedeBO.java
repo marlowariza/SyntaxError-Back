@@ -1,10 +1,14 @@
 package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
+import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.SedeDTO;
 import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SedeBO {
 
@@ -98,6 +102,29 @@ public class SedeBO {
         }
 
         return sedesActivas;
+    }
+
+    public ArrayList<SedeDTO> listarSedesActivasPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+
+        ArrayList<SedeDTO> sedes = new ArrayList<>();
+        ArrayList<EjemplarDTO> ejemplares = new EjemplarBO().listarTodos();
+        Set<Integer> idsAgregados = new HashSet<>();
+
+        for (EjemplarDTO ej : ejemplares) {
+            SedeDTO sede = ej.getSede();
+            if (ej.getMaterial() != null
+                    && ej.getMaterial().getIdMaterial() == idMaterial
+                    && sede != null
+                    && Boolean.TRUE.equals(sede.getActiva())
+                    && !idsAgregados.contains(sede.getIdSede())) {
+
+                sedes.add(sede);
+                idsAgregados.add(sede.getIdSede());
+            }
+        }
+
+        return sedes;
     }
 
 }
