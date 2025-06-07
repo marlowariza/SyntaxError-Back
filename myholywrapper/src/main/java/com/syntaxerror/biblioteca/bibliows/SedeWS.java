@@ -79,4 +79,23 @@ public class SedeWS {
             throw new WebServiceException("Error al eliminar sede: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarSedesActivas")
+    public ArrayList<SedeDTO> listarSedesActivas() {
+        try {
+            return sedeBO.listarSedesActivas();
+        } catch (Exception e) {
+            throw new WebServiceException("Error al listar sedes activas: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarSedesActivasPorMaterial")
+    public ArrayList<SedeDTO> listarSedesActivasPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+        try {
+            return new SedeBO().listarSedesActivasPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar sedes activas por material: " + e.getMessage());
+        }
+    }
+
 }

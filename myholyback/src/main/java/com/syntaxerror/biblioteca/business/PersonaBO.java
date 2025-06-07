@@ -133,30 +133,44 @@ public class PersonaBO {
         return this.personaDAO.listarTodos();
     }
 
-    public PersonaDTO obtenerPorCredenciales(String correo, String contrasenha) throws BusinessException {
-        validarCredenciales(correo, contrasenha);
+    public PersonaDTO obtenerPorCredenciales(String identificador, String contrasenha) throws BusinessException {
+        validarCredenciales(identificador, contrasenha);
+
         String contraCifrada = Cifrado.cifrarMD5(contrasenha);
         ArrayList<PersonaDTO> listaPersonas = new PersonaBO().listarTodos();
+
         for (PersonaDTO p : listaPersonas) {
-            if (p.getCorreo().equals(correo)
-                    && p.getContrasenha().equals(contraCifrada)) {
+            boolean coincideIdentificador = identificador.equalsIgnoreCase(p.getCorreo())
+                    || identificador.equalsIgnoreCase(p.getCodigo());
+
+            if (coincideIdentificador && p.getContrasenha().equals(contraCifrada)) {
+                if (Boolean.FALSE.equals(p.getVigente())) {
+                    throw new BusinessException("El usuario no está vigente.");
+                }
                 return p;
             }
         }
-        throw new BusinessException("Credenciales inválidas. Verifica correo y contraseña.");
+
+        throw new BusinessException("Credenciales inválidas. Verifica correo/código y contraseña.");
     }
 
-    private void validarCredenciales(String correo, String contrasenha) throws BusinessException {
-        if (correo == null || !correo.contains("@")) {
-            throw new BusinessException("El correo debe tener un formato válido.");
+    private void validarCredenciales(String identificador, String contrasenha) throws BusinessException {
+        if (identificador == null || identificador.isBlank()) {
+            throw new BusinessException("Debe ingresar un código o correo.");
         }
 
-        // Validar dominio específico
-        String dominio = correo.toLowerCase();
-        if (!(dominio.endsWith(".admin@myholylib.edu.pe")
-                || dominio.endsWith(".teacher@myholylib.edu.pe")
-                || dominio.endsWith(".student@myholylib.edu.pe"))) {
-            throw new BusinessException("El correo ingresado no es válido.");
+        // Si contiene '@', validar como correo
+        if (identificador.contains("@")) {
+            if (!(identificador.endsWith(".admin@myholylib.edu.pe")
+                    || identificador.endsWith(".teacher@myholylib.edu.pe")
+                    || identificador.endsWith(".student@myholylib.edu.pe"))) {
+                throw new BusinessException("El correo ingresado no tiene un dominio válido.");
+            }
+        } else {
+            // Si es código, debe tener 6 caracteres
+            if (identificador.length() != 6) {
+                throw new BusinessException("El código debe tener exactamente 6 caracteres.");
+            }
         }
 
         if (contrasenha == null || contrasenha.length() < 6) {
@@ -164,22 +178,39 @@ public class PersonaBO {
         }
     }
 
-    public int calcularLimitePrestamos(String correo) throws BusinessException {
-        if (correo == null) {
-            throw new BusinessException("Correo no puede ser nulo.");
+    public int calcularLimitePrestamos(String codigo) throws BusinessException {
+        if (codigo == null || codigo.length() != 6) {
+            throw new BusinessException("El código debe tener exactamente 6 caracteres.");
         }
 
-        correo = correo.toLowerCase();
+        String prefijo = codigo.substring(0, 2).toUpperCase();
 
-        if (correo.endsWith(".student@myholylib.edu.pe")) {
-            return 3;
-        } else if (correo.endsWith(".teacher@myholylib.edu.pe")) {
-            return 5;
-        } else if (correo.endsWith(".admin@myholylib.edu.pe")) {
-            return 2;
-        } else {
-            throw new BusinessException("Dominio de correo no reconocido para cálculo de préstamos.");
+        switch (prefijo) {
+            case "ES":
+                return 3; // Estudiante
+            case "PR":
+                return 5; // Profesor
+            case "AD":
+                return 2; // Administrador
+            default:
+                throw new BusinessException("Prefijo de código no reconocido para cálculo de préstamos.");
         }
+        //por correo
+//        if (correo == null) {
+//            throw new BusinessException("Correo no puede ser nulo.");
+//        }
+//
+//        correo = correo.toLowerCase();
+//
+//        if (correo.endsWith(".student@myholylib.edu.pe")) {
+//            return 3;
+//        } else if (correo.endsWith(".teacher@myholylib.edu.pe")) {
+//            return 5;
+//        } else if (correo.endsWith(".admin@myholylib.edu.pe")) {
+//            return 2;
+//        } else {
+//            throw new BusinessException("Dominio de correo no reconocido para cálculo de préstamos.");
+//        }
     }
 
     private void validarDatos(String nombre, String paterno, String materno, String direccion,

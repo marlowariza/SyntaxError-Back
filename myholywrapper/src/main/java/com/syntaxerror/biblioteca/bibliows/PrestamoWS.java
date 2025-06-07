@@ -108,10 +108,11 @@ public class PrestamoWS {
     @WebMethod(operationName = "solicitarPrestamo")
     public void solicitarPrestamo(
             @WebParam(name = "idPersona") Integer idPersona,
-            @WebParam(name = "idMaterial") Integer idMaterial
+            @WebParam(name = "idMaterial") Integer idMaterial,
+            @WebParam(name = "idSede") Integer idSede
     ) {
         try {
-            prestamoBO.solicitarPrestamo(idPersona, idMaterial);
+            prestamoBO.solicitarPrestamo(idPersona, idMaterial, idSede);
         } catch (BusinessException | java.text.ParseException e) {
             throw new WebServiceException("Error al solicitar préstamo: " + e.getMessage());
         }
@@ -123,6 +124,33 @@ public class PrestamoWS {
             return prestamoBO.listarEjemplaresPrestadosPorPersona(idPersona);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar ejemplares prestados: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarEjemplaresSolicitadosPorPersona")
+    public ArrayList<EjemplarDTO> listarEjemplaresSolicitadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarEjemplaresSolicitadosPorPersona(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares solicitados: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarPrestamosPorPersona")
+    public ArrayList<PrestamoDTO> listarPrestamosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarPrestamosPorPersona(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar préstamos por persona: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarPrestamosActivosPorPersona")
+    public ArrayList<PrestamoDTO> listarPrestamosActivosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarPrestamosActivosPorPersona(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
 

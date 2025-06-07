@@ -108,9 +108,9 @@ public class PersonaWS {
     }
 
     @WebMethod(operationName = "obtenerPersonaPorCredenciales")
-    public PersonaDTO obtenerPersonaPorCredenciales(@WebParam(name = "correo") String correo, @WebParam(name = "contrasenha") String contrasenha) {
+    public PersonaDTO obtenerPersonaPorCredenciales(@WebParam(name = "correo_codigo") String correo_codigo, @WebParam(name = "contrasenha") String contrasenha) {
         try {
-            return personaBO.obtenerPorCredenciales(correo, contrasenha);
+            return personaBO.obtenerPorCredenciales(correo_codigo, contrasenha);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al obtener por credenciales: " + e.getMessage());
         }
