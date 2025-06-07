@@ -71,4 +71,20 @@ public class PrestamoEjemplarBO {
             throw new BusinessException("ID de ejemplar inválido.");
         }
     }
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosDevueltos() {
+        return dao.listarPrestamosDevueltos();
+    }
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosAtrasados() {
+        return dao.listarPrestamosAtrasados();
+    }
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosSolicitados() {
+        return dao.listarPrestamosSolicitados();
+    }
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosNoCulminados() {
+        return dao.listarPrestamosNoCulminados();
+    }
+
 }

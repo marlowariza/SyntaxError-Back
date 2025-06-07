@@ -77,7 +77,7 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
         }
     }
-    @WebMethod(operationName = "listarCreadoresPorMaterial")
+    @WebMethod(operationName = "listarTemasPorMaterial")
     public ArrayList<TemaDTO> listarTemasPorMaterial(
             @WebParam(name = "idMaterial") Integer idMaterial
     ) {

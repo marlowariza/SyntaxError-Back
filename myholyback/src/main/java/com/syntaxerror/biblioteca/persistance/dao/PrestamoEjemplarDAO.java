@@ -20,4 +20,13 @@ public interface PrestamoEjemplarDAO {
     public Integer eliminar(Integer idPrestamo, Integer idEjemplar);
 
     public boolean existeRelacion(Integer idPrestamo, Integer idEjemplar);
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosDevueltos();
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosAtrasados();
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosSolicitados();
+    
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosNoCulminados();
+
 }

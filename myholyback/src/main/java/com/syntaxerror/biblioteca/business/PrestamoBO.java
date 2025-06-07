@@ -10,8 +10,10 @@ import com.syntaxerror.biblioteca.model.SancionDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,10 +25,12 @@ public class PrestamoBO {
 
     private final PrestamoDAO prestamoDAO;
     private final PersonaDAO personaDAO;
+    private final PrestamoEjemplarDAO prestamoEjemplarDAO;
 
     public PrestamoBO() {
         this.prestamoDAO = new PrestamoDAOImpl();
         this.personaDAO = new PersonaDAOImpl();
+        this.prestamoEjemplarDAO = new PrestamoEjemplarDAOImpl();
     }
 
     public int insertar(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
@@ -371,6 +375,61 @@ public class PrestamoBO {
         }
 
         return resultado;
+    }
+    public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
+        ArrayList<PrestamoEjemplarDTO> prestamosDevueltos=prestamoEjemplarDAO.listarPrestamosDevueltos();
+        ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
+        for (PrestamoEjemplarDTO p : prestamosDevueltos) {
+            Integer idPrestamoAux = p.getIdPrestamo();
+            PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamoAux);
+            if (prestamo != null) {
+                prestamos.add(prestamo);
+            }
+        }
+        
+        return prestamos;
+    }
+    
+    public ArrayList<PrestamoDTO> listarPrestamosAtrasados() {
+        ArrayList<PrestamoEjemplarDTO> prestamosAtrasados=prestamoEjemplarDAO.listarPrestamosAtrasados();
+        ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
+        for (PrestamoEjemplarDTO p : prestamosAtrasados) {
+            Integer idPrestamoAux = p.getIdPrestamo();
+            PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamoAux);
+            if (prestamo != null) {
+                prestamos.add(prestamo);
+            }
+        }
+        
+        return prestamos;
+    }
+    
+    public ArrayList<PrestamoDTO> listarPrestamosSolicitados() {
+        ArrayList<PrestamoEjemplarDTO> prestamosSolicitados=prestamoEjemplarDAO.listarPrestamosSolicitados();
+        ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
+        for (PrestamoEjemplarDTO p : prestamosSolicitados) {
+            Integer idPrestamoAux = p.getIdPrestamo();
+            PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamoAux);
+            if (prestamo != null) {
+                prestamos.add(prestamo);
+            }
+        }
+        
+        return prestamos;
+    }
+    
+    public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
+        ArrayList<PrestamoEjemplarDTO> prestamosNoCulminados=prestamoEjemplarDAO.listarPrestamosNoCulminados();
+        ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
+        for (PrestamoEjemplarDTO p : prestamosNoCulminados) {
+            Integer idPrestamoAux = p.getIdPrestamo();
+            PrestamoDTO prestamo = prestamoDAO.obtenerPorId(idPrestamoAux);
+            if (prestamo != null) {
+                prestamos.add(prestamo);
+            }
+        }
+        
+        return prestamos;
     }
 
 }
