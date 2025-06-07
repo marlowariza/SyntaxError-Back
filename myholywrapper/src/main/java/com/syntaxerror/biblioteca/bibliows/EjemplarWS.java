@@ -124,18 +124,38 @@ public class EjemplarWS {
     @WebMethod(operationName = "listarEjemplaresDisponiblesPorMaterial")
     public ArrayList<EjemplarDTO> listarEjemplaresDisponiblesPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
         try {
-            return ejemplarBO.listarEjemplaresDisponiblesPorMaterial(idMaterial);
+            return ejemplarBO.listarEjemplaresFisicosDisponiblesPorMaterial(idMaterial);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar ejemplares disponibles por material: " + e.getMessage());
         }
     }
 
     @WebMethod(operationName = "obtenerPrimerEjemplarDisponiblePorMaterial")
-    public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+    public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(@WebParam(name = "idMaterial") int idMaterial, @WebParam(name = "idSede") int idSede) {
         try {
-            return ejemplarBO.obtenerPrimerEjemplarDisponiblePorMaterial(idMaterial);
+            return ejemplarBO.obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(idMaterial, idSede);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al obtener el primer ejemplar disponible: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "contarFisicosDisponiblesPorMaterial")
+    public int contarFisicosDisponiblesPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+        try {
+            return ejemplarBO.contarEjemplaresFisicosDisponiblesPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al contar ejemplares físicos disponibles: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarFisicosDisponiblesPorMaterialYSede")
+    public ArrayList<EjemplarDTO> listarFisicosDisponiblesPorMaterialYSede(
+            @WebParam(name = "idMaterial") int idMaterial,
+            @WebParam(name = "idSede") int idSede) {
+        try {
+            return ejemplarBO.listarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares físicos disponibles por material y sede: " + e.getMessage());
         }
     }
 

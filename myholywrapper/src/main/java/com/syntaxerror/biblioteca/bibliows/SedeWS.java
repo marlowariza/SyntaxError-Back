@@ -79,4 +79,13 @@ public class SedeWS {
             throw new WebServiceException("Error al eliminar sede: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarSedesActivas")
+    public ArrayList<SedeDTO> listarSedesActivas() {
+        try {
+            return sedeBO.listarSedesActivas();
+        } catch (Exception e) {
+            throw new WebServiceException("Error al listar sedes activas: " + e.getMessage());
+        }
+    }
 }

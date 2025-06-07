@@ -86,4 +86,18 @@ public class SedeBO {
             throw new BusinessException("El correo debe tener un formato válido.");
         }
     }
+
+    public ArrayList<SedeDTO> listarSedesActivas() throws BusinessException {
+        ArrayList<SedeDTO> sedesActivas = new ArrayList<>();
+        ArrayList<SedeDTO> todas = sedeDAO.listarTodos();
+
+        for (SedeDTO sede : todas) {
+            if (Boolean.TRUE.equals(sede.getActiva())) {
+                sedesActivas.add(sede);
+            }
+        }
+
+        return sedesActivas;
+    }
+
 }
