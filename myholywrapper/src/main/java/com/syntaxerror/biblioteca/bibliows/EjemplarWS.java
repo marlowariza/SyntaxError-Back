@@ -119,6 +119,18 @@ public class EjemplarWS {
         } catch (BusinessException e) {
             throw new WebServiceException("Error al contar ejemplares disponibles por sede: " + e.getMessage());
         }
+
+    }
+
+    @WebMethod(operationName = "contarEjemplaresFisicosDisponiblesPorMaterialYSede")
+    public int contarEjemplaresFisicosDisponiblesPorMaterialYSede(
+            @WebParam(name = "idMaterial") int idMaterial,
+            @WebParam(name = "idSede") int idSede) {
+        try {
+            return new EjemplarBO().contarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al contar ejemplares físicos disponibles: " + e.getMessage());
+        }
     }
 
     @WebMethod(operationName = "listarEjemplaresDisponiblesPorMaterial")

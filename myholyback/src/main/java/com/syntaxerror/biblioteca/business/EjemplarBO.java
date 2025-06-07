@@ -143,6 +143,12 @@ public class EjemplarBO {
         return contarEjemplares(null, idSede, true, null);
     }
 
+    public int contarEjemplaresFisicosDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+        return contarEjemplares(idMaterial, idSede, true, "FISICO");
+    }
+
     private int contarEjemplares(Integer idMaterial, Integer idSede, boolean soloDisponibles, String tipoEjemplar) {
         int total = 0;
         for (EjemplarDTO ej : this.listarTodos()) {
