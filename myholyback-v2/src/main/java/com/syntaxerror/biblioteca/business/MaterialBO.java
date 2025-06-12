@@ -2,41 +2,34 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
-import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EditorialesDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
-import com.syntaxerror.biblioteca.model.enums.TipoCreador;
-import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
 
-import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialesDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
 import java.util.List;
-import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.EditorialesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.EjemplaresDAO;
-import com.syntaxerror.biblioteca.persistance.dao.NivelesInglesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplaresDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.NivelesInglesDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadoresMaterialesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
+import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
 
 public class MaterialBO {
 
-    private final MaterialesDAO materialDAO;
-    private final EditorialesDAO editorialDAO;
-    private final NivelesInglesDAO nivelDAO;
-    private final EjemplaresDAO ejemplarDAO;
+    private final MaterialDAO materialDAO;
+    private final EditorialDAO editorialDAO;
+    private final NivelInglesDAO nivelDAO;
+    private final EjemplarDAO ejemplarDAO;
 
     public MaterialBO() {
-        this.materialDAO = new MaterialesDAOImpl();
-        this.editorialDAO = new EditorialesDAOImpl();
-        this.nivelDAO = new NivelesInglesDAOImpl();
-        this.ejemplarDAO = new EjemplaresDAOImpl();
+        this.materialDAO = new MaterialDAOImpl();
+        this.editorialDAO = new EditorialDAOImpl();
+        this.nivelDAO = new NivelInglesDAOImpl();
+        this.ejemplarDAO = new EjemplarDAOImpl();
     }
 
     public int insertar(String titulo, String edicion,
@@ -117,205 +110,53 @@ public class MaterialBO {
     }
 
     //LISTA EJEMPLARES POR ID MATERIAL (SEA FISICO O DIGITAL / DISPONIBLE O NO)
-    public ArrayList<EjemplaresDTO> listarEjemplaresMaterial(Integer idMaterial) {
-        ArrayList<EjemplaresDTO> ejemplares = ejemplarDAO.listarTodos();
-        ArrayList<EjemplaresDTO> ejemplaresFiltrados = new ArrayList<>();
-        for (EjemplaresDTO ej : ejemplares) {
-            if (ej.getMaterial().getIdMaterial().equals(idMaterial)) {
-                ejemplaresFiltrados.add(ej);
-            }
-
-        }
-        return ejemplaresFiltrados;
-    }
-
-    //LISTA EJEMPLARES DISPONIBLES (FISICOS O DIGITALES)
-    public List<EjemplaresDTO> listarEjemplaresDisponibles() {
-        List<EjemplaresDTO> disponibles = new ArrayList<>();
-        for (EjemplaresDTO ej : ejemplarDAO.listarTodos()) {
-            if (ej.getDisponible()) {
-                disponibles.add(ej);
-            }
-        }
-        return disponibles;
-    }
-
-    // Lista ejemplares FÍSICOS y DISPONIBLES de un material
-    public List<EjemplaresDTO> listarEjemplaresFisicosDisponiblesPorMaterial(Integer idMaterial) {
-        return listarEjemplaresDisponiblesPorMaterialYTipo(idMaterial, "FISICO");
-    }
-    // Lista ejemplares DIGITALES y DISPONIBLES de un material
-
-    public List<EjemplaresDTO> listarEjemplaresDigitalesDisponiblesPorMaterial(Integer idMaterial) {
-        return listarEjemplaresDisponiblesPorMaterialYTipo(idMaterial, "DIGITAL");
-    }
-
-    private List<EjemplaresDTO> listarEjemplaresDisponiblesPorMaterialYTipo(Integer idMaterial, String tipoEjemplar) {
-        List<EjemplaresDTO> resultado = new ArrayList<>();
-        for (EjemplaresDTO ej : ejemplarDAO.listarTodos()) {
-            if (ej.getMaterial() != null
-                    && ej.getMaterial().getIdMaterial().equals(idMaterial)
-                    && tipoEjemplar.equalsIgnoreCase(ej.getTipo().name())
-                    && ej.getDisponible()) {
-                resultado.add(ej);
-            }
-        }
-        return resultado;
+    public ArrayList<EjemplaresDTO> listarEjemplaresMaterial(Integer idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return ejemplarDAO.listarPorIdMaterial(idMaterial);
     }
 
     //LISTA MATERIALES POR CARACTERES EN EL BUSCADOR ( DISPONIBLE O NO)
-    public ArrayList<MaterialesDTO> listarPorCaracteres(String car) {
-        ArrayList<MaterialesDTO> listaMateriales = (ArrayList<MaterialesDTO>) new MaterialBO().listarTodos();
-        ArrayList<MaterialesDTO> listaFiltrada = new ArrayList<>();
+    public ArrayList<MaterialesDTO> listarPorCaracteres(String car) throws BusinessException {
         if (car == null || car.trim().isEmpty()) {
-            return listaFiltrada;
+            return new ArrayList<>();
         }
-        String filtro = car.toLowerCase().trim();
-        for (MaterialesDTO m : listaMateriales) {
-            String titulo = m.getTitulo();
-            if (titulo != null && titulo.toLowerCase().contains(filtro)) {
-                listaFiltrada.add(m);
-            }
-        }
-        return listaFiltrada;
+        return materialDAO.listarPorTituloConteniendo(car);
     }
 
     // LISTA MATERIALES VIGENTES POR CARACTERES EN EL BUSCADOR
-    public List<MaterialesDTO> listarVigentesPorCaracteres(String car) {
-        List<MaterialesDTO> listaMateriales = this.listarTodos();  // No uses new MaterialBO()
-        List<MaterialesDTO> listaFiltrada = new ArrayList<>();
-
+    public ArrayList<MaterialesDTO> listarVigentesPorCaracteres(String car) throws BusinessException {
         if (car == null || car.trim().isEmpty()) {
-            return listaFiltrada;
+            return new ArrayList<>();
         }
 
-        String filtro = car.toLowerCase().trim();
-
-        for (MaterialesDTO m : listaMateriales) {
-            String titulo = m.getTitulo();
-            if (Boolean.TRUE.equals(m.getVigente())
-                    && titulo != null
-                    && titulo.toLowerCase().contains(filtro)) {
-                listaFiltrada.add(m);
-            }
-        }
-
-        return listaFiltrada;
+        return materialDAO.listarVigentesPorTituloConteniendo(car);
     }
 
-    //LISTA MATERIALES VIGENTES EN GENERAL
-    public List<MaterialesDTO> listarMaterialesVigentes() {
-        List<MaterialesDTO> todos = this.materialDAO.listarTodos();
-        List<MaterialesDTO> vigentes = new ArrayList<>();
-
-        for (MaterialesDTO mat : todos) {
-            if (Boolean.TRUE.equals(mat.getVigente())) {
-                vigentes.add(mat);
-            }
-        }
-
-        return vigentes;
-    }
-
-    //LISTA MATERIALES POR ID SEDE (SEA FISICO O DIGITAL / DISPONIBLE O NO)
+    //LISTA MATERIALES POR ID SEDE ( VIGENTE O NO)
     public ArrayList<MaterialesDTO> listarMaterialesPorSede(Integer idSede) throws BusinessException {
-
         BusinessValidator.validarId(idSede, "sede");
-        EjemplarBO ejemplarBO = new EjemplarBO();
-        ArrayList<EjemplaresDTO> ejemplares = ejemplarBO.listarTodos();
-        ArrayList<MaterialesDTO> materialesPorSede = new ArrayList<>();
-        HashSet<Integer> idsUnicos = new HashSet<>();
-
-        for (EjemplaresDTO ej : ejemplares) {
-            if (ej.getSede() != null && ej.getSede().getIdSede().equals(idSede)) {
-                MaterialesDTO material = ej.getMaterial();
-                if (material != null && !idsUnicos.contains(material.getIdMaterial())) {
-                    materialesPorSede.add(material);
-                    idsUnicos.add(material.getIdMaterial());
-                }
-            }
-        }
-
-        return materialesPorSede;
+        return materialDAO.listarPorSede(idSede);
     }
 
     //LISTA MATERIALES VIGENTES POR SEDE
     public List<MaterialesDTO> listarMaterialesVigentesPorSede(Integer idSede) throws BusinessException {
         BusinessValidator.validarId(idSede, "sede");
-
-        List<EjemplaresDTO> ejemplares = ejemplarDAO.listarTodos();
-        HashSet<Integer> idsUnicos = new HashSet<>();
-        List<MaterialesDTO> resultado = new ArrayList<>();
-
-        for (EjemplaresDTO ej : ejemplares) {
-            if (ej.getSede() != null
-                    && ej.getSede().getIdSede().equals(idSede)) {
-
-                MaterialesDTO material = ej.getMaterial();
-                if (material != null
-                        && Boolean.TRUE.equals(material.getVigente())
-                        && !idsUnicos.contains(material.getIdMaterial())) {
-
-                    resultado.add(material);
-                    idsUnicos.add(material.getIdMaterial());
-                }
-            }
-        }
-
-        return resultado;
+        return materialDAO.listarVigentesPorSede(idSede);
     }
 
     //INDICA SI EXISTE EJEMPLAR DIGITAL (AHORA QUE ME DOY CUENTA SOLO ES NECESARIO QYE HAYA UNO NO?)
-    public boolean existeEjemplarDigitalPorMaterial(Integer idMaterial) {
-        for (EjemplaresDTO ej : ejemplarDAO.listarTodos()) {
-            if (ej.getMaterial() != null
-                    && ej.getMaterial().getIdMaterial().equals(idMaterial)
-                    && "DIGITAL".equalsIgnoreCase(ej.getTipo().name())) {
-                return true; // Basta con encontrar uno
-            }
-        }
-        return false;
+    public boolean existeEjemplarDigitalPorMaterial(Integer idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return ejemplarDAO.existeEjemplarDigitalPorMaterial(idMaterial);
     }
 
-    private boolean coincide(String filtro, String valor) {
-        return valor != null && valor.toLowerCase().contains(filtro);
-    }
     //BUSCA MATERIALES VIGENTES POR caracteres SOLO AUTORES
-    public List<MaterialesDTO> buscarMaterialesVigentesPorNombreAutor(String filtro) throws BusinessException {
-        List<MaterialesDTO> resultado = new ArrayList<>();
-
+    public List<MaterialesDTO> listarPorCaracter_Creador(String filtro) throws BusinessException {
         if (filtro == null || filtro.trim().isEmpty()) {
-            return resultado;
+            return new ArrayList<>();
         }
 
-        filtro = filtro.trim().toLowerCase();
-
-        CreadoresDAO creadorDAO = new CreadoresDAOImpl();
-        CreadoresMaterialesDAO cmDAO = new CreadoresMaterialesDAO();
-
-        List<CreadoresDTO> todosCreadores = creadorDAO.listarTodos();
-        Set<Integer> idsAgregados = new HashSet<>();
-
-        for (CreadoresDTO creador : todosCreadores) {
-            if (creador.getTipo() == TipoCreador.AUTOR
-                    && creador.getActivo()
-                    && (coincide(filtro, creador.getNombre())
-                    || coincide(filtro, creador.getPaterno())
-                    || coincide(filtro, creador.getMaterno())
-                    || coincide(filtro, creador.getSeudonimo()))) {
-
-                List<MaterialesDTO> materiales = cmDAO.listarPorCreador(creador.getIdCreador());
-
-                for (MaterialesDTO mat : materiales) {
-                    if (Boolean.TRUE.equals(mat.getVigente()) && !idsAgregados.contains(mat.getIdMaterial())) {
-                        resultado.add(mat);
-                        idsAgregados.add(mat.getIdMaterial());
-                    }
-                }
-            }
-        }
-
-        return resultado;
+        return new MaterialDAOImpl().listarMaterialesVigentesPorCreadorFiltro(filtro);
     }
 
 }

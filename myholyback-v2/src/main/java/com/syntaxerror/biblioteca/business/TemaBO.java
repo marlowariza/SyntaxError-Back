@@ -4,16 +4,16 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
-import com.syntaxerror.biblioteca.persistance.dao.impl.TemasDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.TemaDAOImpl;
 import java.util.ArrayList;
-import com.syntaxerror.biblioteca.persistance.dao.TemasDAO;
+import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
 
 public class TemaBO {
 
-    private final TemasDAO temaDAO;
+    private final TemaDAO temaDAO;
 
     public TemaBO() {
-        this.temaDAO = new TemasDAOImpl();
+        this.temaDAO = new TemaDAOImpl();
     }
 
     public int insertar(String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {

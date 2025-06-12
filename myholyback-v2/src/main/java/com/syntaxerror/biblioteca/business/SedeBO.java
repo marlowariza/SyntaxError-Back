@@ -3,16 +3,16 @@ package com.syntaxerror.biblioteca.business;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.SedesDTO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
 import java.util.ArrayList;
-import com.syntaxerror.biblioteca.persistance.dao.SedesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 
 public class SedeBO {
 
-    private final SedesDAO sedeDAO;
+    private final SedeDAO sedeDAO;
 
     public SedeBO() {
-        this.sedeDAO = new SedesDAOImpl();
+        this.sedeDAO = new SedeDAOImpl();
     }
 
     public int insertar(String nombre, String direccion, String distrito, String telefonoContacto,
@@ -83,4 +83,24 @@ public class SedeBO {
             throw new BusinessException("El correo debe tener un formato válido.");
         }
     }
+
+    //SE CONSIDERA QUE HAY POCAS SEDES EN LA TABLA
+    public ArrayList<SedesDTO> listarSedesActivas() throws BusinessException {
+        ArrayList<SedesDTO> sedesActivas = new ArrayList<>();
+        ArrayList<SedesDTO> todas = sedeDAO.listarTodos();
+
+        for (SedesDTO sede : todas) {
+            if (Boolean.TRUE.equals(sede.getActiva())) {
+                sedesActivas.add(sede);
+            }
+        }
+
+        return sedesActivas;
+    }
+
+    public ArrayList<SedesDTO> listarSedesActivasPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return sedeDAO.listarSedesActivasPorMaterial(idMaterial);
+    }
+
 }
