@@ -8,22 +8,22 @@ import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PersonasDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SedesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import com.syntaxerror.biblioteca.persistance.dao.SedesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.PersonasDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
+import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 
 public class PersonaBO {
 
-    private final PersonasDAO personaDAO;
-    private final SedesDAO sedeDAO;
+    private final PersonaDAO personaDAO;
+    private final SedeDAO sedeDAO;
 
     public PersonaBO() {
-        this.personaDAO = new PersonasDAOImpl();
-        this.sedeDAO = new SedesDAOImpl();
+        this.personaDAO = new PersonaDAOImpl();
+        this.sedeDAO = new SedeDAOImpl();
     }
 
     public int insertar(String codigo, String nombre, String paterno, String materno, String direccion,
@@ -169,7 +169,7 @@ public class PersonaBO {
         if (codigo == null || codigo.length() != 6) {
             throw new BusinessException("El código debe tener exactamente 6 caracteres.");
         }
-
+        //POR CAMBIAR A,P,E
         String prefijoEsperado;
         switch (tipo) {
             case ADMINISTRADOR:
@@ -199,21 +199,19 @@ public class PersonaBO {
         validarCredenciales(identificador, contrasenha);
 
         String contraCifrada = Cifrado.cifrarMD5(contrasenha);
-        ArrayList<PersonasDTO> listaPersonas = new PersonaBO().listarTodos();
 
-        for (PersonasDTO p : listaPersonas) {
-            boolean coincideIdentificador = identificador.equalsIgnoreCase(p.getCorreo())
-                    || identificador.equalsIgnoreCase(p.getCodigo());
+        PersonasDTO persona = personaDAO.obtenerPorCredenciales(identificador, contraCifrada);
 
-            if (coincideIdentificador && p.getContrasenha().equals(contraCifrada)) {
-                if (Boolean.FALSE.equals(p.getVigente())) {
-                    throw new BusinessException("El usuario no está vigente.");
-                }
-                return p;
-            }
+        if (persona == null) {
+            throw new BusinessException("Credenciales inválidas. Verifica correo/código y contraseña.");
         }
 
-        throw new BusinessException("Credenciales inválidas. Verifica correo/código y contraseña.");
+        if (Boolean.FALSE.equals(persona.getVigente())) {
+            throw new BusinessException("El usuario no está vigente.");
+        }
+
+        return persona;
+
     }
 
     private void validarCredenciales(String identificador, String contrasenha) throws BusinessException {
@@ -240,13 +238,13 @@ public class PersonaBO {
         }
     }
 
-    public int calcularLimitePrestamosPorCodigo(String codigo) throws BusinessException {
+    public int calcularLimitePrestamos(String codigo) throws BusinessException {
         if (codigo == null || codigo.length() != 6) {
             throw new BusinessException("El código debe tener exactamente 6 caracteres.");
         }
 
         String prefijo = codigo.substring(0, 2).toUpperCase();
-
+        //POR CAMBIAR E,P,A
         switch (prefijo) {
             case "ES":
                 return 3; // Estudiante

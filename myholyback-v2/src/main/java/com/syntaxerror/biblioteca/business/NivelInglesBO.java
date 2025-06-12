@@ -4,17 +4,17 @@ import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
-import com.syntaxerror.biblioteca.persistance.dao.NivelesInglesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.NivelesInglesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
 
 import java.util.ArrayList;
+import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
 
 public class NivelInglesBO {
 
-    private final NivelesInglesDAO nivelesDAO;
+    private final NivelInglesDAO nivelesDAO;
 
     public NivelInglesBO() {
-        this.nivelesDAO = new NivelesInglesDAOImpl();
+        this.nivelesDAO = new NivelInglesDAOImpl();
     }
 
     public int insertar(String nombreNivel, String descripcion) throws BusinessException {

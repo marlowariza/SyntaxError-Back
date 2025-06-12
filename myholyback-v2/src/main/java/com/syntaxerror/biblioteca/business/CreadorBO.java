@@ -6,13 +6,13 @@ import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
-import com.syntaxerror.biblioteca.persistance.dao.impl.CreadoresDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.CreadorDAOImpl;
 import java.util.ArrayList;
-import com.syntaxerror.biblioteca.persistance.dao.CreadoresDAO;
-import com.syntaxerror.biblioteca.persistance.dao.MaterialesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
 import java.util.List;
 import java.util.Objects;
+import com.syntaxerror.biblioteca.persistance.dao.CreadorDAO;
+import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 
 /**
  *
@@ -20,12 +20,12 @@ import java.util.Objects;
  */
 public class CreadorBO {
 
-    private final CreadoresDAO creadorDAO;
-    private final MaterialesDAO materialDAO;
+    private final CreadorDAO creadorDAO;
+    private final MaterialDAO materialDAO;
 
     public CreadorBO() {
-        this.creadorDAO = new CreadoresDAOImpl();
-        this.materialDAO = new MaterialesDAOImpl();
+        this.creadorDAO = new CreadorDAOImpl();
+        this.materialDAO = new MaterialDAOImpl();
     }
 
     public int insertar(String nombre, String paterno, String materno,

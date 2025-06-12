@@ -82,6 +82,23 @@ public class PrestamoBO {
     public ArrayList<PrestamoDTO> listarTodos() {
         return this.prestamoDAO.listarTodos();
     }
+    
+        private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
+        if (fechaSolicitud == null ) {
+            throw new BusinessException("Las fecha no pueden ser nulas.");
+        }
+
+        if (fechaSolicitud.after(fechaPrestamo)) {
+            throw new BusinessException("La fecha de solicitud no puede ser posterior a la de préstamo.");
+        }
+
+        if (fechaPrestamo.after(fechaDevolucion)) {
+            throw new BusinessException("La fecha de préstamo no puede ser posterior a la de devolución.");
+        }
+
+        BusinessValidator.validarId(idPersona, "persona");
+    }
+    
 
     public int contarEjemplaresActivosPorUsuario(int idUsuario) throws BusinessException {
         BusinessValidator.validarId(idUsuario, "usuario");
@@ -147,21 +164,7 @@ public class PrestamoBO {
         return contador;
     }
 
-    private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
-        if (fechaSolicitud == null || fechaPrestamo == null || fechaDevolucion == null) {
-            throw new BusinessException("Las fechas no pueden ser nulas.");
-        }
 
-        if (fechaSolicitud.after(fechaPrestamo)) {
-            throw new BusinessException("La fecha de solicitud no puede ser posterior a la de préstamo.");
-        }
-
-        if (fechaPrestamo.after(fechaDevolucion)) {
-            throw new BusinessException("La fecha de préstamo no puede ser posterior a la de devolución.");
-        }
-
-        BusinessValidator.validarId(idPersona, "persona");
-    }
 
 //    public void solicitarPrestamo(Integer idPersona, Integer idMaterial) throws BusinessException, ParseException {
 //        // Validaciones iniciales

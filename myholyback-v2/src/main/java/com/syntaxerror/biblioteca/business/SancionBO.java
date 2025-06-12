@@ -5,21 +5,21 @@ import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
 import com.syntaxerror.biblioteca.model.SancionesDTO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamosDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.SancionesDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.SancionDAOImpl;
 import java.util.ArrayList;
 import java.util.Date;
-import com.syntaxerror.biblioteca.persistance.dao.SancionesDAO;
-import com.syntaxerror.biblioteca.persistance.dao.PrestamosDAO;
+import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
+import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
 
 public class SancionBO {
 
-    private final SancionesDAO sancionDAO;
-    private final PrestamosDAO prestamoDAO;
+    private final SancionDAO sancionDAO;
+    private final PrestamoDAO prestamoDAO;
 
     public SancionBO() {
-        this.sancionDAO = new SancionesDAOImpl();
-        this.prestamoDAO = new PrestamosDAOImpl();
+        this.sancionDAO = new SancionDAOImpl();
+        this.prestamoDAO = new PrestamoDAOImpl();
     }
 
     public int insertar(TipoSancion tipo, Date fecha, Double monto, Date duracion, String descripcion, Integer idPrestamo) throws BusinessException {
@@ -96,31 +96,30 @@ public class SancionBO {
 
     public ArrayList<SancionesDTO> listarSancionesPorPersona(int idPersona) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
-
-        ArrayList<SancionesDTO> sanciones = this.listarTodos();
-        ArrayList<SancionesDTO> resultado = new ArrayList<>();
-
-        for (SancionesDTO s : sanciones) {
-            if (s.getPrestamo() != null
-                    && s.getPrestamo().getPersona() != null
-                    && s.getPrestamo().getPersona().getIdPersona() == idPersona) {
-                resultado.add(s);
-            }
-        }
-
-        return resultado;
+        return this.sancionDAO.listarSancionesPorPersona(idPersona);
     }
-    //Si no sale excepcion todo ok
+
+    public ArrayList<SancionesDTO> listarSancionesActivasPorPersona(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+        return this.sancionDAO.listarSancionesActivasPorPersona(idPersona);
+    }
+
+    //Bloquea procesos si hay sanciones
     public void verificarSancionesActivas(int idPersona) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
 
-        ArrayList<SancionesDTO> sanciones = listarSancionesPorPersona(idPersona);
-        Date hoy = new Date();
+        ArrayList<SancionesDTO> sancionesActivas = this.sancionDAO.listarSancionesActivasPorPersona(idPersona);
 
-        for (SancionesDTO s : sanciones) {
-            if (s.getDuracion() != null && s.getDuracion().after(hoy)) {
-                throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
-            }
+        if (!sancionesActivas.isEmpty()) {
+            throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
         }
     }
+
+    //Avisa si hay sanciones
+    public boolean tieneSancionesActivas(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+        ArrayList<SancionesDTO> sancionesActivas = sancionDAO.listarSancionesActivasPorPersona(idPersona);
+        return !sancionesActivas.isEmpty();
+    }
+
 }
