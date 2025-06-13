@@ -4,7 +4,7 @@
  */
 package com.syntaxerror.biblioteca.bibliows;
 
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
@@ -49,7 +49,7 @@ public class PersonaWSTest {
     public void testListarPersonas() {
         System.out.println("listarPersonas");
         PersonaWS instance = new PersonaWS();
-        ArrayList<PersonaDTO> temp = instance.listarPersonas();
+        ArrayList<PersonasDTO> temp = instance.listarPersonas();
         
         System.out.println(temp.get(1).getCorreo());
     }

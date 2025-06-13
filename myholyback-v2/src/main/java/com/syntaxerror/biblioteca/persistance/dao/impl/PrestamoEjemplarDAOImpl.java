@@ -284,7 +284,7 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
         String sql = """
         SELECT COUNT(*) AS TOTAL
         FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
-        JOIN BIB_EJEMPLARES E ON E.IDEJEMPLAR = PDE.EJEMPLAR_IDEJEMPLAR
+        JOIN BIB_EJEMPLARES E ON E.ID_EJEMPLAR  = PDE.EJEMPLAR_IDEJEMPLAR
         WHERE E.MATERIAL_IDMATERIAL = ?
     """;
 
@@ -309,5 +309,7 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
 
         return contador;
     }
+    
+    
 
 }

@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.NivelInglesBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.NivelInglesDTO;
+import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -55,7 +55,7 @@ public class NivelInglesWS {
     }
 
     @WebMethod(operationName = "obtenerNivelPorId")
-    public NivelInglesDTO obtenerNivelPorId(@WebParam(name = "idNivel") Integer idNivel) {
+    public NivelesInglesDTO obtenerNivelPorId(@WebParam(name = "idNivel") Integer idNivel) {
         try {
             return nivelBO.obtenerPorId(idNivel);
         } catch (BusinessException e) {
@@ -64,7 +64,7 @@ public class NivelInglesWS {
     }
 
     @WebMethod(operationName = "listarNiveles")
-    public ArrayList<NivelInglesDTO> listarNiveles() {
+    public ArrayList<NivelesInglesDTO> listarNiveles() {
         try {
             return nivelBO.listarTodos();
         } catch (Exception e) {

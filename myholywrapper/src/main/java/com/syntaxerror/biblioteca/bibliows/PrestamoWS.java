@@ -2,8 +2,8 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.PrestamoBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.EjemplarDTO;
-import com.syntaxerror.biblioteca.model.PrestamoDTO;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
+import com.syntaxerror.biblioteca.model.PrestamosDTO;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -61,7 +61,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "obtenerPrestamo")
-    public PrestamoDTO obtenerPrestamo(@WebParam(name = "idPrestamo") Integer idPrestamo) {
+    public PrestamosDTO obtenerPrestamo(@WebParam(name = "idPrestamo") Integer idPrestamo) {
         try {
             return prestamoBO.obtenerPorId(idPrestamo);
         } catch (BusinessException e) {
@@ -70,7 +70,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "listarPrestamos")
-    public ArrayList<PrestamoDTO> listarPrestamos() {
+    public ArrayList<PrestamosDTO> listarPrestamos() {
         try {
             return prestamoBO.listarTodos();
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "listarEjemplaresPrestadosPorPersona")
-    public ArrayList<EjemplarDTO> listarEjemplaresPrestadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+    public ArrayList<EjemplaresDTO> listarEjemplaresPrestadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
             return prestamoBO.listarEjemplaresPrestadosPorPersona(idPersona);
         } catch (BusinessException e) {
@@ -128,7 +128,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "listarEjemplaresSolicitadosPorPersona")
-    public ArrayList<EjemplarDTO> listarEjemplaresSolicitadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+    public ArrayList<EjemplaresDTO> listarEjemplaresSolicitadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
             return prestamoBO.listarEjemplaresSolicitadosPorPersona(idPersona);
         } catch (BusinessException e) {
@@ -137,7 +137,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "listarPrestamosPorPersona")
-    public ArrayList<PrestamoDTO> listarPrestamosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+    public ArrayList<PrestamosDTO> listarPrestamosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
             return prestamoBO.listarPrestamosPorPersona(idPersona);
         } catch (BusinessException e) {
@@ -146,7 +146,7 @@ public class PrestamoWS {
     }
 
     @WebMethod(operationName = "listarPrestamosActivosPorPersona")
-    public ArrayList<PrestamoDTO> listarPrestamosActivosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+    public ArrayList<PrestamosDTO> listarPrestamosActivosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
             return prestamoBO.listarPrestamosActivosPorPersona(idPersona);
         } catch (BusinessException e) {
@@ -154,22 +154,22 @@ public class PrestamoWS {
         }
     }
     @WebMethod(operationName = "listarPrestamosSolicitados")
-    public ArrayList<PrestamoDTO> listarPrestamosSolicitados() {
+    public ArrayList<PrestamosDTO> listarPrestamosSolicitados() {
         return prestamoBO.listarPrestamosSolicitados();
     }
     
     @WebMethod(operationName = "listarPrestamosAtrasados")
-    public ArrayList<PrestamoDTO> listarPrestamosAtrasados() {
+    public ArrayList<PrestamosDTO> listarPrestamosAtrasados() {
         return prestamoBO.listarPrestamosAtrasados();
     }
     
     @WebMethod(operationName = "listarPrestamosDevueltos")
-    public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
+    public ArrayList<PrestamosDTO> listarPrestamosDevueltos() {
         return prestamoBO.listarPrestamosDevueltos();
     }
     
     @WebMethod(operationName = "listarPrestamosNoCulminados")
-    public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
+    public ArrayList<PrestamosDTO> listarPrestamosNoCulminados() {
         return prestamoBO.listarPrestamosNoCulminados();
     }
 

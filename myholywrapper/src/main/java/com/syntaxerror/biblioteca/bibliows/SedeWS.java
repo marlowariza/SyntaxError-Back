@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.SedeBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.SedeDTO;
+import com.syntaxerror.biblioteca.model.SedesDTO;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -21,7 +21,7 @@ public class SedeWS {
     }
 
     @WebMethod(operationName = "listarSedes")
-    public ArrayList<SedeDTO> listarSedes() {
+    public ArrayList<SedesDTO> listarSedes() {
         try {
             return sedeBO.listarTodos();
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class SedeWS {
     }
 
     @WebMethod(operationName = "obtenerSede")
-    public SedeDTO obtenerSede(@WebParam(name = "idSede") Integer idSede) {
+    public SedesDTO obtenerSede(@WebParam(name = "idSede") Integer idSede) {
         try {
             return sedeBO.obtenerPorId(idSede);
         } catch (Exception e) {
@@ -81,7 +81,7 @@ public class SedeWS {
     }
 
     @WebMethod(operationName = "listarSedesActivas")
-    public ArrayList<SedeDTO> listarSedesActivas() {
+    public ArrayList<SedesDTO> listarSedesActivas() {
         try {
             return sedeBO.listarSedesActivas();
         } catch (Exception e) {
@@ -90,9 +90,9 @@ public class SedeWS {
     }
 
     @WebMethod(operationName = "listarSedesActivasPorMaterial")
-    public ArrayList<SedeDTO> listarSedesActivasPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+    public ArrayList<SedesDTO> listarSedesActivasPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
         try {
-            return new SedeBO().listarSedesActivasPorMaterial(idMaterial);
+            return this.sedeBO.listarSedesActivasPorMaterial(idMaterial);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar sedes activas por material: " + e.getMessage());
         }

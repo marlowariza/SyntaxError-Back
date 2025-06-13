@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.ReporteSedeBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.ReporteSedeDTO;
+import com.syntaxerror.biblioteca.model.ReportesPorSedeDTO;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -33,7 +33,7 @@ public class ReporteSedeWS {
     }
 
     @WebMethod(operationName = "listarPorPeriodoYSede")
-    public ArrayList<ReporteSedeDTO> listarPorPeriodoYSede(
+    public ArrayList<ReportesPorSedeDTO> listarPorPeriodoYSede(
         @WebParam(name = "anio") Integer anio,
         @WebParam(name = "mes") Integer mes,
         @WebParam(name = "idSede") Integer idSede,

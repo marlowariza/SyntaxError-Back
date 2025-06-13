@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.TemaBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.TemaDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
 
 import jakarta.jws.WebService;
@@ -58,7 +58,7 @@ public class TemaWS {
     }
 
     @WebMethod(operationName = "obtenerTemaPorId")
-    public TemaDTO obtenerTemaPorId(@WebParam(name = "idTema") Integer idTema) {
+    public TemasDTO obtenerTemaPorId(@WebParam(name = "idTema") Integer idTema) {
         try {
             return temaBO.obtenerPorId(idTema);
         } catch (BusinessException e) {
@@ -67,7 +67,7 @@ public class TemaWS {
     }
 
     @WebMethod(operationName = "listarTemas")
-    public ArrayList<TemaDTO> listarTemas() {
+    public ArrayList<TemasDTO> listarTemas() {
         try {
             return temaBO.listarTodos();
         } catch (Exception e) {

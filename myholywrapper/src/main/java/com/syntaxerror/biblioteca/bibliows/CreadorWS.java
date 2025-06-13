@@ -2,8 +2,8 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.CreadorBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.CreadorDTO;
-import com.syntaxerror.biblioteca.model.enums.TipoAutor;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
+import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -27,7 +27,7 @@ public class CreadorWS {
         @WebParam(name = "paterno") String paterno,
         @WebParam(name = "materno") String materno,
         @WebParam(name = "seudonimo") String seudonimo,
-        @WebParam(name = "tipo") TipoAutor tipo,
+        @WebParam(name = "tipo") TipoCreador tipo,
         @WebParam(name = "nacionalidad") String nacionalidad,
         @WebParam(name = "activo") Boolean activo
     ) {
@@ -45,7 +45,7 @@ public class CreadorWS {
         @WebParam(name = "paterno") String paterno,
         @WebParam(name = "materno") String materno,
         @WebParam(name = "seudonimo") String seudonimo,
-        @WebParam(name = "tipo") TipoAutor tipo,
+        @WebParam(name = "tipo") TipoCreador tipo,
         @WebParam(name = "nacionalidad") String nacionalidad,
         @WebParam(name = "activo") Boolean activo
     ) {
@@ -66,7 +66,7 @@ public class CreadorWS {
     }
 
     @WebMethod(operationName = "obtenerCreadorPorId")
-    public CreadorDTO obtenerCreadorPorId(@WebParam(name = "idCreador") Integer idCreador) {
+    public CreadoresDTO obtenerCreadorPorId(@WebParam(name = "idCreador") Integer idCreador) {
         try {
             return creadorBO.obtenerPorId(idCreador);
         } catch (BusinessException e) {
@@ -75,7 +75,7 @@ public class CreadorWS {
     }
 
     @WebMethod(operationName = "listarCreadores")
-    public ArrayList<CreadorDTO> listarCreadores() {
+    public ArrayList<CreadoresDTO> listarCreadores() {
         try {
             return creadorBO.listarTodos();
         } catch (Exception e) {

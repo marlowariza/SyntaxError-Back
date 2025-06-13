@@ -3,7 +3,6 @@ package com.syntaxerror.biblioteca.persistance.dao.impl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
-import com.syntaxerror.biblioteca.model.PrestamosDeEjemplaresDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.Date;
 import java.sql.SQLException;

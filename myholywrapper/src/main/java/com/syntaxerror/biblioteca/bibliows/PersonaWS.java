@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.PersonaBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.PersonaDTO;
+import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
 
@@ -24,7 +24,7 @@ public class PersonaWS {
     }
 
     @WebMethod(operationName = "listarPersonas")
-    public ArrayList<PersonaDTO> listarPersonas() {
+    public ArrayList<PersonasDTO> listarPersonas() {
         try {
             return personaBO.listarTodos();
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public class PersonaWS {
     }
 
     @WebMethod(operationName = "obtenerPersona")
-    public PersonaDTO obtenerPersona(@WebParam(name = "idPersona") Integer idPersona) {
+    public PersonasDTO obtenerPersona(@WebParam(name = "idPersona") Integer idPersona) {
         try {
             return personaBO.obtenerPorId(idPersona);
         } catch (BusinessException e) {
@@ -108,7 +108,7 @@ public class PersonaWS {
     }
 
     @WebMethod(operationName = "obtenerPersonaPorCredenciales")
-    public PersonaDTO obtenerPersonaPorCredenciales(@WebParam(name = "correo_codigo") String correo_codigo, @WebParam(name = "contrasenha") String contrasenha) {
+    public PersonasDTO obtenerPersonaPorCredenciales(@WebParam(name = "correo_codigo") String correo_codigo, @WebParam(name = "contrasenha") String contrasenha) {
         try {
             return personaBO.obtenerPorCredenciales(correo_codigo, contrasenha);
         } catch (BusinessException e) {
@@ -117,9 +117,9 @@ public class PersonaWS {
     }
 
     @WebMethod(operationName = "calcularLimitePrestamos")
-    public int calcularLimitePrestamos(@WebParam(name = "correo") String correo) {
+    public int calcularLimitePrestamos(@WebParam(name = "codigo") String codigo) {
         try {
-            return personaBO.calcularLimitePrestamos(correo);
+            return personaBO.calcularLimitePrestamos(codigo);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al calcular límite de préstamos: " + e.getMessage());
         }

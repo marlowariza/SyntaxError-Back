@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.EditorialBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.EditorialDTO;
+import com.syntaxerror.biblioteca.model.EditorialesDTO;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -21,7 +21,7 @@ public class EditorialWS {
     }
 
     @WebMethod(operationName = "listarEditoriales")
-    public ArrayList<EditorialDTO> listarEditoriales() {
+    public ArrayList<EditorialesDTO> listarEditoriales() {
         try {
             return editorialBO.listarTodos();
         } catch (Exception e) {
@@ -30,7 +30,7 @@ public class EditorialWS {
     }
 
     @WebMethod(operationName = "obtenerEditorial")
-    public EditorialDTO obtenerEditorial(@WebParam(name = "idEditorial") Integer idEditorial) {
+    public EditorialesDTO obtenerEditorial(@WebParam(name = "idEditorial") Integer idEditorial) {
         try {
             return editorialBO.obtenerPorId(idEditorial);
         } catch (BusinessException e) {

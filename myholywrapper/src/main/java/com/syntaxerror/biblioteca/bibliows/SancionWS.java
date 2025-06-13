@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.SancionBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.SancionDTO;
+import com.syntaxerror.biblioteca.model.SancionesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
 
 import jakarta.jws.WebService;
@@ -65,7 +65,7 @@ public class SancionWS {
     }
 
     @WebMethod(operationName = "obtenerSancionPorId")
-    public SancionDTO obtenerSancionPorId(@WebParam(name = "idSancion") Integer idSancion) {
+    public SancionesDTO obtenerSancionPorId(@WebParam(name = "idSancion") Integer idSancion) {
         try {
             return sancionBO.obtenerPorId(idSancion);
         } catch (BusinessException e) {
@@ -74,7 +74,7 @@ public class SancionWS {
     }
 
     @WebMethod(operationName = "listarSanciones")
-    public ArrayList<SancionDTO> listarSanciones() {
+    public ArrayList<SancionesDTO> listarSanciones() {
         try {
             return sancionBO.listarTodos();
         } catch (Exception e) {
@@ -83,20 +83,29 @@ public class SancionWS {
     }
 
     @WebMethod(operationName = "listarSancionesPorPersona")
-    public ArrayList<SancionDTO> listarSancionesPorPersona(@WebParam(name = "idPersona") int idPersona) {
+    public ArrayList<SancionesDTO> listarSancionesPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
             return sancionBO.listarSancionesPorPersona(idPersona);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar sanciones por persona: " + e.getMessage());
         }
     }
-
+    //Bloquea prestamos
     @WebMethod(operationName = "verificarSancionesActivas")
     public void verificarSancionesActivas(@WebParam(name = "idPersona") int idPersona) {
         try {
             sancionBO.verificarSancionesActivas(idPersona);
         } catch (BusinessException e) {
             throw new WebServiceException("Sanciones activas encontradas: " + e.getMessage());
+        }
+    }
+   
+    @WebMethod(operationName = "tieneSancionesActivas")
+    public boolean tieneSancionesActivas(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return sancionBO.tieneSancionesActivas(idPersona);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al verificar sanciones: " + e.getMessage());
         }
     }
 

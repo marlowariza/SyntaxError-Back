@@ -199,8 +199,9 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
             parametros.add(disponible ? 1 : 0);
         }
         if (tipo != null) {
-            sql.append(" AND TIPO = ?");
+            sql.append(" AND UPPER(TRIM(TIPO_EJEMPLAR)) = ?");
             parametros.add(tipo.name());
+
         }
 
         return (ArrayList<EjemplaresDTO>) super.listarTodos(
@@ -236,8 +237,9 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
             parametros.add(disponible ? 1 : 0);
         }
         if (tipo != null) {
-            sql.append(" AND TIPO = ?");
+            sql.append(" AND UPPER(TRIM(TIPO_EJEMPLAR)) = ?");
             parametros.add(tipo.name());
+
         }
 
         int total = 0;
@@ -290,7 +292,7 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         SELECT 1
         FROM BIB_EJEMPLARES
         WHERE MATERIAL_IDMATERIAL = ?
-          AND UPPER(TIPO) = 'DIGITAL'
+          AND UPPER(TIPO_EJEMPLAR) = 'DIGITAL'
         LIMIT 1
     """;
 

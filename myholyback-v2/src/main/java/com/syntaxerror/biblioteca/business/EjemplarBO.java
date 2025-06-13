@@ -134,6 +134,12 @@ public class EjemplarBO {
         return this.ejemplarDAO.contarEjemplaresPorFiltros(idMaterial, null, true, TipoEjemplar.FISICO);
     }
 
+    public int contarEjemplaresFisicosDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+        return this.ejemplarDAO.contarEjemplaresPorFiltros(idMaterial, idSede, true, TipoEjemplar.FISICO);
+    }
+
     public int contarEjemplaresPorSede(int idSede) throws BusinessException {
         BusinessValidator.validarId(idSede, "sede");
         return this.ejemplarDAO.contarEjemplaresPorFiltros(null, idSede, null, null);
