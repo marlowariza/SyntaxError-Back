@@ -8,6 +8,7 @@ import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoPersona;
 import com.syntaxerror.biblioteca.model.enums.Turnos;
+import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.SedeDAOImpl;
 
@@ -15,25 +16,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
 
 public class PersonaBO {
 
     private final PersonaDAO personaDAO;
     private final SedeDAO sedeDAO;
+    private final NivelInglesDAO nivelDAO;
 
     public PersonaBO() {
         this.personaDAO = new PersonaDAOImpl();
         this.sedeDAO = new SedeDAOImpl();
+        this.nivelDAO = new NivelInglesDAOImpl();
     }
 
     public int insertar(String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
+            TipoPersona tipo, Turnos turno,
             Date fechaContratoInicio, Date fechaContratoFinal,
-            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idSede) throws BusinessException {
+            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idNivel, Integer idSede) throws BusinessException {
 
         validarDatos(codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
-                tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, idSede);
+                tipo, turno, fechaContratoInicio, fechaContratoFinal, idNivel, idSede);
 
         PersonasDTO persona = new PersonasDTO();
         persona.setCodigo(codigo);
@@ -45,13 +49,20 @@ public class PersonaBO {
         persona.setCorreo(correo);
         persona.setContrasenha(Cifrado.cifrarMD5(contrasenha));
         persona.setTipo(tipo);
-        persona.setNivel(nivel);
         persona.setTurno(turno);
         persona.setFechaContratoInicio(fechaContratoInicio);
         persona.setFechaContratoFinal(fechaContratoFinal);
         persona.setDeuda(deuda != null ? deuda : 0.0);
         persona.setFechaSancionFinal(fechaSancionFinal);
         persona.setVigente(vigente != null ? vigente : true);
+
+        if (idNivel != null) {
+            NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+            if (nivel == null) {
+                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+            }
+            persona.setNivel(nivel);
+        }
 
         SedesDTO sede = sedeDAO.obtenerPorId(idSede);
         if (sede == null) {
@@ -64,13 +75,13 @@ public class PersonaBO {
 
     public int modificar(Integer idPersona, String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
+            TipoPersona tipo, Turnos turno,
             Date fechaContratoInicio, Date fechaContratoFinal,
-            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idSede) throws BusinessException {
+            Double deuda, Date fechaSancionFinal, Boolean vigente, Integer idNivel, Integer idSede) throws BusinessException {
 
         BusinessValidator.validarId(idPersona, "persona");
         validarDatos(codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
-                tipo, nivel, turno, fechaContratoInicio, fechaContratoFinal, idSede);
+                tipo, turno, fechaContratoInicio, fechaContratoFinal, idNivel, idSede);
 
         PersonasDTO persona = new PersonasDTO();
         persona.setIdPersona(idPersona);
@@ -83,13 +94,20 @@ public class PersonaBO {
         persona.setCorreo(correo);
         persona.setContrasenha(Cifrado.cifrarMD5(contrasenha));
         persona.setTipo(tipo);
-        persona.setNivel(nivel);
         persona.setTurno(turno);
         persona.setFechaContratoInicio(fechaContratoInicio);
         persona.setFechaContratoFinal(fechaContratoFinal);
         persona.setDeuda(deuda != null ? deuda : 0.0);
         persona.setFechaSancionFinal(fechaSancionFinal);
         persona.setVigente(vigente != null ? vigente : true);
+
+        if (idNivel != null) {
+            NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+            if (nivel == null) {
+                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+            }
+            persona.setNivel(nivel);
+        }
 
         SedesDTO sede = sedeDAO.obtenerPorId(idSede);
         if (sede == null) {
@@ -117,12 +135,12 @@ public class PersonaBO {
 
     private void validarDatos(String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
-            TipoPersona tipo, NivelesInglesDTO nivel, Turnos turno,
-            Date fechaIni, Date fechaFin, Integer idSede) throws BusinessException {
+            TipoPersona tipo, Turnos turno,
+            Date fechaIni, Date fechaFin, Integer idNivel, Integer idSede) throws BusinessException {
 
         BusinessValidator.validarTexto(codigo, "código");
 
-        //validarCodigoPorTipo(codigo, tipo);
+        validarCodigoPorTipo(codigo, tipo);
         BusinessValidator.validarTexto(nombre, "nombre");
         BusinessValidator.validarTexto(paterno, "apellido paterno");
         BusinessValidator.validarTexto(materno, "apellido materno");
@@ -158,7 +176,7 @@ public class PersonaBO {
             }
         }
         if (tipo == TipoPersona.PROFESOR || tipo == TipoPersona.ESTUDIANTE) {
-            if (nivel == null) {
+            if (idNivel == null || idNivel <= 0) {
                 throw new BusinessException("Debe asignarse un nivel de inglés al lector.");
             }
         }
@@ -173,13 +191,13 @@ public class PersonaBO {
         String prefijoEsperado;
         switch (tipo) {
             case ADMINISTRADOR:
-                prefijoEsperado = "AD";
+                prefijoEsperado = "A";
                 break;
             case PROFESOR:
-                prefijoEsperado = "PR";
+                prefijoEsperado = "P";
                 break;
             case ESTUDIANTE:
-                prefijoEsperado = "ES";
+                prefijoEsperado = "E";
                 break;
             default:
                 throw new BusinessException("Tipo de persona no válido para validar código.");
@@ -189,10 +207,11 @@ public class PersonaBO {
             throw new BusinessException("El código debe comenzar con '" + prefijoEsperado + "' para tipo " + tipo.name());
         }
 
-        String numeros = codigo.substring(2);
-        if (!numeros.matches("\\d{4}")) {
-            throw new BusinessException("El código debe terminar en 4 dígitos numéricos.");
+        String numeros = codigo.substring(1); // correcto si es "P12345"
+        if (!numeros.matches("\\d{5}")) {
+            throw new BusinessException("El código debe tener 5 dígitos numéricos tras el prefijo.");
         }
+
     }
 
     public PersonasDTO obtenerPorCredenciales(String identificador, String contrasenha) throws BusinessException {
@@ -243,34 +262,19 @@ public class PersonaBO {
             throw new BusinessException("El código debe tener exactamente 6 caracteres.");
         }
 
-        String prefijo = codigo.substring(0, 2).toUpperCase();
+        String prefijo = codigo.substring(0, 1).toUpperCase();
+
         //POR CAMBIAR E,P,A
         switch (prefijo) {
-            case "ES":
+            case "E":
                 return 3; // Estudiante
-            case "PR":
+            case "P":
                 return 5; // Profesor
-            case "AD":
+            case "A":
                 return 2; // Administrador
             default:
                 throw new BusinessException("Prefijo de código no reconocido para cálculo de préstamos.");
         }
-        //por correo
-//        if (correo == null) {
-//            throw new BusinessException("Correo no puede ser nulo.");
-//        }
-//
-//        correo = correo.toLowerCase();
-//
-//        if (correo.endsWith(".student@myholylib.edu.pe")) {
-//            return 3;
-//        } else if (correo.endsWith(".teacher@myholylib.edu.pe")) {
-//            return 5;
-//        } else if (correo.endsWith(".admin@myholylib.edu.pe")) {
-//            return 2;
-//        } else {
-//            throw new BusinessException("Dominio de correo no reconocido para cálculo de préstamos.");
-//        }
     }
 
 }

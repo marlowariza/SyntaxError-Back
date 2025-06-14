@@ -2,7 +2,7 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.EjemplarBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.EjemplarDTO;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 
@@ -24,7 +24,7 @@ public class EjemplarWS {
     }
 
     @WebMethod(operationName = "listarEjemplares")
-    public ArrayList<EjemplarDTO> listarEjemplares() {
+    public ArrayList<EjemplaresDTO> listarEjemplares() {
         try {
             return ejemplarBO.listarTodos();
         } catch (Exception e) {
@@ -33,7 +33,7 @@ public class EjemplarWS {
     }
 
     @WebMethod(operationName = "obtenerEjemplar")
-    public EjemplarDTO obtenerEjemplar(@WebParam(name = "idEjemplar") Integer idEjemplar) {
+    public EjemplaresDTO obtenerEjemplar(@WebParam(name = "idEjemplar") Integer idEjemplar) {
         try {
             return ejemplarBO.obtenerPorId(idEjemplar);
         } catch (BusinessException e) {
@@ -127,14 +127,14 @@ public class EjemplarWS {
             @WebParam(name = "idMaterial") int idMaterial,
             @WebParam(name = "idSede") int idSede) {
         try {
-            return new EjemplarBO().contarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
+            return ejemplarBO.contarEjemplaresFisicosDisponiblesPorMaterialYSede(idMaterial, idSede);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al contar ejemplares físicos disponibles: " + e.getMessage());
         }
     }
 
     @WebMethod(operationName = "listarEjemplaresDisponiblesPorMaterial")
-    public ArrayList<EjemplarDTO> listarEjemplaresDisponiblesPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
+    public ArrayList<EjemplaresDTO> listarEjemplaresDisponiblesPorMaterial(@WebParam(name = "idMaterial") int idMaterial) {
         try {
             return ejemplarBO.listarEjemplaresFisicosDisponiblesPorMaterial(idMaterial);
         } catch (BusinessException e) {
@@ -143,7 +143,7 @@ public class EjemplarWS {
     }
 
     @WebMethod(operationName = "obtenerPrimerEjemplarDisponiblePorMaterial")
-    public EjemplarDTO obtenerPrimerEjemplarDisponiblePorMaterial(@WebParam(name = "idMaterial") int idMaterial, @WebParam(name = "idSede") int idSede) {
+    public EjemplaresDTO obtenerPrimerEjemplarDisponiblePorMaterial(@WebParam(name = "idMaterial") int idMaterial, @WebParam(name = "idSede") int idSede) {
         try {
             return ejemplarBO.obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(idMaterial, idSede);
         } catch (BusinessException e) {
@@ -161,7 +161,7 @@ public class EjemplarWS {
     }
 
     @WebMethod(operationName = "listarFisicosDisponiblesPorMaterialYSede")
-    public ArrayList<EjemplarDTO> listarFisicosDisponiblesPorMaterialYSede(
+    public ArrayList<EjemplaresDTO> listarFisicosDisponiblesPorMaterialYSede(
             @WebParam(name = "idMaterial") int idMaterial,
             @WebParam(name = "idSede") int idSede) {
         try {

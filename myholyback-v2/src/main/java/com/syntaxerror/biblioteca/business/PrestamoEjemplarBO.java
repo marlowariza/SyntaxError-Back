@@ -76,4 +76,19 @@ public class PrestamoEjemplarBO {
         return dao.obtenerIdEjemplaresSolicitadosPorPersona(idPersona);
     }
 
+    public ArrayList<PrestamosDeEjemplaresDTO> listarPrestamosDevueltos() {
+        return prestamosDAO.listarPrestamosDevueltos();
+    }
+
+    public ArrayList<PrestamosDeEjemplaresDTO> listarPrestamosAtrasados() {
+        return prestamosDAO.listarPrestamosAtrasados();
+    }
+
+    public ArrayList<PrestamosDeEjemplaresDTO> listarPrestamosSolicitados() {
+        return prestamosDAO.listarPrestamosSolicitados();
+    }
+
+    public ArrayList<PrestamosDeEjemplaresDTO> listarPrestamosNoCulminados() {
+        return prestamosDAO.listarPrestamosNoCulminados();
+    }
 }
