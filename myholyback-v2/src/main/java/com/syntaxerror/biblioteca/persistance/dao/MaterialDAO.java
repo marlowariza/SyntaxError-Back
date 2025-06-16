@@ -4,7 +4,7 @@ import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface MaterialDAO { //falta tabla intermedia
+public interface MaterialDAO {
 
     public Integer insertar(MaterialesDTO material);
 

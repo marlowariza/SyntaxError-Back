@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
-import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialTemaDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialTemaDAOImpl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +16,13 @@ import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
 public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
 
     private TemasDTO tema;
-    private MaterialTemaDAO materialesTemasDAO;
+    private MaterialTemaDAOImpl materialesTemasDAO;
 
     public TemaDAOImpl() {
         super("BIB_TEMAS");
         this.retornarLlavePrimaria = true;
         this.tema = null;
-        this.materialesTemasDAO = new MaterialTemaDAO();
+        this.materialesTemasDAO = new MaterialTemaDAOImpl();
     }
 
     @Override
@@ -130,7 +130,7 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
         Integer resultado = super.modificar();
         if (resultado != null && tema.getMateriales() != null) {
             // Eliminar todas las asociaciones existentes
-            materialesTemasDAO.eliminarAsociacionesTemas(tema.getIdTema());
+            materialesTemasDAO.eliminarAsociacionesConMateriales(tema.getIdTema());
             // Crear las nuevas asociaciones
             for (MaterialesDTO material : tema.getMateriales()) {
                 materialesTemasDAO.asociarTema(tema.getIdTema(), material.getIdMaterial());
@@ -143,7 +143,7 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
     public Integer eliminar(TemasDTO tema) {
         this.tema = tema;
         // Primero eliminar las asociaciones con materiales
-        materialesTemasDAO.eliminarAsociacionesTemas(tema.getIdTema());
+        materialesTemasDAO.eliminarAsociacionesConMateriales(tema.getIdTema());
         return super.eliminar();
     }
 }
