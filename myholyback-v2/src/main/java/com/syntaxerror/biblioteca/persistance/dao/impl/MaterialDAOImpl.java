@@ -313,7 +313,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
             this.ejecutarConsultaEnBD();
 
             while (this.resultSet.next()) {
-                this.instanciarObjetoDelResultSet(); // ✅ Aquí reutilizas la lógica completa
+                this.instanciarObjetoDelResultSet(); 
                 materiales.add(this.material);
             }
 

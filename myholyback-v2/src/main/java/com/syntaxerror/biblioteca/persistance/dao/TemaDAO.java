@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.syntaxerror.biblioteca.model.TemasDTO;
 
-public interface TemaDAO { //falta tabla intermedia
+public interface TemaDAO { 
     
     public Integer insertar(TemasDTO tema);
 

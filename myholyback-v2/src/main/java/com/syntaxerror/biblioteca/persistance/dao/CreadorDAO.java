@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
 
-public interface CreadorDAO { //falta tabla intermedia
+public interface CreadorDAO { 
 
     public Integer insertar(CreadoresDTO autor);
 
