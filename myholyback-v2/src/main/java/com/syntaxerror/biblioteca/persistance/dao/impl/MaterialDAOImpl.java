@@ -1,8 +1,8 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
-import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialTemaDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadorMaterialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.MaterialTemaDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadorMaterialDAOImpl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +14,21 @@ import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
+import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
     private MaterialesDTO material;
-    private CreadorMaterialDAO creadoresMaterialesDAO;
-    private MaterialTemaDAO materialesTemasDAO;
+    private CreadorMaterialDAOImpl creadoresMaterialesDAO;
+    private MaterialTemaDAOImpl materialesTemasDAO;
 
     public MaterialDAOImpl() {
         super("BIB_MATERIALES");
         this.retornarLlavePrimaria = true;
         this.material = null;
-        this.creadoresMaterialesDAO = new CreadorMaterialDAO();
-        this.materialesTemasDAO = new MaterialTemaDAO();
+        this.creadoresMaterialesDAO = new CreadorMaterialDAOImpl();
+        this.materialesTemasDAO = new MaterialTemaDAOImpl();
     }
 
     @Override
@@ -149,7 +151,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         Integer resultado = super.modificar();
         if (resultado != null && resultado > 0) {
             // Eliminar y recrear relaciones con creadores
-            creadoresMaterialesDAO.eliminarAsociacionesMateriales(material.getIdMaterial());
+            creadoresMaterialesDAO.eliminarAsociacionesConCreadores(material.getIdMaterial());
             if (material.getCreadores() != null) {
                 for (CreadoresDTO creador : material.getCreadores()) {
                     creadoresMaterialesDAO.asociarMaterial(creador.getIdCreador(), material.getIdMaterial());
@@ -157,7 +159,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
             }
 
             // Eliminar y recrear relaciones con temas
-            materialesTemasDAO.eliminarAsociacionesTemas(material.getIdMaterial());
+            materialesTemasDAO.eliminarAsociacionesConTemas(material.getIdMaterial());
             if (material.getTemas() != null) {
                 for (TemasDTO tema : material.getTemas()) {
                     materialesTemasDAO.asociarTema(material.getIdMaterial(), tema.getIdTema());
@@ -171,8 +173,16 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     public Integer eliminar(MaterialesDTO material) {
         this.material = material;
         // Primero eliminar las relaciones
-        creadoresMaterialesDAO.eliminarAsociacionesMateriales(material.getIdMaterial());
-        materialesTemasDAO.eliminarAsociacionesTemas(material.getIdMaterial());
+        creadoresMaterialesDAO.eliminarAsociacionesConCreadores(material.getIdMaterial());
+        materialesTemasDAO.eliminarAsociacionesConTemas(material.getIdMaterial());
+        
+        // Eliminar los ejemplares asociados
+        EjemplarDAOImpl ejemplarDAO = new EjemplarDAOImpl();
+        ArrayList<EjemplaresDTO> ejemplares = ejemplarDAO.listarEjemplaresPorFiltros(material.getIdMaterial(), null, null, null);
+        for (EjemplaresDTO ejemplar : ejemplares) {
+            ejemplarDAO.eliminar(ejemplar);
+        }
+        
         return super.eliminar();
     }
 

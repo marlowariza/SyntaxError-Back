@@ -1,7 +1,7 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl;
 
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
-import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadorMaterialDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.base.CreadorMaterialDAOImpl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,13 @@ import com.syntaxerror.biblioteca.persistance.dao.CreadorDAO;
 public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
 
     private CreadoresDTO creador;
-    private CreadorMaterialDAO creadoresMaterialesDAO;
+    private CreadorMaterialDAOImpl creadoresMaterialesDAO;
 
     public CreadorDAOImpl() {
         super("BIB_CREADORES");
         this.retornarLlavePrimaria = true;
         this.creador = null;
-        this.creadoresMaterialesDAO = new CreadorMaterialDAO();
+        this.creadoresMaterialesDAO = new CreadorMaterialDAOImpl();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
         Integer resultado = super.modificar();
         if (resultado != null && resultado > 0 && creador.getMateriales() != null) {
             // Eliminar todas las asociaciones existentes
-            creadoresMaterialesDAO.eliminarAsociacionesMateriales(creador.getIdCreador());
+            creadoresMaterialesDAO.eliminarAsociacionesConMateriales(creador.getIdCreador());
             // Crear las nuevas asociaciones
             for (MaterialesDTO material : creador.getMateriales()) {
                 creadoresMaterialesDAO.asociarMaterial(creador.getIdCreador(), material.getIdMaterial());
@@ -140,7 +140,7 @@ public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
     public Integer eliminar(CreadoresDTO creador) {
         this.creador = creador;
         // Primero eliminar las asociaciones con materiales
-        creadoresMaterialesDAO.eliminarAsociacionesMateriales(creador.getIdCreador());
+        creadoresMaterialesDAO.eliminarAsociacionesConMateriales(creador.getIdCreador());
         return super.eliminar();
     }
 }
