@@ -24,4 +24,8 @@ public interface MaterialDAO { //falta tabla intermedia
 
     List<MaterialesDTO> listarVigentesPorSede(Integer idSede);
 
+    List<MaterialesDTO> listarMasSolicitados(int limite, int offset);
+
+    List<MaterialesDTO> listarMasRecientes(int limite, int offset);
+
 }

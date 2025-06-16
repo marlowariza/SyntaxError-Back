@@ -320,4 +320,55 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         return materiales;
     }
 
+    @Override
+    public List<MaterialesDTO> listarMasSolicitados(int limite, int offset) {
+        String sql = """
+        SELECT m.*, COUNT(pde.EJEMPLAR_IDEJEMPLAR) AS total_solicitudes
+        FROM BIB_MATERIALES m
+        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+        JOIN BIB_PRESTAMOS_DE_EJEMPLARES pde ON e.ID_EJEMPLAR = pde.EJEMPLAR_IDEJEMPLAR
+        GROUP BY m.ID_MATERIAL
+        ORDER BY total_solicitudes DESC, m.ID_MATERIAL DESC
+        LIMIT ? OFFSET ?
+    """;
+
+        return (List<MaterialesDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    try {
+                        int[] p = (int[]) params;
+                        this.statement.setInt(1, p[0]); // limite
+                        this.statement.setInt(2, p[1]); // offset
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                new int[]{limite, offset}
+        );
+    }
+
+    @Override
+    public List<MaterialesDTO> listarMasRecientes(int limite, int offset) {
+        String sql = """
+        SELECT *
+        FROM BIB_MATERIALES
+        ORDER BY ANHIO_PUBLICACION DESC, ID_MATERIAL DESC
+        LIMIT ? OFFSET ?
+    """;
+
+        return (List<MaterialesDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    try {
+                        int[] p = (int[]) params;
+                        this.statement.setInt(1, p[0]); // limite
+                        this.statement.setInt(2, p[1]); // offset
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                new int[]{limite, offset}
+        );
+    }
+
 }

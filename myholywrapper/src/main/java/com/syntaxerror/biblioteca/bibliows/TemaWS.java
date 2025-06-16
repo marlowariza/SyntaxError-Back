@@ -23,12 +23,10 @@ public class TemaWS {
 
     @WebMethod(operationName = "insertarTema")
     public int insertarTema(
-        @WebParam(name = "descripcion") String descripcion,
-        @WebParam(name = "categoria") Categoria categoria,
-        @WebParam(name = "idTemaPadre") Integer idTemaPadre
+        @WebParam(name = "tema") TemasDTO tema
     ) {
         try {
-            return temaBO.insertar(descripcion, categoria, idTemaPadre);
+            return temaBO.insertar(tema);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar tema: " + e.getMessage());
         }
@@ -36,13 +34,10 @@ public class TemaWS {
 
     @WebMethod(operationName = "modificarTema")
     public int modificarTema(
-        @WebParam(name = "idTema") Integer idTema,
-        @WebParam(name = "descripcion") String descripcion,
-        @WebParam(name = "categoria") Categoria categoria,
-        @WebParam(name = "idTemaPadre") Integer idTemaPadre
+        @WebParam(name = "tema") TemasDTO tema
     ) {
         try {
-            return temaBO.modificar(idTema, descripcion, categoria, idTemaPadre);
+            return temaBO.modificar(tema);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar tema: " + e.getMessage());
         }

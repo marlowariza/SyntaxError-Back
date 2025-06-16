@@ -2,10 +2,13 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EditorialesDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
+import com.syntaxerror.biblioteca.persistance.dao.CreadorDAO;
 
 import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
@@ -17,6 +20,9 @@ import com.syntaxerror.biblioteca.persistance.dao.EditorialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
+import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.CreadorDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.TemaDAOImpl;
 
 public class MaterialBO {
 
@@ -24,64 +30,114 @@ public class MaterialBO {
     private final EditorialDAO editorialDAO;
     private final NivelInglesDAO nivelDAO;
     private final EjemplarDAO ejemplarDAO;
+    private final CreadorDAO creadorDAO;
+    private final TemaDAO temaDAO;
 
     public MaterialBO() {
         this.materialDAO = new MaterialDAOImpl();
         this.editorialDAO = new EditorialDAOImpl();
         this.nivelDAO = new NivelInglesDAOImpl();
         this.ejemplarDAO = new EjemplarDAOImpl();
+        this.creadorDAO = new CreadorDAOImpl();
+        this.temaDAO = new TemaDAOImpl();
     }
 
-    public int insertar(String titulo, String edicion,
-            Integer anioPublicacion, String portada, Boolean vigente,
-            Integer idNivel, Integer idEditorial) throws BusinessException {
-        BusinessValidator.validarTexto(titulo, "título");
-        MaterialesDTO material = new MaterialesDTO();
-        material.setTitulo(titulo);
-        material.setEdicion(edicion);
-        material.setAnioPublicacion(anioPublicacion);
-        material.setPortada(portada);
-        material.setVigente(vigente);
+    public int insertar(MaterialesDTO material) throws BusinessException {
+        BusinessValidator.validarTexto(material.getTitulo(), "título");
 
-        if (idNivel != null) {
+        // Validar nivel si existe
+        if (material.getNivel() != null) {
+            Integer idNivel = material.getNivel().getIdNivel();
             NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
             if (nivel == null) {
                 throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
             }
             material.setNivel(nivel);
         }
-        if (idEditorial != null) {
+        // Validar editorial si existe
+        if (material.getEditorial() != null) {
+            Integer idEditorial = material.getEditorial().getIdEditorial();
             EditorialesDTO editorial = editorialDAO.obtenerPorId(idEditorial);
             if (editorial == null) {
                 throw new BusinessException("La editorial con ID " + idEditorial + " no existe.");
             }
             material.setEditorial(editorial);
+        }
+
+        // Validar creadores (lista)
+        if (material.getCreadores() != null) {
+            List<CreadoresDTO> creadoresValidados = new ArrayList<>();
+            for (CreadoresDTO creador : material.getCreadores()) {
+                CreadoresDTO val = creadorDAO.obtenerPorId(creador.getIdCreador());
+                if (val == null) {
+                    throw new BusinessException("El creador con ID " + creador.getIdCreador() + " no existe.");
+                }
+                creadoresValidados.add(val);
+            }
+            material.setCreadores(creadoresValidados);
+        }
+
+        // Validar temas (lista)
+        if (material.getTemas() != null) {
+            List<TemasDTO> temasValidados = new ArrayList<>();
+            for (TemasDTO tema : material.getTemas()) {
+                TemasDTO val = temaDAO.obtenerPorId(tema.getIdTema());
+                if (val == null) {
+                    throw new BusinessException("El tema con ID " + tema.getIdTema() + " no existe.");
+                }
+                temasValidados.add(val);
+            }
+            material.setTemas(temasValidados);
         }
 
         return this.materialDAO.insertar(material);
     }
+//    public int insertar(String titulo, String edicion,
+//            Integer anioPublicacion, String portada, Boolean vigente,
+//            Integer idNivel, Integer idEditorial) throws BusinessException {
+//        BusinessValidator.validarTexto(titulo, "título");
+//        MaterialesDTO material = new MaterialesDTO();
+//        material.setTitulo(titulo);
+//        material.setEdicion(edicion);
+//        material.setAnioPublicacion(anioPublicacion);
+//        material.setPortada(portada);
+//        material.setVigente(vigente);
+//
+//        if (idNivel != null) {
+//            NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+//            if (nivel == null) {
+//                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+//            }
+//            material.setNivel(nivel);
+//        }
+//        if (idEditorial != null) {
+//            EditorialesDTO editorial = editorialDAO.obtenerPorId(idEditorial);
+//            if (editorial == null) {
+//                throw new BusinessException("La editorial con ID " + idEditorial + " no existe.");
+//            }
+//            material.setEditorial(editorial);
+//        }
+//
+//        return this.materialDAO.insertar(material);
+//    }
 
-    public int modificar(Integer idMaterial, String titulo, String edicion,
-            Integer anioPublicacion, String portada, Boolean vigente,
-            Integer idNivel, Integer idEditorial) throws BusinessException {
-        BusinessValidator.validarId(idMaterial, "material");
-        BusinessValidator.validarTexto(titulo, "título");
-        MaterialesDTO material = new MaterialesDTO();
-        material.setIdMaterial(idMaterial);
-        material.setTitulo(titulo);
-        material.setEdicion(edicion);
-        material.setAnioPublicacion(anioPublicacion);
-        material.setPortada(portada);
-        material.setVigente(vigente);
+    public int modificar(MaterialesDTO material) throws BusinessException {
+        BusinessValidator.validarId(material.getIdMaterial(), "material");
+        BusinessValidator.validarTexto(material.getTitulo(), "título");
 
-        if (idNivel != null) {
+        // Validar nivel si existe
+        if (material.getNivel() != null) {
+            Integer idNivel = material.getNivel().getIdNivel();
             NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
             if (nivel == null) {
                 throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
             }
             material.setNivel(nivel);
         }
-        if (idEditorial != null) {
+
+        // Validar editorial si existe
+        if (material.getEditorial() != null) {
+            Integer idEditorial = material.getEditorial().getIdEditorial();
             EditorialesDTO editorial = editorialDAO.obtenerPorId(idEditorial);
             if (editorial == null) {
                 throw new BusinessException("La editorial con ID " + idEditorial + " no existe.");
@@ -89,8 +145,64 @@ public class MaterialBO {
             material.setEditorial(editorial);
         }
 
+        // Validar creadores (lista)
+        if (material.getCreadores() != null) {
+            List<CreadoresDTO> creadoresValidados = new ArrayList<>();
+            for (CreadoresDTO creador : material.getCreadores()) {
+                CreadoresDTO val = creadorDAO.obtenerPorId(creador.getIdCreador());
+                if (val == null) {
+                    throw new BusinessException("El creador con ID " + creador.getIdCreador() + " no existe.");
+                }
+                creadoresValidados.add(val);
+            }
+            material.setCreadores(creadoresValidados);
+        }
+
+        // Validar temas (lista)
+        if (material.getTemas() != null) {
+            List<TemasDTO> temasValidados = new ArrayList<>();
+            for (TemasDTO tema : material.getTemas()) {
+                TemasDTO val = temaDAO.obtenerPorId(tema.getIdTema());
+                if (val == null) {
+                    throw new BusinessException("El tema con ID " + tema.getIdTema() + " no existe.");
+                }
+                temasValidados.add(val);
+            }
+            material.setTemas(temasValidados);
+        }
+
         return this.materialDAO.modificar(material);
     }
+//    public int modificar(Integer idMaterial, String titulo, String edicion,
+//            Integer anioPublicacion, String portada, Boolean vigente,
+//            Integer idNivel, Integer idEditorial) throws BusinessException {
+//        BusinessValidator.validarId(idMaterial, "material");
+//        BusinessValidator.validarTexto(titulo, "título");
+//        MaterialesDTO material = new MaterialesDTO();
+//        material.setIdMaterial(idMaterial);
+//        material.setTitulo(titulo);
+//        material.setEdicion(edicion);
+//        material.setAnioPublicacion(anioPublicacion);
+//        material.setPortada(portada);
+//        material.setVigente(vigente);
+//
+//        if (idNivel != null) {
+//            NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+//            if (nivel == null) {
+//                throw new BusinessException("El nivel con ID " + idNivel + " no existe.");
+//            }
+//            material.setNivel(nivel);
+//        }
+//        if (idEditorial != null) {
+//            EditorialesDTO editorial = editorialDAO.obtenerPorId(idEditorial);
+//            if (editorial == null) {
+//                throw new BusinessException("La editorial con ID " + idEditorial + " no existe.");
+//            }
+//            material.setEditorial(editorial);
+//        }
+//
+//        return this.materialDAO.modificar(material);
+//    }
 
     public int eliminar(Integer idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
@@ -158,5 +270,27 @@ public class MaterialBO {
 
         return new MaterialDAOImpl().listarMaterialesVigentesPorCreadorFiltro(filtro);
     }
+    
+    
+    //ORDENA DESCENDENTE POR CANTIDAD DE PRESTAMOS, PERMITE LISTAR POR CANTIDAD Y PAGINA
+    public List<MaterialesDTO> listarMasSolicitados(int limite, int pagina) throws BusinessException {
+        validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.materialDAO.listarMasSolicitados(limite, offset);
+    }
+     //ORDENA DESCENDENTE POR MATERIALES RECIENTES, PERMITE LISTAR POR CANTIDAD Y PAGINA
+    public List<MaterialesDTO> listarMasRecientes(int limite, int pagina) throws BusinessException {
+        validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.materialDAO.listarMasRecientes(limite, offset);
+    }
 
+    private void validarPaginacion(int limite, int pagina) throws BusinessException {
+        if (limite <= 0) {
+            throw new BusinessException("El límite debe ser mayor que cero.");
+        }
+        if (pagina <= 0) {
+            throw new BusinessException("La página debe ser mayor que cero.");
+        }
+    }
 }

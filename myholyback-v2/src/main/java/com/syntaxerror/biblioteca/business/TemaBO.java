@@ -16,39 +16,56 @@ public class TemaBO {
         this.temaDAO = new TemaDAOImpl();
     }
 
-    public int insertar(String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
-        validarDatos(descripcion, categoria);
-        TemasDTO tema = new TemasDTO();
-        tema.setDescripcion(descripcion);
-        tema.setCategoria(categoria);
-
-        if (idTemaPadre != null) {
-            BusinessValidator.validarId(idTemaPadre, "tema padre");
-            TemasDTO temaPadre = new TemasDTO();
-            temaPadre.setIdTema(idTemaPadre);
-            tema.setTemaPadre(temaPadre);
+    public int insertar(TemasDTO tema) throws BusinessException {
+        validarDatos(tema.getDescripcion(), tema.getCategoria());
+        if (tema.getTemaPadre() != null && tema.getTemaPadre().getIdTema() != null) {
+            BusinessValidator.validarId(tema.getTemaPadre().getIdTema(), "tema padre");
         }
 
         return this.temaDAO.insertar(tema);
     }
+//    public int insertar(String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
+//        validarDatos(descripcion, categoria);
+//        TemasDTO tema = new TemasDTO();
+//        tema.setDescripcion(descripcion);
+//        tema.setCategoria(categoria);
+//
+//        if (idTemaPadre != null) {
+//            BusinessValidator.validarId(idTemaPadre, "tema padre");
+//            TemasDTO temaPadre = new TemasDTO();
+//            temaPadre.setIdTema(idTemaPadre);
+//            tema.setTemaPadre(temaPadre);
+//        }
+//
+//        return this.temaDAO.insertar(tema);
+//    }
 
-    public int modificar(Integer idTema, String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
-        BusinessValidator.validarId(idTema, "tema");
-        validarDatos(descripcion, categoria);
-        TemasDTO tema = new TemasDTO();
-        tema.setIdTema(idTema);
-        tema.setDescripcion(descripcion);
-        tema.setCategoria(categoria);
-
-        if (idTemaPadre != null) {
-            BusinessValidator.validarId(idTemaPadre, "tema padre");
-            TemasDTO temaPadre = new TemasDTO();
-            temaPadre.setIdTema(idTemaPadre);
-            tema.setTemaPadre(temaPadre);
+    public int modificar(TemasDTO tema) throws BusinessException {
+        BusinessValidator.validarId(tema.getIdTema(), "tema");
+        validarDatos(tema.getDescripcion(), tema.getCategoria());
+        if (tema.getTemaPadre() != null && tema.getTemaPadre().getIdTema() != null) {
+            BusinessValidator.validarId(tema.getTemaPadre().getIdTema(), "tema padre");
         }
 
         return this.temaDAO.modificar(tema);
     }
+//    public int modificar(Integer idTema, String descripcion, Categoria categoria, Integer idTemaPadre) throws BusinessException {
+//        BusinessValidator.validarId(idTema, "tema");
+//        validarDatos(descripcion, categoria);
+//        TemasDTO tema = new TemasDTO();
+//        tema.setIdTema(idTema);
+//        tema.setDescripcion(descripcion);
+//        tema.setCategoria(categoria);
+//
+//        if (idTemaPadre != null) {
+//            BusinessValidator.validarId(idTemaPadre, "tema padre");
+//            TemasDTO temaPadre = new TemasDTO();
+//            temaPadre.setIdTema(idTemaPadre);
+//            tema.setTemaPadre(temaPadre);
+//        }
+//
+//        return this.temaDAO.modificar(tema);
+//    }
 
     public int eliminar(Integer idTema) throws BusinessException {
         BusinessValidator.validarId(idTema, "tema");

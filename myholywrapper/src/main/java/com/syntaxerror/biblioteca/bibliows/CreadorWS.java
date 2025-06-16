@@ -23,16 +23,10 @@ public class CreadorWS {
 
     @WebMethod(operationName = "insertarCreador")
     public int insertarCreador(
-        @WebParam(name = "nombre") String nombre,
-        @WebParam(name = "paterno") String paterno,
-        @WebParam(name = "materno") String materno,
-        @WebParam(name = "seudonimo") String seudonimo,
-        @WebParam(name = "tipo") TipoCreador tipo,
-        @WebParam(name = "nacionalidad") String nacionalidad,
-        @WebParam(name = "activo") Boolean activo
+            @WebParam(name = "creador") CreadoresDTO creador
     ) {
         try {
-            return creadorBO.insertar(nombre, paterno, materno, seudonimo, tipo, nacionalidad, activo);
+            return creadorBO.insertar(creador);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar creador: " + e.getMessage());
         }
@@ -40,17 +34,10 @@ public class CreadorWS {
 
     @WebMethod(operationName = "modificarCreador")
     public int modificarCreador(
-        @WebParam(name = "idCreador") Integer idCreador,
-        @WebParam(name = "nombre") String nombre,
-        @WebParam(name = "paterno") String paterno,
-        @WebParam(name = "materno") String materno,
-        @WebParam(name = "seudonimo") String seudonimo,
-        @WebParam(name = "tipo") TipoCreador tipo,
-        @WebParam(name = "nacionalidad") String nacionalidad,
-        @WebParam(name = "activo") Boolean activo
+            @WebParam(name = "creador") CreadoresDTO creador
     ) {
         try {
-            return creadorBO.modificar(idCreador, nombre, paterno, materno, seudonimo, tipo, nacionalidad, activo);
+            return creadorBO.modificar(creador);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar creador: " + e.getMessage());
         }
