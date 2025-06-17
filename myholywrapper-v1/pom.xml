@@ -19,6 +19,11 @@
             <version>${jakartaee}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.syntaxerror.biblioteca</groupId>
+            <artifactId>myholyback-v1</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     <build>
