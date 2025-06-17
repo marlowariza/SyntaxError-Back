@@ -16,6 +16,7 @@ import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
+import java.util.function.Consumer;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
@@ -175,14 +176,14 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         // Primero eliminar las relaciones
         creadoresMaterialesDAO.eliminarAsociacionesConCreadores(material.getIdMaterial());
         materialesTemasDAO.eliminarAsociacionesConTemas(material.getIdMaterial());
-        
+
         // Eliminar los ejemplares asociados
         EjemplarDAOImpl ejemplarDAO = new EjemplarDAOImpl();
         ArrayList<EjemplaresDTO> ejemplares = ejemplarDAO.listarEjemplaresPorFiltros(material.getIdMaterial(), null, null, null);
         for (EjemplaresDTO ejemplar : ejemplares) {
             ejemplarDAO.eliminar(ejemplar);
         }
-        
+
         return super.eliminar();
     }
 
@@ -313,7 +314,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
             this.ejecutarConsultaEnBD();
 
             while (this.resultSet.next()) {
-                this.instanciarObjetoDelResultSet(); 
+                this.instanciarObjetoDelResultSet();
                 materiales.add(this.material);
             }
 
@@ -379,6 +380,59 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
                 },
                 new int[]{limite, offset}
         );
+    }
+
+    /**
+     * Lista materiales vigentes por sede y filtro dinámico (título o autor)
+     * usando listarTodos genérico.
+     */
+    public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo) {
+        String sql;
+        if (porTitulo) {
+            sql = """
+            SELECT DISTINCT m.*
+            FROM BIB_MATERIALES m
+            JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+            WHERE m.VIGENTE = TRUE
+              AND e.SEDE_IDSEDE = ?
+              AND LOWER(m.TITULO) LIKE ?
+            """;
+        } else {
+            sql = """
+            SELECT DISTINCT m.*
+            FROM BIB_MATERIALES m
+            JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+            JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
+            JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
+            WHERE m.VIGENTE = TRUE
+              AND e.SEDE_IDSEDE = ?
+              AND c.TIPO_CREADOR = 'AUTOR'
+              AND (
+                  LOWER(c.NOMBRE) LIKE ?
+                  OR LOWER(c.PATERNO) LIKE ?
+                  OR LOWER(c.MATERNO) LIKE ?
+                  OR LOWER(c.SEUDONIMO) LIKE ?
+              )
+            """;
+        }
+
+        // Consumer para bindear parámetros:
+        Consumer<Object> binder = params -> {
+            try {
+                String likeFiltro = "%" + filtro.toLowerCase().trim() + "%";
+                this.statement.setInt(1, idSede);
+                this.statement.setString(2, likeFiltro);
+                if (!porTitulo) {
+                    this.statement.setString(3, likeFiltro);
+                    this.statement.setString(4, likeFiltro);
+                    this.statement.setString(5, likeFiltro);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        return this.listarTodos(sql, binder, null);
     }
 
 }

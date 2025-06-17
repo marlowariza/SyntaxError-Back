@@ -167,6 +167,19 @@ public class MaterialWS {
         }
     }
 
+    @WebMethod(operationName = "listarMaterialesPorSedeYFiltro")
+    public List<MaterialesDTO> listarMaterialesPorSedeYFiltro(
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "filtro") String filtro,
+            @WebParam(name = "porTitulo") boolean porTitulo
+    ) {
+        try {
+            return materialBO.listarPorSedeYFiltro(idSede, filtro, porTitulo);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales por sede y filtro: " + e.getMessage());
+        }
+    }
+
     //En teoria con insertar y modificar se asocia automaticamente
 //    @WebMethod(operationName = "asociarMaterialTema")
 //    public Integer asociarMaterialPorTema(

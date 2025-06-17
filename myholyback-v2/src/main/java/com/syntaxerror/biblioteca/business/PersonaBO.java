@@ -277,4 +277,27 @@ public class PersonaBO {
         }
     }
 
+    public int modificarContrasenha(Integer idPersona, String contrasenhaNueva) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        if (contrasenhaNueva == null || contrasenhaNueva.length() < 6) {
+            throw new BusinessException("La nueva contraseña debe tener al menos 6 caracteres.");
+        }
+
+        // Obtener la persona para verificar existencia y vigencia.
+        PersonasDTO persona = this.personaDAO.obtenerPorId(idPersona);
+        if (persona == null) {
+            throw new BusinessException("No se encontró una persona con el ID especificado.");
+        }
+
+        if (Boolean.FALSE.equals(persona.getVigente())) {
+            throw new BusinessException("No se puede modificar la contraseña de un usuario inactivo.");
+        }
+
+        // Cifrar y establecer la nueva contraseña.
+        persona.setContrasenha(Cifrado.cifrarMD5(contrasenhaNueva));
+
+        return this.personaDAO.modificar(persona);
+    }
+
 }
