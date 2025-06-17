@@ -4,6 +4,7 @@ import com.syntaxerror.biblioteca.business.PrestamoBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
+import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
@@ -148,11 +149,39 @@ public class PrestamoWS {
     @WebMethod(operationName = "listarPrestamosActivosPorPersona")
     public ArrayList<PrestamosDTO> listarPrestamosActivosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
-            return prestamoBO.listarPrestamosActivosPorPersona(idPersona);
+            return prestamoBO.listarPrestamosPorEstadoPersona(idPersona, EstadoPrestamoEjemplar.PRESTADO);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
+    
+    @WebMethod(operationName = "listarPrestamosSolicitadosPorPersona")
+    public ArrayList<PrestamosDTO> listarPrestamosSolicitadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarPrestamosPorEstadoPersona(idPersona, EstadoPrestamoEjemplar.SOLICITADO);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "listarPrestamosDevueltosPorPersona")
+    public ArrayList<PrestamosDTO> listarPrestamosDevueltosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarPrestamosPorEstadoPersona(idPersona, EstadoPrestamoEjemplar.DEVUELTO);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "listarPrestamosAtrasadosPorPersona")
+    public ArrayList<PrestamosDTO> listarPrestamosAtrasadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
+        try {
+            return prestamoBO.listarPrestamosPorEstadoPersona(idPersona, EstadoPrestamoEjemplar.ATRASADO);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
+        }
+    }
+    
     @WebMethod(operationName = "listarPrestamosSolicitados")
     public ArrayList<PrestamosDTO> listarPrestamosSolicitados() {
         return prestamoBO.listarPrestamosSolicitados();

@@ -1,12 +1,17 @@
 package com.syntaxerror.biblioteca.business;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.PrestamoDTO;
 import com.syntaxerror.biblioteca.model.PrestamoEjemplarDTO;
-import com.syntaxerror.biblioteca.model.SancionDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
@@ -14,12 +19,6 @@ import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PrestamoBO {
 
@@ -362,23 +361,24 @@ public class PrestamoBO {
         return resultado;
     }
 
-    public ArrayList<PrestamoDTO> listarPrestamosActivosPorPersona(int idPersona) throws BusinessException {
+    public ArrayList<PrestamoDTO> listarPrestamoPorEstadoPersona(int idPersona, EstadoPrestamoEjemplar estado) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
 
         ArrayList<PrestamoDTO> resultado = new ArrayList<>();
         PrestamoEjemplarBO peBO = new PrestamoEjemplarBO();
-
+        
         for (PrestamoDTO prestamo : this.listarPrestamosPorPersona(idPersona)) {
-            for (PrestamoEjemplarDTO pe : peBO.listarPorPrestamo(prestamo.getIdPrestamo())) {
-                if (pe.getEstado() == EstadoPrestamoEjemplar.PRESTADO || pe.getEstado() == EstadoPrestamoEjemplar.ATRASADO) {
+            ArrayList<PrestamoEjemplarDTO> ejemplaresPrestamo = peBO.listarPorPrestamo(prestamo.getIdPrestamo());
+            for (PrestamoEjemplarDTO pe : ejemplaresPrestamo) {
+                if (pe.getEstado() == estado) {
                     resultado.add(prestamo);
-                    break; // Basta con que un ejemplar esté activo
+                    break; // Solo se agrega una vez por préstamo
                 }
             }
         }
-
         return resultado;
     }
+        
     public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
         ArrayList<PrestamoEjemplarDTO> prestamosDevueltos=prestamoEjemplarDAO.listarPrestamosDevueltos();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
