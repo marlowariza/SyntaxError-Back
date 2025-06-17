@@ -37,7 +37,7 @@ public class PersonaBO {
             Boolean vigente, Integer idNivel, Integer idSede) throws BusinessException {
 
         validarDatos(nombre, paterno, materno, direccion, telefono, correo, contrasenha,
-                tipo, turno, fechaContratoInicio, fechaContratoFinal, idSede);
+                tipo, turno, fechaContratoInicio, fechaContratoFinal, idSede, idNivel);
 
         PersonaDTO persona = new PersonaDTO();
         persona.setCodigo(codigo);
@@ -81,7 +81,7 @@ public class PersonaBO {
 
         BusinessValidator.validarId(idPersona, "persona");
         validarDatos(nombre, paterno, materno, direccion, telefono, correo, contrasenha,
-                tipo, turno, fechaContratoInicio, fechaContratoFinal, idSede);
+                tipo, turno, fechaContratoInicio, fechaContratoFinal, idSede, idNivel);
 
         PersonaDTO persona = new PersonaDTO();
         persona.setCodigo(codigo);
@@ -181,40 +181,24 @@ public class PersonaBO {
             throw new BusinessException("El código debe tener exactamente 6 caracteres.");
         }
 
-        String prefijo = codigo.substring(0, 2).toUpperCase();
+        String prefijo = codigo.substring(0, 1).toUpperCase();
 
         switch (prefijo) {
-            case "ES":
+            case "E":
                 return 3; // Estudiante
-            case "PR":
+            case "P":
                 return 5; // Profesor
-            case "AD":
+            case "A":
                 return 2; // Administrador
             default:
                 throw new BusinessException("Prefijo de código no reconocido para cálculo de préstamos.");
         }
-        //por correo
-//        if (correo == null) {
-//            throw new BusinessException("Correo no puede ser nulo.");
-//        }
-//
-//        correo = correo.toLowerCase();
-//
-//        if (correo.endsWith(".student@myholylib.edu.pe")) {
-//            return 3;
-//        } else if (correo.endsWith(".teacher@myholylib.edu.pe")) {
-//            return 5;
-//        } else if (correo.endsWith(".admin@myholylib.edu.pe")) {
-//            return 2;
-//        } else {
-//            throw new BusinessException("Dominio de correo no reconocido para cálculo de préstamos.");
-//        }
     }
 
     private void validarDatos(String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
             TipoPersona tipo, Turnos turno,
-            Date fechaIni, Date fechaFin, Integer idSede) throws BusinessException {
+            Date fechaIni, Date fechaFin, Integer idSede, Integer idNivel) throws BusinessException {
 
         BusinessValidator.validarTexto(nombre, "nombre");
         BusinessValidator.validarTexto(paterno, "apellido paterno");
@@ -224,8 +208,13 @@ public class PersonaBO {
         if (telefono == null || telefono.length() < 9) {
             throw new BusinessException("El teléfono debe tener al menos 9 dígitos.");
         }
+        if (correo == null || !correo.contains("@")) {
+            throw new BusinessException("El correo debe tener un formato válido.");
+        }
+        if (contrasenha == null || contrasenha.length() < 6) {
+            throw new BusinessException("La contraseña debe tener al menos 6 caracteres.");
+        }
 
-        validarCredenciales(correo, contrasenha);
         if (tipo == null) {
             throw new BusinessException("Debe seleccionar un tipo de persona.");
         }
@@ -234,22 +223,45 @@ public class PersonaBO {
             throw new BusinessException("Debe asignarse una sede válida.");
         }
 
-        //falta validaciones por los nuevos tipos
-//        if (tipo == TipoPersona.BIBLIOTECARIO) {
-//            if (turno == null) {
-//                throw new BusinessException("Debe asignarse un turno al bibliotecario.");
-//            }
-//            if (fechaIni == null || fechaFin == null) {
-//                throw new BusinessException("Las fechas de contrato no pueden ser nulas.");
-//            }
-//            if (fechaIni.after(fechaFin)) {
-//                throw new BusinessException("La fecha de inicio no puede ser posterior a la fecha de fin.");
-//            }
-//        }
-//        if (tipo == TipoPersona.LECTOR) {
-//            if (nivel == null) {
-//                throw new BusinessException("Debe asignarse un nivel de inglés al lector.");
-//            }
-//        }
+        if (tipo == TipoPersona.ADMINISTRADOR) {
+            if (turno == null) {
+                throw new BusinessException("Debe asignarse un turno al bibliotecario.");
+            }
+            if (fechaIni == null || fechaFin == null) {
+                throw new BusinessException("Las fechas de contrato no pueden ser nulas.");
+            }
+            if (fechaIni.after(fechaFin)) {
+                throw new BusinessException("La fecha de inicio no puede ser posterior a la fecha de fin.");
+            }
+        }
+        if (tipo == TipoPersona.PROFESOR || tipo == TipoPersona.ESTUDIANTE) {
+            if (idNivel == null || idNivel <= 0) {
+                throw new BusinessException("Debe asignarse un nivel de inglés al lector.");
+            }
+        }
     }
+
+    public int modificarContrasenha(Integer idPersona, String contrasenhaNueva) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        if (contrasenhaNueva == null || contrasenhaNueva.length() < 6) {
+            throw new BusinessException("La nueva contraseña debe tener al menos 6 caracteres.");
+        }
+
+        // Obtener la persona para verificar existencia y vigencia.
+        PersonaDTO persona = this.personaDAO.obtenerPorId(idPersona);
+        if (persona == null) {
+            throw new BusinessException("No se encontró una persona con el ID especificado.");
+        }
+
+        if (Boolean.FALSE.equals(persona.getVigente())) {
+            throw new BusinessException("No se puede modificar la contraseña de un usuario inactivo.");
+        }
+
+        // Cifrar y establecer la nueva contraseña.
+        persona.setContrasenha(Cifrado.cifrarMD5(contrasenhaNueva));
+
+        return this.personaDAO.modificar(persona);
+    }
+
 }

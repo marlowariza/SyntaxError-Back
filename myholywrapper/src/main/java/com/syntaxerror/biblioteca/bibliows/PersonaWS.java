@@ -91,7 +91,7 @@ public class PersonaWS {
             @WebParam(name = "idSede") Integer idSede
     ) {
         try {
-            return personaBO.modificar(idPersona,codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
+            return personaBO.modificar(idPersona, codigo, nombre, paterno, materno, direccion, telefono, correo, contrasenha,
                     tipo, turno, fechaContratoInicio, fechaContratoFinal, deuda, fechaSancionFinal, vigente, idNivel, idSede);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar persona: " + e.getMessage());
@@ -122,6 +122,17 @@ public class PersonaWS {
             return personaBO.calcularLimitePrestamos(codigo);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al calcular límite de préstamos: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "modificarContrasenha")
+    public int modificarContrasenha(
+            @WebParam(name = "idPersona") Integer idPersona,
+            @WebParam(name = "nuevaContrasenha") String nuevaContrasenha) {
+        try {
+            return personaBO.modificarContrasenha(idPersona, nuevaContrasenha);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al modificar contraseña: " + e.getMessage());
         }
     }
 }

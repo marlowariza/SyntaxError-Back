@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.db.util.Cifrado;
 import com.syntaxerror.biblioteca.model.EjemplarDTO;
 import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.PrestamoDTO;
@@ -82,9 +83,9 @@ public class PrestamoBO {
     public ArrayList<PrestamoDTO> listarTodos() {
         return this.prestamoDAO.listarTodos();
     }
-    
-        private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
-        if (fechaSolicitud == null ) {
+
+    private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
+        if (fechaSolicitud == null) {
             throw new BusinessException("Las fecha no pueden ser nulas.");
         }
 
@@ -98,7 +99,6 @@ public class PrestamoBO {
 
         BusinessValidator.validarId(idPersona, "persona");
     }
-    
 
     public int contarEjemplaresActivosPorUsuario(int idUsuario) throws BusinessException {
         BusinessValidator.validarId(idUsuario, "usuario");
@@ -163,8 +163,6 @@ public class PrestamoBO {
         }
         return contador;
     }
-
-
 
 //    public void solicitarPrestamo(Integer idPersona, Integer idMaterial) throws BusinessException, ParseException {
 //        // Validaciones iniciales
@@ -379,8 +377,9 @@ public class PrestamoBO {
 
         return resultado;
     }
+
     public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
-        ArrayList<PrestamoEjemplarDTO> prestamosDevueltos=prestamoEjemplarDAO.listarPrestamosDevueltos();
+        ArrayList<PrestamoEjemplarDTO> prestamosDevueltos = prestamoEjemplarDAO.listarPrestamosDevueltos();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosDevueltos) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -389,12 +388,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosAtrasados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosAtrasados=prestamoEjemplarDAO.listarPrestamosAtrasados();
+        ArrayList<PrestamoEjemplarDTO> prestamosAtrasados = prestamoEjemplarDAO.listarPrestamosAtrasados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosAtrasados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -403,12 +402,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosSolicitados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosSolicitados=prestamoEjemplarDAO.listarPrestamosSolicitados();
+        ArrayList<PrestamoEjemplarDTO> prestamosSolicitados = prestamoEjemplarDAO.listarPrestamosSolicitados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosSolicitados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -417,12 +416,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosNoCulminados=prestamoEjemplarDAO.listarPrestamosNoCulminados();
+        ArrayList<PrestamoEjemplarDTO> prestamosNoCulminados = prestamoEjemplarDAO.listarPrestamosNoCulminados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosNoCulminados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -431,8 +430,10 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
+
+
 
 }

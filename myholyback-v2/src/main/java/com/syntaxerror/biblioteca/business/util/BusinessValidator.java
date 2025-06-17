@@ -17,4 +17,13 @@ public class BusinessValidator {
             throw new BusinessException("El campo " + campo + " no puede estar vacío.");
         }
     }
+
+    public static void validarPaginacion(int limite, int pagina) throws BusinessException {
+        if (limite <= 0) {
+            throw new BusinessException("El límite debe ser mayor que cero.");
+        }
+        if (pagina <= 0) {
+            throw new BusinessException("La página debe ser mayor que cero.");
+        }
+    }
 }

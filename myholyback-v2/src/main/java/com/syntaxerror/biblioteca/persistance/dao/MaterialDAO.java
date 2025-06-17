@@ -28,4 +28,6 @@ public interface MaterialDAO {
 
     List<MaterialesDTO> listarMasRecientes(int limite, int offset);
 
+    List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo);
+
 }

@@ -270,27 +270,27 @@ public class MaterialBO {
 
         return new MaterialDAOImpl().listarMaterialesVigentesPorCreadorFiltro(filtro);
     }
-    
-    
+
     //ORDENA DESCENDENTE POR CANTIDAD DE PRESTAMOS, PERMITE LISTAR POR CANTIDAD Y PAGINA
     public List<MaterialesDTO> listarMasSolicitados(int limite, int pagina) throws BusinessException {
-        validarPaginacion(limite, pagina);
+        BusinessValidator.validarPaginacion(limite, pagina);
         int offset = (pagina - 1) * limite;
         return this.materialDAO.listarMasSolicitados(limite, offset);
     }
-     //ORDENA DESCENDENTE POR MATERIALES RECIENTES, PERMITE LISTAR POR CANTIDAD Y PAGINA
+    //ORDENA DESCENDENTE POR MATERIALES RECIENTES, PERMITE LISTAR POR CANTIDAD Y PAGINA
+
     public List<MaterialesDTO> listarMasRecientes(int limite, int pagina) throws BusinessException {
-        validarPaginacion(limite, pagina);
+        BusinessValidator.validarPaginacion(limite, pagina);
         int offset = (pagina - 1) * limite;
         return this.materialDAO.listarMasRecientes(limite, offset);
     }
 
-    private void validarPaginacion(int limite, int pagina) throws BusinessException {
-        if (limite <= 0) {
-            throw new BusinessException("El límite debe ser mayor que cero.");
+
+    public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        if (filtro == null || filtro.isBlank()) {
+            throw new BusinessException("El filtro de búsqueda no puede estar vacío.");
         }
-        if (pagina <= 0) {
-            throw new BusinessException("La página debe ser mayor que cero.");
-        }
+        return new ArrayList<>(materialDAO.listarPorSedeYFiltro(idSede, filtro, porTitulo));
     }
 }

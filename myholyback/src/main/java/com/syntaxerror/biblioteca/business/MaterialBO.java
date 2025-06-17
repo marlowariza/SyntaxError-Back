@@ -200,4 +200,26 @@ public class MaterialBO {
         return materialesPorSede;
     }
 
+    //ORDENA DESCENDENTE POR CANTIDAD DE PRESTAMOS, PERMITE LISTAR POR CANTIDAD Y PAGINA
+    public List<MaterialDTO> listarMasSolicitados(int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.materialDAO.listarMasSolicitados(limite, offset);
+    }
+    //ORDENA DESCENDENTE POR MATERIALES RECIENTES, PERMITE LISTAR POR CANTIDAD Y PAGINA
+
+    public List<MaterialDTO> listarMasRecientes(int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.materialDAO.listarMasRecientes(limite, offset);
+    }
+
+    public List<MaterialDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        if (filtro == null || filtro.isBlank()) {
+            throw new BusinessException("El filtro de búsqueda no puede estar vacío.");
+        }
+        return new ArrayList<>(materialDAO.listarPorSedeYFiltro(idSede, filtro, porTitulo));
+    }
+
 }
