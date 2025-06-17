@@ -23,24 +23,16 @@ public class MaterialWS {
 
     private final MaterialBO materialBO;
 
-
     public MaterialWS() {
         materialBO = new MaterialBO();
     }
 
     @WebMethod(operationName = "insertarMaterial")
     public int insertarMaterial(
-            @WebParam(name = "titulo") String titulo,
-            @WebParam(name = "edicion") String edicion,
-            @WebParam(name = "anioPublicacion") Integer anioPublicacion,
-            @WebParam(name = "portada") String portada,
-            @WebParam(name = "vigente") Boolean vigente,
-            @WebParam(name = "nivel") Integer idNivel,
-            @WebParam(name = "idEditorial") Integer idEditorial
+            @WebParam(name = "material") MaterialesDTO material
     ) {
         try {
-            return materialBO.insertar(titulo, edicion, anioPublicacion, portada, vigente, idNivel, idEditorial);
-
+            return materialBO.insertar(material);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar material: " + e.getMessage());
         } catch (Exception e) {
@@ -80,22 +72,16 @@ public class MaterialWS {
 //            throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
 //        }
 //    }
-
     @WebMethod(operationName = "modificarMaterial")
     public int modificarMaterial(
-            @WebParam(name = "idMaterial") Integer idMaterial,
-            @WebParam(name = "titulo") String titulo,
-            @WebParam(name = "edicion") String edicion,
-            @WebParam(name = "anioPublicacion") Integer anioPublicacion,
-            @WebParam(name = "portada") String portada,
-            @WebParam(name = "vigente") Boolean vigente,
-            @WebParam(name = "nivel") Integer idNivel,
-            @WebParam(name = "idEditorial") Integer idEditorial
+            @WebParam(name = "material") MaterialesDTO material
     ) {
         try {
-            return materialBO.modificar(idMaterial, titulo, edicion, anioPublicacion, portada, vigente, idNivel, idEditorial);
+            return materialBO.modificar(material);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al modificar material: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al modificar material: " + e.getMessage());
         }
     }
 
@@ -157,8 +143,31 @@ public class MaterialWS {
         }
     }
 
+    @WebMethod(operationName = "listarMasSolicitados")
+    public List<MaterialesDTO> listarMasSolicitados(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return materialBO.listarMasSolicitados(limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales más solicitados: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarMasRecientes")
+    public List<MaterialesDTO> listarMasRecientes(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return materialBO.listarMasRecientes(limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales más recientes: " + e.getMessage());
+        }
+    }
+
     //En teoria con insertar y modificar se asocia automaticamente
-    
 //    @WebMethod(operationName = "asociarMaterialTema")
 //    public Integer asociarMaterialPorTema(
 //            @WebParam(name = "idMaterial") Integer idMaterial,
