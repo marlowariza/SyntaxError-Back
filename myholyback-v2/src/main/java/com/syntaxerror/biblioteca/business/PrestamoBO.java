@@ -1,5 +1,9 @@
 package com.syntaxerror.biblioteca.business;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
@@ -7,15 +11,12 @@ import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDeEjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
-import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
-import java.util.ArrayList;
-import java.util.Date;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
-import java.text.ParseException;
 
 public class PrestamoBO {
 
@@ -217,6 +218,24 @@ public class PrestamoBO {
             resultado.add(ejemplarBO.obtenerPorId(idEjemplar));
         }
 
+        return resultado;
+    }
+    
+    public ArrayList<PrestamosDTO> listarPrestamosPorEstadoPersona(int idPersona, EstadoPrestamoEjemplar estado) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+
+        ArrayList<PrestamosDTO> resultado = new ArrayList<>();
+        ArrayList<PrestamosDTO> prestamos = prestamoDAO.listarPorIdPersona(idPersona);
+
+        for (PrestamosDTO prestamo : prestamos) {
+            ArrayList<PrestamosDeEjemplaresDTO> ejemplares = prestamoEjemplarDAO.listarPorIdPrestamo(prestamo.getIdPrestamo());
+            for (PrestamosDeEjemplaresDTO pe : ejemplares) {
+                if (pe.getEstado() == estado) {
+                    resultado.add(prestamo);
+                    break; // Solo se agrega una vez por préstamo
+                }
+            }
+        }
         return resultado;
     }
 
