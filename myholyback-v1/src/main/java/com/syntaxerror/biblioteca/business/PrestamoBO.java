@@ -81,9 +81,9 @@ public class PrestamoBO {
     public ArrayList<PrestamoDTO> listarTodos() {
         return this.prestamoDAO.listarTodos();
     }
-    
-        private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
-        if (fechaSolicitud == null ) {
+
+    private void validarDatos(Date fechaSolicitud, Date fechaPrestamo, Date fechaDevolucion, Integer idPersona) throws BusinessException {
+        if (fechaSolicitud == null) {
             throw new BusinessException("Las fecha no pueden ser nulas.");
         }
 
@@ -97,7 +97,6 @@ public class PrestamoBO {
 
         BusinessValidator.validarId(idPersona, "persona");
     }
-    
 
     public int contarEjemplaresActivosPorUsuario(int idUsuario) throws BusinessException {
         BusinessValidator.validarId(idUsuario, "usuario");
@@ -162,8 +161,6 @@ public class PrestamoBO {
         }
         return contador;
     }
-
-
 
 //    public void solicitarPrestamo(Integer idPersona, Integer idMaterial) throws BusinessException, ParseException {
 //        // Validaciones iniciales
@@ -366,7 +363,7 @@ public class PrestamoBO {
 
         ArrayList<PrestamoDTO> resultado = new ArrayList<>();
         PrestamoEjemplarBO peBO = new PrestamoEjemplarBO();
-        
+
         for (PrestamoDTO prestamo : this.listarPrestamosPorPersona(idPersona)) {
             ArrayList<PrestamoEjemplarDTO> ejemplaresPrestamo = peBO.listarPorPrestamo(prestamo.getIdPrestamo());
             for (PrestamoEjemplarDTO pe : ejemplaresPrestamo) {
@@ -378,9 +375,9 @@ public class PrestamoBO {
         }
         return resultado;
     }
-        
+
     public ArrayList<PrestamoDTO> listarPrestamosDevueltos() {
-        ArrayList<PrestamoEjemplarDTO> prestamosDevueltos=prestamoEjemplarDAO.listarPrestamosDevueltos();
+        ArrayList<PrestamoEjemplarDTO> prestamosDevueltos = prestamoEjemplarDAO.listarPrestamosDevueltos();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosDevueltos) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -389,12 +386,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosAtrasados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosAtrasados=prestamoEjemplarDAO.listarPrestamosAtrasados();
+        ArrayList<PrestamoEjemplarDTO> prestamosAtrasados = prestamoEjemplarDAO.listarPrestamosAtrasados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosAtrasados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -403,12 +400,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosSolicitados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosSolicitados=prestamoEjemplarDAO.listarPrestamosSolicitados();
+        ArrayList<PrestamoEjemplarDTO> prestamosSolicitados = prestamoEjemplarDAO.listarPrestamosSolicitados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosSolicitados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -417,12 +414,12 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
     }
-    
+
     public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
-        ArrayList<PrestamoEjemplarDTO> prestamosNoCulminados=prestamoEjemplarDAO.listarPrestamosNoCulminados();
+        ArrayList<PrestamoEjemplarDTO> prestamosNoCulminados = prestamoEjemplarDAO.listarPrestamosNoCulminados();
         ArrayList<PrestamoDTO> prestamos = new ArrayList<>();
         for (PrestamoEjemplarDTO p : prestamosNoCulminados) {
             Integer idPrestamoAux = p.getIdPrestamo();
@@ -431,8 +428,42 @@ public class PrestamoBO {
                 prestamos.add(prestamo);
             }
         }
-        
+
         return prestamos;
+    }
+
+    /**
+     * Devuelve todos los ejemplares asociados a un préstamo, actualiza estados,
+     * fechas y libera ejemplares.
+     */
+    public void devolverPrestamo(Integer idPrestamo) throws BusinessException {
+        BusinessValidator.validarId(idPrestamo, "préstamo");
+
+        PrestamoEjemplarBO peBO = new PrestamoEjemplarBO();
+        EjemplarBO ejemplarBO = new EjemplarBO();
+
+        // 1️⃣ Recupera todos los detalles del préstamo
+        ArrayList<PrestamoEjemplarDTO> detalles = peBO.listarPorPrestamo(idPrestamo);
+
+        // 2️⃣ Para cada ejemplar relacionado:
+        for (PrestamoEjemplarDTO pe : detalles) {
+            if (pe.getEstado().name().equals("PRESTADO") || pe.getEstado().name().equals("ATRASADO")) {
+                // Marcar como DEVUELTO
+                pe.setEstado(com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar.DEVUELTO);
+                pe.setFechaRealDevolucion(new java.util.Date());
+                peBO.modificar(pe);
+
+                // Liberar ejemplar
+                ejemplarBO.liberar(pe.getIdEjemplar());
+            }
+        }
+
+        // 3️⃣ Actualizar fecha de devolución de cabecera si aún está null
+        PrestamoDTO prestamo = this.obtenerPorId(idPrestamo);
+        if (prestamo.getFechaDevolucion() == null) {
+            prestamo.setFechaDevolucion(new java.util.Date());
+            prestamoDAO.modificar(prestamo);
+        }
     }
 
 }

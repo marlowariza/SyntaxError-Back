@@ -176,7 +176,7 @@ public class PrestamoWS {
     @WebMethod(operationName = "listarPrestamosAtrasadosPorPersona")
     public ArrayList<PrestamoDTO> listarPrestamosAtrasadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
-            
+
             return prestamoBO.listarPrestamoPorEstadoPersona(idPersona, EstadoPrestamoEjemplar.ATRASADO);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
@@ -201,6 +201,15 @@ public class PrestamoWS {
     @WebMethod(operationName = "listarPrestamosNoCulminados")
     public ArrayList<PrestamoDTO> listarPrestamosNoCulminados() {
         return prestamoBO.listarPrestamosNoCulminados();
+    }
+
+    @WebMethod(operationName = "devolverPrestamo")
+    public void devolverPrestamo(@WebParam(name = "idPrestamo") Integer idPrestamo) {
+        try {
+            prestamoBO.devolverPrestamo(idPrestamo);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al devolver préstamo: " + e.getMessage());
+        }
     }
 
 }
