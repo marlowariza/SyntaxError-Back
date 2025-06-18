@@ -264,4 +264,29 @@ public class PersonaBO {
         return this.personaDAO.modificar(persona);
     }
 
+    public int cambiarContrasenhaPorCodigoYCorreo(String codigo, String correo, String contrasenhaNueva) throws BusinessException {
+        if (codigo == null || codigo.isBlank() || codigo.length() != 6) {
+            throw new BusinessException("Debe proporcionar un código válido de 6 caracteres.");
+        }
+        if (correo == null || !correo.contains("@")) {
+            throw new BusinessException("Debe proporcionar un correo válido.");
+        }
+        if (contrasenhaNueva == null || contrasenhaNueva.length() < 6) {
+            throw new BusinessException("La nueva contraseña debe tener al menos 6 caracteres.");
+        }
+
+        PersonaDTO persona = this.personaDAO.obtenerPorCodigoYCorreo(codigo, correo);
+
+        if (persona == null) {
+            throw new BusinessException("No se encontró una persona con el código y correo especificados.");
+        }
+
+        if (Boolean.FALSE.equals(persona.getVigente())) {
+            throw new BusinessException("No se puede modificar la contraseña de un usuario inactivo.");
+        }
+
+        persona.setContrasenha(Cifrado.cifrarMD5(contrasenhaNueva));
+        return this.personaDAO.modificar(persona);
+    }
+
 }
