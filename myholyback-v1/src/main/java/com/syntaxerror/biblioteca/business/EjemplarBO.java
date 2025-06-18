@@ -212,4 +212,26 @@ public class EjemplarBO {
         return disponibles.isEmpty() ? null : disponibles.get(0);
     }
 
+    public void liberar(Integer idEjemplar) throws BusinessException {
+        BusinessValidator.validarId(idEjemplar, "ejemplar");
+
+        EjemplarDTO ejemplar = this.obtenerPorId(idEjemplar);
+        if (ejemplar == null) {
+            throw new BusinessException("El ejemplar no existe.");
+        }
+
+        ejemplar.setDisponible(true);
+
+        this.modificar(
+                ejemplar.getIdEjemplar(),
+                ejemplar.getFechaAdquisicion(),
+                true,
+                ejemplar.getTipo(),
+                ejemplar.getFormatoDigital(),
+                ejemplar.getUbicacion(),
+                ejemplar.getSede().getIdSede(),
+                ejemplar.getMaterial().getIdMaterial()
+        );
+    }
+
 }
