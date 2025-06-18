@@ -171,4 +171,13 @@ public class EjemplarWS {
         }
     }
 
+    @WebMethod(operationName = "liberarEjemplar")
+    public void liberarEjemplar(@WebParam(name = "idEjemplar") Integer idEjemplar) {
+        try {
+            ejemplarBO.liberar(idEjemplar);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al liberar ejemplar: " + e.getMessage());
+        }
+    }
+
 }
