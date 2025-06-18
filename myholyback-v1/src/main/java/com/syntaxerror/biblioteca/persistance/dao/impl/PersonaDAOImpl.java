@@ -199,4 +199,60 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         return super.eliminar();
     }
 
+    @Override
+    public PersonaDTO obtenerPorCodigoYCorreo(String codigo, String correo) {
+        PersonaDTO persona = null;
+        try {
+            this.abrirConexion();
+            String sql = "SELECT * FROM BIB_PERSONAS WHERE CODIGO = ? AND CORREO = ?";
+            this.colocarSQLenStatement(sql);
+            this.statement.setString(1, codigo);
+            this.statement.setString(2, correo);
+            this.ejecutarConsultaEnBD();
+            if (this.resultSet.next()) {
+                persona = new PersonaDTO();
+
+                persona.setIdPersona(this.resultSet.getInt("ID_PERSONA"));
+                persona.setCodigo(this.resultSet.getString("CODIGO"));
+                persona.setNombre(this.resultSet.getString("NOMBRE"));
+                persona.setPaterno(this.resultSet.getString("PATERNO"));
+                persona.setMaterno(this.resultSet.getString("MATERNO"));
+                persona.setDireccion(this.resultSet.getString("DIRECCION"));
+                persona.setTelefono(this.resultSet.getString("TELEFONO"));
+                persona.setCorreo(this.resultSet.getString("CORREO"));
+                persona.setContrasenha(this.resultSet.getString("CONTRASENHA"));
+                persona.setTipo(TipoPersona.valueOf(this.resultSet.getString("TIPO_PERSONA")));
+
+                String turnoStr = this.resultSet.getString("TURNO");
+                persona.setTurno(turnoStr != null ? Turnos.valueOf(turnoStr) : null);
+
+                persona.setFechaContratoInicio(this.resultSet.getDate("FECHA_CONTRATO_INI"));
+                persona.setFechaContratoFinal(this.resultSet.getDate("FECHA_CONTRATO_FIN"));
+                persona.setDeuda(this.resultSet.getDouble("DEUDA_ACUMULADA"));
+                persona.setFechaSancionFinal(this.resultSet.getDate("FECHA_SANCION_FIN"));
+                persona.setVigente(this.resultSet.getInt("VIGENTE") == 1);
+
+                int idNivel = this.resultSet.getInt("NIVEL_IDNIVEL");
+                if (!this.resultSet.wasNull()) {
+                    NivelInglesDTO nivel = new NivelInglesDTO();
+                    nivel.setIdNivel(idNivel);
+                    persona.setNivel(nivel);
+                }
+
+                SedeDTO sede = new SedeDTO();
+                sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
+                persona.setSede(sede);
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error al obtener persona por código y correo: " + ex);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException ex) {
+                System.err.println("Error al cerrar la conexión: " + ex);
+            }
+        }
+        return persona;
+    }
+
 }

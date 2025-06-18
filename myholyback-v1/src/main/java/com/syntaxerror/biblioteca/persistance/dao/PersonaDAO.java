@@ -14,4 +14,7 @@ public interface PersonaDAO {
     public Integer modificar(PersonaDTO persona);
 
     public Integer eliminar(PersonaDTO persona);
+
+    PersonaDTO obtenerPorCodigoYCorreo(String codigo, String correo);
+
 }
