@@ -2,11 +2,14 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.model.PersonaDTO;
 import com.syntaxerror.biblioteca.model.PrestamoDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoSancion;
 import com.syntaxerror.biblioteca.model.SancionDTO;
+import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.SancionDAOImpl;
 import java.util.ArrayList;
@@ -16,10 +19,12 @@ public class SancionBO {
 
     private final SancionDAO sancionDAO;
     private final PrestamoDAO prestamoDAO;
+    private final PersonaDAO personaDAO;
 
     public SancionBO() {
         this.sancionDAO = new SancionDAOImpl();
         this.prestamoDAO = new PrestamoDAOImpl();
+        this.personaDAO = new PersonaDAOImpl();
     }
 
     public int insertar(TipoSancion tipo, Date fecha, Double monto, Date duracion, String descripcion, Integer idPrestamo) throws BusinessException {
@@ -113,15 +118,19 @@ public class SancionBO {
 
     public void verificarSancionesActivas(int idPersona) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
-
-        ArrayList<SancionDTO> sanciones = listarSancionesPorPersona(idPersona);
-        Date hoy = new Date();
-
-        for (SancionDTO s : sanciones) {
-            if (s.getDuracion() != null && s.getDuracion().after(hoy)) {
+        PersonaDTO persona=personaDAO.obtenerPorId(idPersona);
+        
+        if (persona.getFechaSancionFinal()!=null) {
                 throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
             }
+//        ArrayList<SancionDTO> sanciones = listarSancionesPorPersona(idPersona);
+//        Date hoy = new Date();
+//
+//        for (SancionDTO s : sanciones) {
+//            if (s.getDuracion() != null && s.getDuracion().after(hoy)) {
+//                throw new BusinessException("No puedes solicitar préstamos mientras tengas sanciones activas.");
+//            }
+//        }
         }
-    }
 
-}
+    }
