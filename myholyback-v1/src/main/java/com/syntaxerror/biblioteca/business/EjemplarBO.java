@@ -233,5 +233,6 @@ public class EjemplarBO {
                 ejemplar.getMaterial().getIdMaterial()
         );
     }
+    
 
 }
