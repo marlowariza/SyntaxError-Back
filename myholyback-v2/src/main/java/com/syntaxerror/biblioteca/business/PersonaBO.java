@@ -240,17 +240,16 @@ public class PersonaBO {
 
         // Si contiene '@', validar como correo
         if (identificador.contains("@")) {
-            if (!(identificador.endsWith(".admin@myholylib.edu.pe")
-                    || identificador.endsWith(".teacher@myholylib.edu.pe")
-                    || identificador.endsWith(".student@myholylib.edu.pe"))) {
+            if (!(identificador.endsWith("@myholylib.edu.pe")|| identificador.endsWith("@britanico.edu.pe")|| identificador.endsWith("@gmail.edu.pe") || identificador.endsWith("@hotmail.edu.pe"))) {
                 throw new BusinessException("El correo ingresado no tiene un dominio válido.");
             }
         } else {
             // Si es código, debe tener 6 caracteres
-            if (identificador.length() != 6) {
-                throw new BusinessException("El código debe tener exactamente 6 caracteres.");
+            if (identificador.length() != 6 || !(identificador.charAt(0) == 'E' || identificador.charAt(0) == 'P' || identificador.charAt(0) == 'A')) {
+                throw new BusinessException("El código no es válido .");
             }
         }
+        
 
         if (contrasenha == null || contrasenha.length() < 6) {
             throw new BusinessException("La contraseña debe tener al menos 6 caracteres.");
