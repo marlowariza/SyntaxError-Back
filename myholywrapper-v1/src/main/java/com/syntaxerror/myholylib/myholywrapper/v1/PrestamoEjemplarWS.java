@@ -94,24 +94,24 @@ public class PrestamoEjemplarWS {
             throw new WebServiceException("Error al listar por ejemplar: " + e.getMessage());
         }
     }
-//    @WebMethod(operationName = "listarPrestamosSolicitados")
-//    public ArrayList<PrestamoEjemplarDTO> listarPrestamosSolicitados() {
-//        return bo.listarPrestamosSolicitados();
-//    }
-//    
-//    @WebMethod(operationName = "listarPrestamosAtrasados")
-//    public ArrayList<PrestamoEjemplarDTO> listarPrestamosAtrasados() {
-//        return bo.listarPrestamosAtrasados();
-//    }
-//    
-//    @WebMethod(operationName = "listarPrestamosDevueltos")
-//    public ArrayList<PrestamoEjemplarDTO> listarPrestamosDevueltos() {
-//        return bo.listarPrestamosDevueltos();
-//    }
-//    
-//    @WebMethod(operationName = "listarPrestamosNoCulminados")
-//    public ArrayList<PrestamoEjemplarDTO> listarPrestamosNoCulminados() {
-//        return bo.listarPrestamosNoCulminados();
-//    }
+    @WebMethod(operationName = "listarPrestamosSolicitados")
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosSolicitados() {
+        return bo.listarPrestamosSolicitados();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosAtrasados")
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosAtrasados() {
+        return bo.listarPrestamosAtrasados();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosDevueltos")
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosDevueltos() {
+        return bo.listarPrestamosDevueltos();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosNoCulminados")
+    public ArrayList<PrestamoEjemplarDTO> listarPrestamosNoCulminados() {
+        return bo.listarPrestamosNoCulminados();
+    }
 
 }
