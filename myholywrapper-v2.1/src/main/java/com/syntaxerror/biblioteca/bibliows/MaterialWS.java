@@ -2,8 +2,10 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.MaterialBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import jakarta.jws.WebService;
@@ -209,6 +211,37 @@ public class MaterialWS {
             throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
         } catch (Exception e) {
             throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "contarMateriales")
+    public int contarMateriales() {
+        try {
+            return materialBO.contarTodos();
+        } catch (Exception e) {
+            throw new WebServiceException("Error al contar todos los materiales: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarCreadoresPorMaterial")
+    public List<CreadoresDTO> listarCreadoresPorMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial
+    ) {
+        try {
+            return materialBO.listarCreadoresPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarTemasPorMaterial")
+    public List<TemasDTO> listarTemasPorMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial
+    ) {
+        try {
+            return materialBO.listarTemasPorMaterial(idMaterial);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar temas por material: " + e.getMessage());
         }
     }
 

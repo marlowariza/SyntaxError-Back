@@ -283,4 +283,18 @@ public class MaterialBO {
         return materialDAO.listarPorSedeYFiltro(idSede, filtro, porTitulo, limite, offset);
     }
 
+    public int contarTodos() {
+        return this.materialDAO.contarTodos();
+    }
+
+    public List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return this.materialDAO.listarCreadoresPorMaterial(idMaterial);
+    }
+
+    public List<TemasDTO> listarTemasPorMaterial(Integer idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return this.materialDAO.listarTemasPorMaterial(idMaterial);
+    }
+
 }
