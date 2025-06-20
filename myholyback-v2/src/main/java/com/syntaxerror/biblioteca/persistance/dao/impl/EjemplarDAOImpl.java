@@ -315,4 +315,27 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         return false;
     }
 
+    @Override
+    public List<EjemplaresDTO> listarPorIdMaterialPaginado(Integer idMaterial, int limite, int offset) {
+        String sql = """
+        SELECT * FROM BIB_EJEMPLARES
+        WHERE MATERIAL_IDMATERIAL = ?
+        ORDER BY ID_EJEMPLAR
+        LIMIT ? OFFSET ?
+    """;
+        return (List<EjemplaresDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    try {
+                        this.statement.setInt(1, idMaterial);
+                        this.statement.setInt(2, limite);
+                        this.statement.setInt(3, offset);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                null
+        );
+    }
+
 }

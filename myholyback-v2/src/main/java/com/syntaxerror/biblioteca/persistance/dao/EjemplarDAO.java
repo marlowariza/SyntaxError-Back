@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
+import java.util.List;
 
 public interface EjemplarDAO {
 
@@ -19,12 +20,12 @@ public interface EjemplarDAO {
 
     ArrayList<EjemplaresDTO> listarPorIdMaterial(Integer idMaterial);
 
+    List<EjemplaresDTO> listarPorIdMaterialPaginado(Integer idMaterial, int limite, int offset);
+
     boolean existeEjemplarDigitalPorMaterial(Integer idMaterial);
 
     public ArrayList<EjemplaresDTO> listarEjemplaresPorFiltros(Integer idMaterial, Integer idSede, Boolean disponible, TipoEjemplar tipo);
 
     public int contarEjemplaresPorFiltros(Integer idMaterial, Integer idSede, Boolean disponible, TipoEjemplar tipo);
-
-    
 
 }

@@ -38,13 +38,21 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
         this.statement.setInt(1, this.prestamoEjemplar.getIdPrestamo());
         this.statement.setInt(2, this.prestamoEjemplar.getIdEjemplar());
         this.statement.setString(3, this.prestamoEjemplar.getEstado().name());
-        this.statement.setDate(4, new Date(this.prestamoEjemplar.getFechaRealDevolucion().getTime()));
+        if (this.prestamoEjemplar.getFechaRealDevolucion() != null) {
+            this.statement.setDate(4, new Date(this.prestamoEjemplar.getFechaRealDevolucion().getTime()));
+        } else {
+            this.statement.setDate(4, null);
+        }
     }
 
     @Override
     protected void incluirValorDeParametrosParaModificacion() throws SQLException {
         this.statement.setString(1, this.prestamoEjemplar.getEstado().name());
-        this.statement.setDate(2, new Date(this.prestamoEjemplar.getFechaRealDevolucion().getTime()));
+        if (this.prestamoEjemplar.getFechaRealDevolucion() != null) {
+            this.statement.setDate(2, new Date(this.prestamoEjemplar.getFechaRealDevolucion().getTime()));
+        } else {
+            this.statement.setDate(2, null);
+        }
         this.statement.setInt(3, this.prestamoEjemplar.getIdPrestamo());
         this.statement.setInt(4, this.prestamoEjemplar.getIdEjemplar());
     }
@@ -309,7 +317,38 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
 
         return contador;
     }
-    
-    
+
+    public int contarEjemplaresEnProcesoPorIdPersona(int idPersona) {
+        int contador = 0;
+
+        String sql = """
+        SELECT COUNT(*)
+        FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
+        JOIN BIB_PRESTAMOS P ON P.ID_PRESTAMO = PDE.PRESTAMO_IDPRESTAMO
+        WHERE P.PERSONA_IDPERSONA = ?
+          AND PDE.ESTADO IN ('SOLICITADO', 'PRESTADO', 'ATRASADO')
+    """;
+
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.statement.setInt(1, idPersona);
+            this.ejecutarConsultaEnBD();
+
+            if (this.resultSet.next()) {
+                contador = this.resultSet.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return contador;
+    }
 
 }
