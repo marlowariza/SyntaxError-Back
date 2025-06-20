@@ -17,12 +17,16 @@ import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
     private MaterialesDTO material;
     private CreadorMaterialDAOImpl creadoresMaterialesDAO;
     private MaterialTemaDAOImpl materialesTemasDAO;
+
+    private boolean cargarRelaciones = true;
 
     public MaterialDAOImpl() {
         super("BIB_MATERIALES");
@@ -97,8 +101,11 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material.setEditorial(editorial);
 
         // Cargar relaciones
-        this.material.setCreadores(creadoresMaterialesDAO.listarPorMaterial(this.material.getIdMaterial()));
-        this.material.setTemas(materialesTemasDAO.listarPorMaterial(this.material.getIdMaterial()));
+        // === CONTROL DE RELACIONES ===
+        if (this.cargarRelaciones) {
+            this.material.setCreadores(creadoresMaterialesDAO.listarPorMaterial(this.material.getIdMaterial()));
+            this.material.setTemas(materialesTemasDAO.listarPorMaterial(this.material.getIdMaterial()));
+        }
     }
 
     @Override
@@ -188,147 +195,206 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     }
 
     @Override
-    public ArrayList<MaterialesDTO> listarPorTituloConteniendo(String texto) {
-        String sql = "SELECT * FROM BIB_MATERIALES WHERE LOWER(TITULO) LIKE ?";
+    public List<MaterialesDTO> listarPorTituloConteniendo(String texto, int limite, int offset) {
 
-        return (ArrayList<MaterialesDTO>) this.listarTodos(
-                sql,
-                obj -> {
-                    try {
-                        String filtro = "%" + ((String) obj).toLowerCase().trim() + "%";
-                        this.statement.setString(1, filtro);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                texto
-        );
+        // Elige estrategia según longitud del filtro
+        boolean usarFulltext = texto.trim().length() >= 3;
+
+        String sql;
+        if (usarFulltext) {
+            sql = """
+            SELECT * FROM BIB_MATERIALES
+            WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
+            LIMIT ? OFFSET ?
+        """;
+        } else {
+            sql = """
+            SELECT * FROM BIB_MATERIALES
+            WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
+            ORDER BY TITULO
+            LIMIT ? OFFSET ?
+        """;
+        }
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    obj -> {
+                        try {
+                            if (usarFulltext) {
+                                String filtro = "+" + texto.trim() + "*";
+                                this.statement.setString(1, filtro);
+                            } else {
+                                String filtro = "%" + texto.trim() + "%";
+                                this.statement.setString(1, filtro);
+                            }
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    null
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
     }
 
     @Override
-    public ArrayList<MaterialesDTO> listarVigentesPorTituloConteniendo(String texto) {
-        String sql = """
-        SELECT * FROM BIB_MATERIALES 
-        WHERE LOWER(TITULO) LIKE ? AND VIGENTE = TRUE
-    """;
+    public ArrayList<MaterialesDTO> listarVigentesPorTituloConteniendo(String texto, int limite, int offset) {
+        // Decide si usar FULLTEXT o LIKE según longitud
+        boolean usarFulltext = texto.trim().length() >= 3;
 
-        return (ArrayList<MaterialesDTO>) this.listarTodos(
-                sql,
-                obj -> {
-                    try {
-                        String filtro = "%" + ((String) obj).toLowerCase().trim() + "%";
-                        this.statement.setString(1, filtro);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                texto
-        );
+        String sql;
+        if (usarFulltext) {
+            sql = """
+            SELECT * FROM BIB_MATERIALES
+            WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
+              AND VIGENTE = TRUE
+            LIMIT ? OFFSET ?
+        """;
+        } else {
+            sql = """
+            SELECT * FROM BIB_MATERIALES
+            WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
+              AND VIGENTE = TRUE
+            ORDER BY TITULO
+            LIMIT ? OFFSET ?
+        """;
+        }
+
+        this.cargarRelaciones = false;
+        try {
+            return (ArrayList<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    obj -> {
+                        try {
+                            if (usarFulltext) {
+                                String filtro = "+" + texto.trim() + "*";
+                                this.statement.setString(1, filtro);
+                            } else {
+                                String filtro = "%" + texto.trim() + "%";
+                                this.statement.setString(1, filtro);
+                            }
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    null
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
     }
 
     @Override
-    public List<MaterialesDTO> listarVigentesPorSede(Integer idSede) {
+    public List<MaterialesDTO> listarVigentesPorSede(Integer idSede, int limite, int offset) {
         String sql = """
         SELECT DISTINCT m.*
         FROM BIB_MATERIALES m
         JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
-        WHERE m.VIGENTE = TRUE AND e.SEDE_IDSEDE = ?
+        WHERE m.VIGENTE = TRUE 
+          AND e.SEDE_IDSEDE = ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
     """;
 
-        return (List<MaterialesDTO>) this.listarTodos(
-                sql,
-                obj -> {
-                    try {
-                        this.statement.setInt(1, (Integer) obj);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                idSede
-        );
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    obj -> {
+                        try {
+                            this.statement.setInt(1, idSede);
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    null
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
     }
 
     @Override
-    public ArrayList<MaterialesDTO> listarPorSede(Integer idSede) {
-        ArrayList<MaterialesDTO> lista = new ArrayList<>();
-
+    public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset) {
         String sql = """
         SELECT DISTINCT m.*
         FROM BIB_MATERIALES m
         JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
         WHERE e.SEDE_IDSEDE = ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
     """;
 
+        this.cargarRelaciones = false;
         try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.statement.setInt(1, idSede);
-            this.ejecutarConsultaEnBD();
-
-            while (this.resultSet.next()) {
-                this.instanciarObjetoDelResultSet();
-                lista.add(this.material);
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return (ArrayList<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    obj -> {
+                        try {
+                            this.statement.setInt(1, idSede);
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    null
+            );
         } finally {
-            try {
-                this.cerrarConexion();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+            this.cargarRelaciones = true;
         }
-
-        return lista;
     }
 
-    public List<MaterialesDTO> listarMaterialesVigentesPorCreadorFiltro(String filtro) {
-        List<MaterialesDTO> materiales = new ArrayList<>();
-
+    @Override
+    public List<MaterialesDTO> listarMaterialesVigentesPorCreadorFiltro(String filtro, int limite, int offset) {
         String sql = """
-        SELECT DISTINCT m.*
-        FROM BIB_MATERIALES m
-        JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
-        JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
-        WHERE m.VIGENTE = TRUE
-          AND c.TIPO_CREADOR = 'AUTOR'
-          AND c.ACTIVO = 1
-          AND (
-              LOWER(c.NOMBRE) LIKE ?
-              OR LOWER(c.PATERNO) LIKE ?
-              OR LOWER(c.MATERNO) LIKE ?
-              OR LOWER(c.SEUDONIMO) LIKE ?
-          )
+    SELECT DISTINCT m.*
+    FROM BIB_MATERIALES m
+    JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
+    JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
+    WHERE m.VIGENTE = TRUE
+      AND c.TIPO_CREADOR = 'AUTOR'
+      AND c.ACTIVO = 1
+      AND (
+          LOWER(c.NOMBRE) LIKE ?
+          OR LOWER(c.PATERNO) LIKE ?
+          OR LOWER(c.MATERNO) LIKE ?
+          OR LOWER(c.SEUDONIMO) LIKE ?
+      )
+    ORDER BY m.TITULO
+    LIMIT ? OFFSET ?
     """;
 
+        this.cargarRelaciones = false;
         try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-
-            String valor = "%" + filtro.toLowerCase().trim() + "%";
-            for (int i = 1; i <= 4; i++) {
-                this.statement.setString(i, valor);
-            }
-
-            this.ejecutarConsultaEnBD();
-
-            while (this.resultSet.next()) {
-                this.instanciarObjetoDelResultSet();
-                materiales.add(this.material);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    obj -> {
+                        try {
+                            String valor = "%" + filtro.trim().toLowerCase() + "%";
+                            for (int i = 1; i <= 4; i++) {
+                                this.statement.setString(i, valor);
+                            }
+                            this.statement.setInt(5, limite);
+                            this.statement.setInt(6, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    null
+            );
         } finally {
-            try {
-                this.cerrarConexion();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            this.cargarRelaciones = true;
         }
-
-        return materiales;
     }
 
     @Override
@@ -386,53 +452,96 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
      * Lista materiales vigentes por sede y filtro dinámico (título o autor)
      * usando listarTodos genérico.
      */
-    public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo) {
+    @Override
+    public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo, int limite, int offset) {
         String sql;
         if (porTitulo) {
             sql = """
-            SELECT DISTINCT m.*
-            FROM BIB_MATERIALES m
-            JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
-            WHERE m.VIGENTE = TRUE
-              AND e.SEDE_IDSEDE = ?
-              AND LOWER(m.TITULO) LIKE ?
-            """;
+        SELECT DISTINCT m.*
+        FROM BIB_MATERIALES m
+        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+        WHERE m.VIGENTE = TRUE
+          AND e.SEDE_IDSEDE = ?
+          AND LOWER(m.TITULO) LIKE ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
+        """;
         } else {
             sql = """
-            SELECT DISTINCT m.*
-            FROM BIB_MATERIALES m
-            JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
-            JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
-            JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
-            WHERE m.VIGENTE = TRUE
-              AND e.SEDE_IDSEDE = ?
-              AND c.TIPO_CREADOR = 'AUTOR'
-              AND (
-                  LOWER(c.NOMBRE) LIKE ?
-                  OR LOWER(c.PATERNO) LIKE ?
-                  OR LOWER(c.MATERNO) LIKE ?
-                  OR LOWER(c.SEUDONIMO) LIKE ?
-              )
-            """;
+        SELECT DISTINCT m.*
+        FROM BIB_MATERIALES m
+        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+        JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
+        JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
+        WHERE m.VIGENTE = TRUE
+          AND e.SEDE_IDSEDE = ?
+          AND c.TIPO_CREADOR = 'AUTOR'
+          AND (
+              LOWER(c.NOMBRE) LIKE ?
+              OR LOWER(c.PATERNO) LIKE ?
+              OR LOWER(c.MATERNO) LIKE ?
+              OR LOWER(c.SEUDONIMO) LIKE ?
+          )
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
+        """;
         }
 
-        // Consumer para bindear parámetros:
         Consumer<Object> binder = params -> {
             try {
-                String likeFiltro = "%" + filtro.toLowerCase().trim() + "%";
+                String likeFiltro = "%" + filtro.trim().toLowerCase() + "%";
                 this.statement.setInt(1, idSede);
                 this.statement.setString(2, likeFiltro);
                 if (!porTitulo) {
                     this.statement.setString(3, likeFiltro);
                     this.statement.setString(4, likeFiltro);
                     this.statement.setString(5, likeFiltro);
+                    this.statement.setInt(6, limite);
+                    this.statement.setInt(7, offset);
+                } else {
+                    this.statement.setInt(3, limite);
+                    this.statement.setInt(4, offset);
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         };
 
-        return this.listarTodos(sql, binder, null);
+        this.cargarRelaciones = false;
+        try {
+            return this.listarTodos(sql, binder, null);
+        } finally {
+            this.cargarRelaciones = true;
+        }
+    }
+
+    @Override
+    public List<MaterialesDTO> listarTodosPaginado(int limite, int offset) {
+        String sql = """
+    SELECT *
+    FROM BIB_MATERIALES
+    ORDER BY TITULO
+    LIMIT ? OFFSET ?
+    """;
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        int[] p = (int[]) params;
+                        try {
+                            this.statement.setInt(1, p[0]);
+                            this.statement.setInt(2, p[1]);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new int[]{limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true; 
+        }
     }
 
 }

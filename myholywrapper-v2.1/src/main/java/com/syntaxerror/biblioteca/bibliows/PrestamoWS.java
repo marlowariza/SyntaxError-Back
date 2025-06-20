@@ -109,11 +109,10 @@ public class PrestamoWS {
     @WebMethod(operationName = "solicitarPrestamo")
     public void solicitarPrestamo(
             @WebParam(name = "idPersona") Integer idPersona,
-            @WebParam(name = "idMaterial") Integer idMaterial,
-            @WebParam(name = "idSede") Integer idSede
+            @WebParam(name = "idEjemplares") ArrayList<Integer> idEjemplares
     ) {
         try {
-            prestamoBO.solicitarPrestamo(idPersona, idMaterial, idSede);
+            prestamoBO.solicitarPrestamo(idPersona, idEjemplares);
         } catch (BusinessException | java.text.ParseException e) {
             throw new WebServiceException("Error al solicitar préstamo: " + e.getMessage());
         }
@@ -154,7 +153,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosSolicitadosPorPersona")
     public ArrayList<PrestamosDTO> listarPrestamosSolicitadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
@@ -163,7 +162,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosDevueltosPorPersona")
     public ArrayList<PrestamosDTO> listarPrestamosDevueltosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
@@ -172,7 +171,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosAtrasadosPorPersona")
     public ArrayList<PrestamosDTO> listarPrestamosAtrasadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
@@ -181,22 +180,22 @@ public class PrestamoWS {
             throw new WebServiceException("Error al listar préstamos activos por persona: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosSolicitados")
     public ArrayList<PrestamosDTO> listarPrestamosSolicitados() {
         return prestamoBO.listarPrestamosSolicitados();
     }
-    
+
     @WebMethod(operationName = "listarPrestamosAtrasados")
     public ArrayList<PrestamosDTO> listarPrestamosAtrasados() {
         return prestamoBO.listarPrestamosAtrasados();
     }
-    
+
     @WebMethod(operationName = "listarPrestamosDevueltos")
     public ArrayList<PrestamosDTO> listarPrestamosDevueltos() {
         return prestamoBO.listarPrestamosDevueltos();
     }
-    
+
     @WebMethod(operationName = "listarPrestamosNoCulminados")
     public ArrayList<PrestamosDTO> listarPrestamosNoCulminados() {
         return prestamoBO.listarPrestamosNoCulminados();

@@ -34,8 +34,17 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
 
         //si es autoincremental, se salta el (1,ID)
         this.statement.setDate(1, new Date(this.prestamo.getFechaSolicitud().getTime()));
-        this.statement.setDate(2, new Date(this.prestamo.getFechaPrestamo().getTime()));
-        this.statement.setDate(3, new Date(this.prestamo.getFechaDevolucion().getTime()));
+        if (this.prestamo.getFechaPrestamo() != null) {
+            this.statement.setDate(2, new Date(this.prestamo.getFechaPrestamo().getTime()));
+        } else {
+            this.statement.setDate(2, null);
+        }
+
+        if (this.prestamo.getFechaDevolucion() != null) {
+            this.statement.setDate(3, new Date(this.prestamo.getFechaDevolucion().getTime()));
+        } else {
+            this.statement.setDate(3, null);
+        }
         this.statement.setInt(4, this.prestamo.getPersona().getIdPersona());
     }
 
@@ -43,8 +52,17 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
     protected void incluirValorDeParametrosParaModificacion() throws SQLException {
 
         this.statement.setDate(1, new Date(this.prestamo.getFechaSolicitud().getTime()));
-        this.statement.setDate(2, new Date(this.prestamo.getFechaPrestamo().getTime()));
-        this.statement.setDate(3, new Date(this.prestamo.getFechaDevolucion().getTime()));
+        if (this.prestamo.getFechaPrestamo() != null) {
+            this.statement.setDate(2, new Date(this.prestamo.getFechaPrestamo().getTime()));
+        } else {
+            this.statement.setDate(2, null);
+        }
+
+        if (this.prestamo.getFechaDevolucion() != null) {
+            this.statement.setDate(3, new Date(this.prestamo.getFechaDevolucion().getTime()));
+        } else {
+            this.statement.setDate(3, null);
+        }
         this.statement.setInt(4, this.prestamo.getPersona().getIdPersona());
         this.statement.setInt(5, this.prestamo.getIdPrestamo());
         //En modificar el ID va al ultimo
@@ -135,7 +153,5 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 idPersona
         );
     }
-
-
 
 }

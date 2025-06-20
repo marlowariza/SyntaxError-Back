@@ -227,4 +227,27 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         return null;
     }
 
+    @Override
+    public List<PersonasDTO> listarTodosPaginado(int limite, int offset) {
+        String sql = """
+        SELECT *
+        FROM BIB_PERSONAS
+        ORDER BY NOMBRE, PATERNO, MATERNO
+        LIMIT ? OFFSET ?
+    """;
+
+        return (List<PersonasDTO>) this.listarTodos(
+                sql,
+                obj -> {
+                    try {
+                        this.statement.setInt(1, limite);
+                        this.statement.setInt(2, offset);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                null
+        );
+    }
+
 }

@@ -144,8 +144,7 @@ public abstract class DAOImplBase {
     }
 
     protected String generarSQLParaInsercion() {
-        // sentencia SQL a generar es similar a
-        // INSERT INTO INV_ALMACENES (NOMBRE, ALMACEN_CENTRAL) VALUES (?,?)
+
         String sql = "INSERT INTO ";
         sql = sql.concat(this.nombreTabla);
         sql = sql.concat("(");
@@ -169,8 +168,7 @@ public abstract class DAOImplBase {
     }
 
     protected String generarSQLParaModificacion() {
-        // sentencia SQL a generar es similar a
-        // UPDATE INV_ALMACENES SET NOMBRE=?, ALMACEN_CENTRAL=? WHERE ALMACEN_ID=?
+
         String sql = "UPDATE ";
         sql = sql.concat(this.nombreTabla);
         sql = sql.concat(" SET ");
@@ -198,8 +196,7 @@ public abstract class DAOImplBase {
     }
 
     protected String generarSQLParaEliminacion() {
-        // sentencia SQL a generar es similar a
-        // DELETE FROM INV_ALMACENES WHERE ALMACEN_ID=?
+
         String sql = "DELETE FROM ";
         sql = sql.concat(this.nombreTabla);
         sql = sql.concat(" WHERE ");
@@ -218,9 +215,7 @@ public abstract class DAOImplBase {
     }
 
     protected String generarSQLParaObtenerPorId() {
-        // sentencia SQL a generar es similar a
-        // SELECT ALMACEN_ID, NOMBRE, ALMACEN_CENTRAL FROM INV_ALMACENES WHERE
-        // ALMACEN_ID = ?
+
         String sql = "SELECT ";
         String sql_columnas = "";
         String sql_predicado = "";
@@ -246,8 +241,7 @@ public abstract class DAOImplBase {
     }
 
     protected String generarSQLParaListarTodos() {
-        // sentencia SQL a generar es similar a
-        // SELECT ALMACEN_ID, NOMBRE, ALMACEN_CENTRAL FROM INV_ALMACENES
+
         String sql = "SELECT ";
         String sql_columnas = "";
         for (Columna columna : this.listaColumnas) {
@@ -312,29 +306,6 @@ public abstract class DAOImplBase {
         }
     }
 
-    //ListarTodos anterior, el nuevo es para los reportes tmb
-    
-//    public List listarTodos() {
-//        List lista = new ArrayList<>();
-//        try {
-//            this.abrirConexion();
-//            String sql = this.generarSQLParaListarTodos();
-//            this.colocarSQLenStatement(sql);
-//            this.ejecutarConsultaEnBD();
-//            while (this.resultSet.next()) {
-//                agregarObjetoALaLista(lista);
-//            }
-//        } catch (SQLException ex) {
-//            System.err.println("Error al intentar listarTodos - " + ex);
-//        } finally {
-//            try {
-//                this.cerrarConexion();
-//            } catch (SQLException ex) {
-//                System.err.println("Error al cerrar la conexión - " + ex);
-//            }
-//        }
-//        return lista;
-//    }
     public List listarTodos() {
         String sql = null;
         Consumer incluirValorDeParametros = null;

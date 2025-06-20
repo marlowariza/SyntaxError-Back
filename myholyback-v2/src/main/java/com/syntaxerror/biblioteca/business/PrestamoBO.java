@@ -17,6 +17,7 @@ import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
+import java.util.List;
 
 public class PrestamoBO {
 
@@ -116,38 +117,106 @@ public class PrestamoBO {
         BusinessValidator.validarId(idMaterial, "material");
         return new PrestamoEjemplarDAOImpl().contarPrestamosPorIdMaterial(idMaterial);
     }
+//
+//    public void solicitarPrestamo(Integer idPersona, Integer idMaterial, Integer idSede) throws BusinessException, ParseException {
+//        // Validaciones iniciales
+//        BusinessValidator.validarId(idPersona, "persona");
+//        BusinessValidator.validarId(idMaterial, "material");
+//        BusinessValidator.validarId(idSede, "sede");
+//
+//        PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
+//        if (persona == null) {
+//            throw new BusinessException("No se encontró a la persona solicitante.");
+//        }
+//
+//        // Validar si tiene sanciones activas
+//        new SancionBO().verificarSancionesActivas(idPersona);
+//
+//        // Verificar límite de préstamos activos
+//        int prestamosActivos = this.contarPrestamosActivosPorUsuario(idPersona);
+//        int limite = new PersonaBO().calcularLimitePrestamos(persona.getCodigo());
+//
+//        if (prestamosActivos >= limite) {
+//            throw new BusinessException("Has alcanzado el límite de préstamos activos permitido.");
+//        }
+//
+//        // Buscar ejemplar físico disponible del material en la sede indicada
+//        EjemplaresDTO ejemplarDisponible = new EjemplarBO()
+//                .obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(idMaterial, idSede);
+//
+//        if (ejemplarDisponible == null) {
+//            throw new BusinessException("No hay ejemplares físicos disponibles de este material en la sede seleccionada.");
+//        }
+//
+//        // Insertar nuevo préstamo
+//        PrestamosDTO prestamo = new PrestamosDTO();
+//        Date fechaActual = new Date();
+//        prestamo.setFechaSolicitud(fechaActual);
+//        prestamo.setFechaPrestamo(null);
+//        prestamo.setFechaDevolucion(null);
+//        prestamo.setPersona(persona);
+//
+//        int idPrestamo = this.prestamoDAO.insertar(prestamo);
+//
+//        // Insertar relación en PrestamoEjemplar (usando parámetros individuales)
+//        new PrestamoEjemplarBO().insertar(
+//                idPrestamo,
+//                ejemplarDisponible.getIdEjemplar(),
+//                EstadoPrestamoEjemplar.SOLICITADO,
+//                null
+//        );
+//
+//        // Marcar ejemplar como no disponible
+//        ejemplarDisponible.setDisponible(false);
+//        new EjemplarBO().modificar(
+//                ejemplarDisponible.getIdEjemplar(),
+//                ejemplarDisponible.getFechaAdquisicion(),
+//                false,
+//                ejemplarDisponible.getTipo(),
+//                ejemplarDisponible.getFormatoDigital(),
+//                ejemplarDisponible.getUbicacion(),
+//                ejemplarDisponible.getSede().getIdSede(),
+//                ejemplarDisponible.getMaterial().getIdMaterial()
+//        );
+//    }
 
-    public void solicitarPrestamo(Integer idPersona, Integer idMaterial, Integer idSede) throws BusinessException, ParseException {
-        // Validaciones iniciales
+    public void solicitarPrestamo(Integer idPersona, List<Integer> idEjemplares) throws BusinessException, ParseException {
+
+        // Validar entrada
         BusinessValidator.validarId(idPersona, "persona");
-        BusinessValidator.validarId(idMaterial, "material");
-        BusinessValidator.validarId(idSede, "sede");
+        if (idEjemplares == null || idEjemplares.isEmpty()) {
+            throw new BusinessException("Debe seleccionar al menos un ejemplar.");
+        }
 
         PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
         if (persona == null) {
             throw new BusinessException("No se encontró a la persona solicitante.");
         }
-
-        // Validar si tiene sanciones activas
+        //Validar sanciones y límites
         new SancionBO().verificarSancionesActivas(idPersona);
 
-        // Verificar límite de préstamos activos
-        int prestamosActivos = this.contarPrestamosActivosPorUsuario(idPersona);
+        int ejemplaresEnProceso = this.contarEjemplaresEnProcesoPorUsuario(idPersona);
         int limite = new PersonaBO().calcularLimitePrestamos(persona.getCodigo());
 
-        if (prestamosActivos >= limite) {
-            throw new BusinessException("Has alcanzado el límite de préstamos activos permitido.");
+        if (ejemplaresEnProceso + idEjemplares.size() > limite) {
+            throw new BusinessException("Has alcanzado el límite de ejemplares permitidos en proceso.");
         }
 
-        // Buscar ejemplar físico disponible del material en la sede indicada
-        EjemplaresDTO ejemplarDisponible = new EjemplarBO()
-                .obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(idMaterial, idSede);
-
-        if (ejemplarDisponible == null) {
-            throw new BusinessException("No hay ejemplares físicos disponibles de este material en la sede seleccionada.");
+        // Cargar ejemplares REALES de la BD y validar disponibilidad
+        EjemplarBO ejemplarBO = new EjemplarBO();
+        List<EjemplaresDTO> ejemplares = new ArrayList<>();
+        for (Integer idEjemplar : idEjemplares) {
+            EjemplaresDTO ej = ejemplarBO.obtenerPorId(idEjemplar);
+            if (ej == null) {
+                throw new BusinessException("El ejemplar con ID " + idEjemplar + " no existe.");
+            }
+            if (!ej.getDisponible()) {
+                throw new BusinessException("El ejemplar con ID " + idEjemplar + " no está disponible.");
+            }
+            ejemplares.add(ej);
         }
 
-        // Insertar nuevo préstamo
+        // Crear préstamo principal
         PrestamosDTO prestamo = new PrestamosDTO();
         Date fechaActual = new Date();
         prestamo.setFechaSolicitud(fechaActual);
@@ -157,26 +226,27 @@ public class PrestamoBO {
 
         int idPrestamo = this.prestamoDAO.insertar(prestamo);
 
-        // Insertar relación en PrestamoEjemplar (usando parámetros individuales)
-        new PrestamoEjemplarBO().insertar(
-                idPrestamo,
-                ejemplarDisponible.getIdEjemplar(),
-                EstadoPrestamoEjemplar.SOLICITADO,
-                null
-        );
-
-        // Marcar ejemplar como no disponible
-        ejemplarDisponible.setDisponible(false);
-        new EjemplarBO().modificar(
-                ejemplarDisponible.getIdEjemplar(),
-                ejemplarDisponible.getFechaAdquisicion(),
-                false,
-                ejemplarDisponible.getTipo(),
-                ejemplarDisponible.getFormatoDigital(),
-                ejemplarDisponible.getUbicacion(),
-                ejemplarDisponible.getSede().getIdSede(),
-                ejemplarDisponible.getMaterial().getIdMaterial()
-        );
+        // Insertar cada relación y marcar no disponible
+        PrestamoEjemplarBO prestamoEjemplarBO = new PrestamoEjemplarBO();
+        for (EjemplaresDTO ej : ejemplares) {
+            prestamoEjemplarBO.insertar(
+                    idPrestamo,
+                    ej.getIdEjemplar(),
+                    EstadoPrestamoEjemplar.SOLICITADO,
+                    null
+            );
+            ej.setDisponible(false);
+            ejemplarBO.modificar(
+                    ej.getIdEjemplar(),
+                    ej.getFechaAdquisicion(),
+                    false,
+                    ej.getTipo(),
+                    ej.getFormatoDigital(),
+                    ej.getUbicacion(),
+                    ej.getSede().getIdSede(),
+                    ej.getMaterial().getIdMaterial()
+            );
+        }
     }
 
     public ArrayList<PrestamosDTO> listarPrestamosDevueltos() {
@@ -220,7 +290,7 @@ public class PrestamoBO {
 
         return resultado;
     }
-    
+
     public ArrayList<PrestamosDTO> listarPrestamosPorEstadoPersona(int idPersona, EstadoPrestamoEjemplar estado) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
 
@@ -306,4 +376,12 @@ public class PrestamoBO {
 
         return prestamos;
     }
+
+    //CUENTA CANTIDAD DE EJEMPLARES (SOLICITADOS,PRESTADOS,ATRASADOS) PARA LA VALIDACION
+    //DE LIMITE POR CANTIDAD DE EJEMPLARES 
+    public int contarEjemplaresEnProcesoPorUsuario(int idPersona) throws BusinessException {
+        BusinessValidator.validarId(idPersona, "persona");
+        return new PrestamoEjemplarDAOImpl().contarEjemplaresEnProcesoPorIdPersona(idPersona);
+    }
+
 }

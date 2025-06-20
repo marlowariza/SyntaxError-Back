@@ -17,6 +17,7 @@ import java.util.Date;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.SedeDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
+import java.util.List;
 
 public class PersonaBO {
 
@@ -133,6 +134,12 @@ public class PersonaBO {
         return this.personaDAO.listarTodos();
     }
 
+    public List<PersonasDTO> listarTodosPaginado(int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.personaDAO.listarTodosPaginado(limite, offset);
+    }
+
     private void validarDatos(String codigo, String nombre, String paterno, String materno, String direccion,
             String telefono, String correo, String contrasenha,
             TipoPersona tipo, Turnos turno,
@@ -240,15 +247,17 @@ public class PersonaBO {
 
         // Si contiene '@', validar como correo
         if (identificador.contains("@")) {
-            if (!(identificador.endsWith(".admin@myholylib.edu.pe")
-                    || identificador.endsWith(".teacher@myholylib.edu.pe")
-                    || identificador.endsWith(".student@myholylib.edu.pe"))) {
+            if (!(identificador.endsWith("@myholylib.edu.pe")
+                    || identificador.endsWith("@britanico.edu.pe")
+                    || identificador.endsWith("@gmail.edu.pe")
+                    || identificador.endsWith("@hotmail.edu.pe"))) {
                 throw new BusinessException("El correo ingresado no tiene un dominio válido.");
             }
         } else {
             // Si es código, debe tener 6 caracteres
-            if (identificador.length() != 6) {
-                throw new BusinessException("El código debe tener exactamente 6 caracteres.");
+            if (identificador.length() != 6 || !(identificador.charAt(0) == 'E'
+                    || identificador.charAt(0) == 'P' || identificador.charAt(0) == 'A')) {
+                throw new BusinessException("El código no es válido .");
             }
         }
 

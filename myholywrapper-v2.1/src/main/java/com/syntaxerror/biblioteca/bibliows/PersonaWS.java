@@ -13,6 +13,7 @@ import jakarta.xml.ws.WebServiceException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @WebService(serviceName = "PersonaWS")
 public class PersonaWS {
@@ -135,4 +136,17 @@ public class PersonaWS {
             throw new WebServiceException("Error al modificar contraseña: " + e.getMessage());
         }
     }
+
+    @WebMethod(operationName = "listarPersonasPaginado")
+    public List<PersonasDTO> listarPersonasPaginado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return personaBO.listarTodosPaginado(limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar personas paginadas: " + e.getMessage());
+        }
+    }
+
 }

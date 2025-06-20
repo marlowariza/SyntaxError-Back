@@ -12,22 +12,26 @@ public interface MaterialDAO {
 
     public ArrayList<MaterialesDTO> listarTodos();
 
+    public List<MaterialesDTO> listarTodosPaginado(int limite, int offset);
+
     public Integer modificar(MaterialesDTO material);
 
     public Integer eliminar(MaterialesDTO material);
 
-    public ArrayList<MaterialesDTO> listarPorTituloConteniendo(String texto);
+    public List<MaterialesDTO> listarPorTituloConteniendo(String texto, int limite, int offset);
 
-    ArrayList<MaterialesDTO> listarVigentesPorTituloConteniendo(String texto);
+    public ArrayList<MaterialesDTO> listarVigentesPorTituloConteniendo(String texto, int limite, int offset);
 
-    ArrayList<MaterialesDTO> listarPorSede(Integer idSede);
+    public List<MaterialesDTO> listarMaterialesVigentesPorCreadorFiltro(String filtro, int limite, int offset);
 
-    List<MaterialesDTO> listarVigentesPorSede(Integer idSede);
+   public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset) ;
+
+    public List<MaterialesDTO> listarVigentesPorSede(Integer idSede, int limite, int offset);
 
     List<MaterialesDTO> listarMasSolicitados(int limite, int offset);
 
     List<MaterialesDTO> listarMasRecientes(int limite, int offset);
 
-    List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo);
+    public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo, int limite, int offset);
 
 }

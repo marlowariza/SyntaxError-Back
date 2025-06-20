@@ -2,11 +2,8 @@ package com.syntaxerror.biblioteca.bibliows;
 
 import com.syntaxerror.biblioteca.business.MaterialBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
-import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
-import com.syntaxerror.biblioteca.model.TemasDTO;
-import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import jakarta.jws.WebService;
@@ -104,42 +101,62 @@ public class MaterialWS {
     }
 
     @WebMethod(operationName = "listarEjemplaresMaterial")
-    public ArrayList<EjemplaresDTO> listarEjemplaresMaterial(
-            @WebParam(name = "idMaterial") Integer idMaterial
-    ) {
+    public List<EjemplaresDTO> listarEjemplaresMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
         try {
-            return materialBO.listarEjemplaresMaterial(idMaterial);
-        } catch (Exception e) {
-            throw new WebServiceException("Error al modificar material: " + e.getMessage());
+            return materialBO.listarEjemplaresMaterial(idMaterial, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares: " + e.getMessage());
         }
     }
 
     @WebMethod(operationName = "listarMaterialPorCaracteres")
-    public ArrayList<MaterialesDTO> listarMaterialPorCaracteres(@WebParam(name = "caracteres") String car) {
+    public List<MaterialesDTO> listarMaterialPorCaracteres(
+            @WebParam(name = "caracteres") String car,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
         try {
-            return materialBO.listarPorCaracteres(car);
-        } catch (Exception e) {
-            throw new WebServiceException("Error al listar Material por caracteres" + e.getMessage());
+            return materialBO.listarPorCaracteres(car, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar por caracteres: " + e.getMessage());
         }
     }
 
     @WebMethod(operationName = "listarPorCaracter_Creador")
-    public ArrayList<MaterialesDTO> listarPorCaracter_Creador(@WebParam(name = "caracteres") String car) {
+    public List<MaterialesDTO> listarPorCaracter_Creador(
+            @WebParam(name = "caracteres") String car,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
         try {
-            return (ArrayList<MaterialesDTO>) materialBO.listarPorCaracter_Creador(car);
+            return materialBO.listarPorCaracter_Creador(car, limite, pagina);
         } catch (BusinessException e) {
-            throw new WebServiceException("Error al listar Material por car_creadores" + e.getMessage());
+            throw new WebServiceException("Error al listar por creador: " + e.getMessage());
         }
     }
 
     @WebMethod(operationName = "listarMaterialesPorSede")
-    public ArrayList<MaterialesDTO> listarMaterialesPorSede(
-            @WebParam(name = "idSede") Integer idSede
-    ) {
+    public List<MaterialesDTO> listarMaterialesPorSede(
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
         try {
-            return materialBO.listarMaterialesPorSede(idSede);
+            return materialBO.listarMaterialesPorSede(idSede, limite, pagina);
         } catch (BusinessException e) {
-            throw new WebServiceException("Error al listar creadores por material: " + e.getMessage());
+            throw new WebServiceException("Error al listar materiales por sede: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarMaterialesVigentesPorSede")
+    public List<MaterialesDTO> listarMaterialesVigentesPorSede(
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
+        try {
+            return materialBO.listarMaterialesVigentesPorSede(idSede, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales vigentes por sede: " + e.getMessage());
         }
     }
 
@@ -171,12 +188,27 @@ public class MaterialWS {
     public List<MaterialesDTO> listarMaterialesPorSedeYFiltro(
             @WebParam(name = "idSede") Integer idSede,
             @WebParam(name = "filtro") String filtro,
-            @WebParam(name = "porTitulo") boolean porTitulo
-    ) {
+            @WebParam(name = "porTitulo") boolean porTitulo,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) {
         try {
-            return materialBO.listarPorSedeYFiltro(idSede, filtro, porTitulo);
+            return materialBO.listarPorSedeYFiltro(idSede, filtro, porTitulo, limite, pagina);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar materiales por sede y filtro: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "listarMaterialesPaginado")
+    public List<MaterialesDTO> listarMaterialesPaginado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return materialBO.listarTodosPaginado(limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
         }
     }
 

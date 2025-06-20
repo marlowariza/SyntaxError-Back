@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.persistance.dao;
 
 import com.syntaxerror.biblioteca.model.PersonasDTO;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface PersonaDAO {
 
@@ -16,5 +17,7 @@ public interface PersonaDAO {
     public Integer eliminar(PersonasDTO persona);
 
     PersonasDTO obtenerPorCredenciales(String identificador, String contrasenha);
+
+    public List<PersonasDTO> listarTodosPaginado(int limite, int offset);
 
 }
