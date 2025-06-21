@@ -22,6 +22,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     private MaterialesDTO material;
     private CreadorMaterialDAOImpl creadoresMaterialesDAO;
     private MaterialTemaDAOImpl materialesTemasDAO;
+    private EditorialDAOImpl editorialDAO;
 
     private boolean cargarRelaciones = true;
 
@@ -31,6 +32,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material = null;
         this.creadoresMaterialesDAO = new CreadorMaterialDAOImpl();
         this.materialesTemasDAO = new MaterialTemaDAOImpl();
+        this.editorialDAO = new EditorialDAOImpl();
     }
 
     @Override
@@ -45,16 +47,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.listaColumnas.add(new Columna("EDITORIAL_IDEDITORIAL", false, false));
     }
 
-    @Override
-    protected void incluirValorDeParametrosParaInsercion() throws SQLException {
-        this.statement.setString(1, this.material.getTitulo());
-        this.statement.setString(2, this.material.getEdicion());
-        this.statement.setInt(3, this.material.getAnioPublicacion());
-        this.statement.setString(4, this.material.getPortada());
-        this.statement.setInt(5, this.material.getVigente() ? 1 : 0);
-        this.statement.setInt(6, this.material.getNivel().getIdNivel());
-        this.statement.setInt(7, this.material.getEditorial().getIdEditorial());
-    }
+    
 
     @Override
     protected void incluirValorDeParametrosParaModificacion() throws SQLException {
@@ -92,9 +85,9 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         NivelesInglesDTO nivel = new NivelesInglesDTO();
         nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
         this.material.setNivel(nivel);
-
-        EditorialesDTO editorial = new EditorialesDTO();
-        editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
+        
+        
+        EditorialesDTO editorial = editorialDAO.obtenerPorId(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
         this.material.setEditorial(editorial);
 
         // Cargar relaciones
