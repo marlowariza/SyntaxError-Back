@@ -25,6 +25,8 @@ public interface PrestamoEjemplarDAO {
     int contarPrestamosAtrasadosPorIdPersona(int idPersona);
 
     int contarPrestamosPorIdMaterial(int idMaterial);
+    
+    public int contarEjemplaresEnProcesoPorIdPersona(int idPersona);
 
     public ArrayList<PrestamosDeEjemplaresDTO> listarPrestamosDevueltos();
 

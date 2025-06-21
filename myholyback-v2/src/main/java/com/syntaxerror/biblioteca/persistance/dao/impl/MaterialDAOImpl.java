@@ -15,6 +15,7 @@ import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import java.util.function.Consumer;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
@@ -394,6 +395,48 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         }
     }
 
+//    @Override
+//public List<MaterialesDTO> listarPaginadoPorAutor(String filtro, int limite, int offset) {
+//    String sql = """
+//    SELECT %s
+//    FROM BIB_MATERIALES m
+//    JOIN BIB_MATERIALES_CREADORES mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL
+//    JOIN BIB_CREADORES c ON mc.CREADOR_IDCREADOR = c.ID_CREADOR
+//    WHERE m.VIGENTE = TRUE
+//      AND c.TIPO_CREADOR = 'AUTOR'
+//      AND c.ACTIVO = 1
+//      AND (
+//          LOWER(c.NOMBRE) LIKE ?
+//          OR LOWER(c.PATERNO) LIKE ?
+//          OR LOWER(c.MATERNO) LIKE ?
+//          OR LOWER(c.SEUDONIMO) LIKE ?
+//      )
+//    ORDER BY m.TITULO
+//    LIMIT ? OFFSET ?
+//    """.formatted(this.generarListaDeCamposConAlias("m"));
+//
+//    this.cargarRelaciones = false;
+//    try {
+//        return (List<MaterialesDTO>) this.listarTodos(
+//                sql,
+//                params -> {
+//                    try {
+//                        String valor = "%" + filtro.trim().toLowerCase() + "%";
+//                        for (int i = 1; i <= 4; i++) {
+//                            this.statement.setString(i, valor);
+//                        }
+//                        this.statement.setInt(5, limite);
+//                        this.statement.setInt(6, offset);
+//                    } catch (SQLException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                },
+//                null
+//        );
+//    } finally {
+//        this.cargarRelaciones = true;
+//    }
+//}
     @Override
     public List<MaterialesDTO> listarMasSolicitados(int limite, int offset) {
         String sql = """
@@ -406,43 +449,53 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         LIMIT ? OFFSET ?
     """;
 
-        return (List<MaterialesDTO>) this.listarTodos(
-                sql,
-                params -> {
-                    try {
-                        int[] p = (int[]) params;
-                        this.statement.setInt(1, p[0]); // limite
-                        this.statement.setInt(2, p[1]); // offset
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                new int[]{limite, offset}
-        );
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            int[] p = (int[]) params;
+                            this.statement.setInt(1, p[0]); // limite
+                            this.statement.setInt(2, p[1]); // offset
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new int[]{limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
     }
 
     @Override
     public List<MaterialesDTO> listarMasRecientes(int limite, int offset) {
         String sql = """
         SELECT *
-    FROM BIB_MATERIALES
-    ORDER BY ANHIO_PUBLICACION DESC, ID_MATERIAL DESC
-    LIMIT ? OFFSET ?
+        FROM BIB_MATERIALES
+        ORDER BY ANHIO_PUBLICACION DESC, ID_MATERIAL DESC
+        LIMIT ? OFFSET ?
     """;
 
-        return (List<MaterialesDTO>) this.listarTodos(
-                sql,
-                params -> {
-                    try {
-                        int[] p = (int[]) params;
-                        this.statement.setInt(1, p[0]); // limite
-                        this.statement.setInt(2, p[1]); // offset
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                new int[]{limite, offset}
-        );
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            int[] p = (int[]) params;
+                            this.statement.setInt(1, p[0]); // limite
+                            this.statement.setInt(2, p[1]); // offset
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new int[]{limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
     }
 
     /**
@@ -543,29 +596,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
     @Override
     public int contarTodos() {
-        String sql = "SELECT COUNT(*) AS total FROM BIB_MATERIALES";
-        int total = 0;
-
-        this.cargarRelaciones = false;//porseacaso, aunque no importaria
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.ejecutarConsultaEnBD();
-            if (this.resultSet.next()) {
-                total = this.resultSet.getInt("total");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al contar todos los materiales", e);
-        } finally {
-            this.cargarRelaciones = true;
-            try {
-                this.cerrarConexion();
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al cerrar la conexión después de contar todos", e);
-            }
-        }
-
-        return total;
+        return super.contar();
     }
 
     @Override
@@ -576,6 +607,142 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     @Override
     public List<TemasDTO> listarTemasPorMaterial(Integer idMaterial) {
         return this.materialesTemasDAO.listarPorMaterial(idMaterial);
+    }
+
+    @Override
+    public List<MaterialesDTO> listarPaginadoPorNivel(Nivel nivel, int limite, int offset) {
+        String sql = """
+        SELECT %s
+        FROM BIB_MATERIALES m
+        JOIN BIB_NIVELES_INGLES n ON m.NIVEL_IDNIVEL = n.ID_NIVEL
+        WHERE n.NIVEL = ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
+    """.formatted(this.generarListaDeCamposConAlias("m"));
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            Object[] p = (Object[]) params;
+                            this.statement.setString(1, nivel.name());
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new Object[]{nivel.name(), limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
+    }
+
+    @Override
+    public List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int offset) {
+        String sql = """
+        SELECT %s
+        FROM BIB_MATERIALES m
+        JOIN BIB_MATERIALES_TEMAS mt ON m.ID_MATERIAL = mt.MATERIAL_IDMATERIAL
+        JOIN BIB_TEMAS t ON mt.TEMA_IDTEMA = t.ID_TEMA
+        WHERE UPPER(TRIM(t.DESCRIPCION)) = ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
+    """.formatted(this.generarListaDeCamposConAlias("m"));
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            Object[] p = (Object[]) params;
+                            this.statement.setString(1, descripcionTema.trim().toUpperCase());
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new Object[]{descripcionTema, limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
+    }
+
+    @Override
+    public List<MaterialesDTO> listarPaginadoPorEditorial(String nombreEditorial, int limite, int offset) {
+        String sql = """
+    SELECT %s
+    FROM BIB_MATERIALES m
+    JOIN BIB_EDITORIALES e ON m.EDITORIAL_IDEDITORIAL = e.ID_EDITORIAL
+    WHERE UPPER(TRIM(e.NOMBRE)) = ?
+    ORDER BY m.TITULO
+    LIMIT ? OFFSET ?
+    """.formatted(this.generarListaDeCamposConAlias("m"));
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            Object[] p = (Object[]) params;
+                            this.statement.setString(1, nombreEditorial.trim().toUpperCase());
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new Object[]{nombreEditorial, limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
+    }
+
+    @Override
+    public String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial) {
+        String nombre = null;
+        String sql = """
+        SELECT 
+            CASE 
+                WHEN TRIM(c.SEUDONIMO) IS NOT NULL AND TRIM(c.SEUDONIMO) != '' 
+                THEN TRIM(c.SEUDONIMO)
+                ELSE CONCAT_WS(' ', TRIM(c.NOMBRE), TRIM(c.PATERNO), TRIM(c.MATERNO))
+            END AS NOMBRE_COMPLETO
+        FROM BIB_CREADORES c
+        JOIN BIB_MATERIALES_CREADORES mc ON c.ID_CREADOR = mc.CREADOR_IDCREADOR
+        WHERE mc.MATERIAL_IDMATERIAL = ?
+          AND c.ACTIVO = 1
+        ORDER BY RAND()
+        LIMIT 1
+    """;
+
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.statement.setInt(1, idMaterial);
+            this.ejecutarConsultaEnBD();
+            if (this.resultSet.next()) {
+                nombre = this.resultSet.getString("NOMBRE_COMPLETO");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error obtenerNombreCreadorRandomPorMaterial: " + e.getMessage());
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                System.err.println("Error cerrar conexión: " + e.getMessage());
+            }
+        }
+
+        return nombre;
     }
 
 }

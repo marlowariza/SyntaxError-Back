@@ -3,6 +3,7 @@ package com.syntaxerror.biblioteca.persistance.dao;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +42,13 @@ public interface MaterialDAO {
     List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial);
 
     List<TemasDTO> listarTemasPorMaterial(Integer idMaterial);
+
+    List<MaterialesDTO> listarPaginadoPorNivel(Nivel nivel, int limite, int offset);
+
+    List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int offset);
+
+    public List<MaterialesDTO> listarPaginadoPorEditorial(String nombreEditorial, int limite, int offset);
+
+    String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial);
 
 }

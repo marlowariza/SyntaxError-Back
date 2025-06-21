@@ -149,4 +149,9 @@ public class PersonaWS {
         }
     }
 
+    @WebMethod
+    public int contarPersonas() {
+        return personaBO.contarPersonas();
+    }
+
 }

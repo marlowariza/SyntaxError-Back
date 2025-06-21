@@ -250,4 +250,9 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
         );
     }
 
+    @Override
+    public int contar() {
+        return super.contar();
+    }
+
 }
