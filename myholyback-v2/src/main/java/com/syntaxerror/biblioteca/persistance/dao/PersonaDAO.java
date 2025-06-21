@@ -19,5 +19,7 @@ public interface PersonaDAO {
     PersonasDTO obtenerPorCredenciales(String identificador, String contrasenha);
 
     public List<PersonasDTO> listarTodosPaginado(int limite, int offset);
+    
+    public int contar();
 
 }

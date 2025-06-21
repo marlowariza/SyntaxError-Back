@@ -10,9 +10,6 @@ import com.syntaxerror.biblioteca.model.PrestamosDeEjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjemplarDAO {
 
@@ -254,73 +251,42 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
 
     @Override
     public int contarPrestamosAtrasadosPorIdPersona(int idPersona) {
-        int contador = 0;
-
         String sql = """
-        SELECT COUNT(DISTINCT PDE.PRESTAMO_IDPRESTAMO) AS TOTAL
+        SELECT COUNT(DISTINCT PDE.PRESTAMO_IDPRESTAMO)
         FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
         JOIN BIB_PRESTAMOS P ON P.ID_PRESTAMO = PDE.PRESTAMO_IDPRESTAMO
         WHERE P.PERSONA_IDPERSONA = ? AND PDE.ESTADO = 'ATRASADO'
     """;
 
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.statement.setInt(1, idPersona);
-            this.ejecutarConsultaEnBD();
-
-            if (this.resultSet.next()) {
-                contador = this.resultSet.getInt("TOTAL");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
+        return super.contarPorSQLyParametros(sql, stmt -> {
             try {
-                this.cerrarConexion();
+                stmt.setInt(1, idPersona);
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
-        }
-
-        return contador;
+        });
     }
 
     @Override
     public int contarPrestamosPorIdMaterial(int idMaterial) {
-        int contador = 0;
-
         String sql = """
-        SELECT COUNT(*) AS TOTAL
+        SELECT COUNT(*)
         FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
-        JOIN BIB_EJEMPLARES E ON E.ID_EJEMPLAR  = PDE.EJEMPLAR_IDEJEMPLAR
+        JOIN BIB_EJEMPLARES E ON E.ID_EJEMPLAR = PDE.EJEMPLAR_IDEJEMPLAR
         WHERE E.MATERIAL_IDMATERIAL = ?
     """;
 
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.statement.setInt(1, idMaterial);
-            this.ejecutarConsultaEnBD();
-
-            if (this.resultSet.next()) {
-                contador = this.resultSet.getInt("TOTAL");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
+        return super.contarPorSQLyParametros(sql, stmt -> {
             try {
-                this.cerrarConexion();
+                stmt.setInt(1, idMaterial);
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
-        }
-
-        return contador;
+        });
     }
 
+    @Override
     public int contarEjemplaresEnProcesoPorIdPersona(int idPersona) {
-        int contador = 0;
-
         String sql = """
         SELECT COUNT(*)
         FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
@@ -329,26 +295,13 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
           AND PDE.ESTADO IN ('SOLICITADO', 'PRESTADO', 'ATRASADO')
     """;
 
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.statement.setInt(1, idPersona);
-            this.ejecutarConsultaEnBD();
-
-            if (this.resultSet.next()) {
-                contador = this.resultSet.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
+        return super.contarPorSQLyParametros(sql, stmt -> {
             try {
-                this.cerrarConexion();
+                stmt.setInt(1, idPersona);
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
-        }
-
-        return contador;
+        });
     }
 
 }

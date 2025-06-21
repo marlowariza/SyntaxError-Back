@@ -395,11 +395,13 @@ public abstract class DAOImplBase {
         }
 
     }
+//Estos 2 ultimos metodos son para evitar el SELECT *
 
     /**
      * Genera una lista de campos separados por coma a partir de listaColumnas,
      * sin alias. Ejemplo: "ID_MATERIAL, TITULO, EDICION, ..."
-     * @return 
+     *
+     * @return
      */
     protected String generarListaDeCampos() {
         StringBuilder campos = new StringBuilder();
@@ -415,8 +417,9 @@ public abstract class DAOImplBase {
     /**
      * Genera una lista de campos con alias. Ejemplo: "m.ID_MATERIAL, m.TITULO,
      * ..."
+     *
      * @param alias
-     * @return 
+     * @return
      */
     protected String generarListaDeCamposConAlias(String alias) {
         StringBuilder campos = new StringBuilder();
@@ -428,5 +431,53 @@ public abstract class DAOImplBase {
         }
         return campos.toString();
     }
+
+    /**
+     * Cuenta la cantidad total de registros de la tabla asociada.
+     *
+     * @return Número total de registros.
+     */
+    /**
+     * Cuenta la cantidad total de registros de la tabla asociada.
+     *
+     * @return Número total de registros.
+     */
+    public int contar() {
+        String sql = "SELECT COUNT(*) FROM " + this.nombreTabla;
+        return contarPorSQLyParametros(sql, null);
+    }
+
+    /**
+     * Ejecuta una consulta COUNT(*) con parámetros dinámicos.
+     *
+     * @param sql SQL con placeholders '?'
+     * @param binder lambda para setear los parámetros en el statement.
+     * @return número total calculado por la consulta.
+     */
+    protected int contarPorSQLyParametros(String sql, Consumer<CallableStatement> binder) {
+        int contador = 0;
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            if (binder != null) {
+                binder.accept(this.statement);
+            }
+            this.ejecutarConsultaEnBD();
+            if (this.resultSet.next()) {
+                contador = this.resultSet.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error en contarPorSQLyParametros: " + ex.getMessage());
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException ex) {
+                System.err.println("Error al cerrar conexión: " + ex.getMessage());
+            }
+        }
+        return contador;
+    }
+    
+    
 
 }

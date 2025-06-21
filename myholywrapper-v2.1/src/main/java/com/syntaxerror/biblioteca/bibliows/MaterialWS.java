@@ -6,6 +6,7 @@ import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
 import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import jakarta.jws.WebService;
@@ -114,8 +115,8 @@ public class MaterialWS {
         }
     }
 
-    @WebMethod(operationName = "listarMaterialPorCaracteres")
-    public List<MaterialesDTO> listarMaterialPorCaracteres(
+    @WebMethod(operationName = "listarMaterialPorTitulo")
+    public List<MaterialesDTO> listarMaterialPorTitulo(
             @WebParam(name = "caracteres") String car,
             @WebParam(name = "limite") int limite,
             @WebParam(name = "pagina") int pagina) {
@@ -126,8 +127,8 @@ public class MaterialWS {
         }
     }
 
-    @WebMethod(operationName = "listarPorCaracter_Creador")
-    public List<MaterialesDTO> listarPorCaracter_Creador(
+    @WebMethod(operationName = "listarPorAutor")
+    public List<MaterialesDTO> listarPorAutor(
             @WebParam(name = "caracteres") String car,
             @WebParam(name = "limite") int limite,
             @WebParam(name = "pagina") int pagina) {
@@ -245,38 +246,63 @@ public class MaterialWS {
         }
     }
 
-    //En teoria con insertar y modificar se asocia automaticamente
-//    @WebMethod(operationName = "asociarMaterialTema")
-//    public Integer asociarMaterialPorTema(
-//            @WebParam(name = "idMaterial") Integer idMaterial,
-//            @WebParam(name = "idTema") Integer idTema
-//    ) throws BusinessException {
-//        try {
-//            if (materialTemaBO.existeRelacion(idMaterial, idTema)) {
-//                throw new BusinessException("La relación entre el material y el tema ya existe.");
-//            }
-//            return materialTemaBO.asociar(idMaterial, idTema);
-//        } catch (BusinessException e) {
-//            throw new WebServiceException("Error al asociar material con tema: " + e.getMessage());
-//        } catch (Exception e) {
-//            throw new WebServiceException("Error inesperado al asociar material con tema: " + e.getMessage());
-//        }
-//    }
-//
-//    @WebMethod(operationName = "asociarMaterialCreador")
-//    public Integer asociarMaterialPorCreador(
-//            @WebParam(name = "idMaterial") Integer idMaterial,
-//            @WebParam(name = "idCreador") Integer idCreador
-//    ) throws BusinessException {
-//        try {
-//            if (materialCreadorBO.existeRelacion(idMaterial, idCreador)) {
-//                throw new BusinessException("La relación entre el material y el creador ya existe.");
-//            }
-//            return materialCreadorBO.asociar(idMaterial, idCreador);
-//        } catch (BusinessException e) {
-//            throw new WebServiceException("Error al asociar material con creador: " + e.getMessage());
-//        } catch (Exception e) {
-//            throw new WebServiceException("Error inesperado al asociar material con creador: " + e.getMessage());
-//        }
-//    }
+    @WebMethod(operationName = "listarTodosPaginadoBasico")
+    public List<MaterialesDTO> listarTodosPaginadoBasico(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) throws BusinessException {
+        return materialBO.listarPaginadoPorNivel(Nivel.BASICO, limite, pagina);
+    }
+
+    @WebMethod(operationName = "listarTodosPaginadoIntermedio")
+    public List<MaterialesDTO> listarTodosPaginadoIntermedio(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) throws BusinessException {
+        return materialBO.listarPaginadoPorNivel(Nivel.INTERMEDIO, limite, pagina);
+    }
+
+    @WebMethod(operationName = "listarTodosPaginadoAvanzado")
+    public List<MaterialesDTO> listarTodosPaginadoAvanzado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) throws BusinessException {
+        return materialBO.listarPaginadoPorNivel(Nivel.AVANZADO, limite, pagina);
+    }
+
+    @WebMethod(operationName = "listarMaterialesPaginadoPorTema")
+    public List<MaterialesDTO> listarMaterialesPaginadoPorTema(
+            @WebParam(name = "descripcionTema") String descripcionTema,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) throws BusinessException {
+        return new MaterialBO().listarPaginadoPorTema(descripcionTema, limite, pagina);
+    }
+
+    @WebMethod(operationName = "listarMaterialesPaginadoPorEditorial")
+    public List<MaterialesDTO> listarPaginadoPorEditorial(@WebParam(name = "nombreEditorial") String nombreEditorial, @WebParam(name = "limite") int limite, @WebParam(name = "pagina") int pagina) throws BusinessException {
+        return materialBO.listarPaginadoPorEditorial(nombreEditorial, limite, pagina);
+    }
+    
+    @WebMethod
+    public String obtenerNombreCreadorRandomPorMaterial(
+            @WebParam(name = "idMaterial") Integer idMaterial) throws BusinessException {
+        return this.materialBO.obtenerNombreCreadorRandomPorMaterial(idMaterial);
+    }
+
+    @WebMethod
+    public int contarStockFisicoPorMaterial(@WebParam(name = "idMaterial") int idMaterial) throws BusinessException {
+        return materialBO.contarStockFisicoPorMaterial(idMaterial);
+    }
+
+    @WebMethod
+    public int contarDisponiblesFisicosPorMaterial(@WebParam(name = "idMaterial") int idMaterial) throws BusinessException {
+        return materialBO.contarDisponiblesFisicosPorMaterial(idMaterial);
+    }
+
+    @WebMethod
+    public int contarPrestadosFisicosPorMaterial(@WebParam(name = "idMaterial") int idMaterial) throws BusinessException {
+        return materialBO.contarPrestadosFisicosPorMaterial(idMaterial);
+    }
+
 }
