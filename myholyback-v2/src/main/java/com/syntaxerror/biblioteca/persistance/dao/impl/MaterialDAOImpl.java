@@ -14,11 +14,8 @@ import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.EjemplarDAOImpl;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
@@ -204,15 +201,15 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         if (usarFulltext) {
             sql = """
             SELECT * FROM BIB_MATERIALES
-            WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
-            LIMIT ? OFFSET ?
+        WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
+        LIMIT ? OFFSET ?
         """;
         } else {
             sql = """
             SELECT * FROM BIB_MATERIALES
-            WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
-            ORDER BY TITULO
-            LIMIT ? OFFSET ?
+        WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
+        ORDER BY TITULO
+        LIMIT ? OFFSET ?
         """;
         }
 
@@ -251,17 +248,17 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         if (usarFulltext) {
             sql = """
             SELECT * FROM BIB_MATERIALES
-            WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
-              AND VIGENTE = TRUE
-            LIMIT ? OFFSET ?
+        WHERE MATCH(TITULO) AGAINST (? IN BOOLEAN MODE)
+          AND VIGENTE = TRUE
+        LIMIT ? OFFSET ?
         """;
         } else {
             sql = """
             SELECT * FROM BIB_MATERIALES
-            WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
-              AND VIGENTE = TRUE
-            ORDER BY TITULO
-            LIMIT ? OFFSET ?
+        WHERE TITULO COLLATE utf8mb4_general_ci LIKE ?
+          AND VIGENTE = TRUE
+        ORDER BY TITULO
+        LIMIT ? OFFSET ?
         """;
         }
 
@@ -295,12 +292,12 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     public List<MaterialesDTO> listarVigentesPorSede(Integer idSede, int limite, int offset) {
         String sql = """
         SELECT DISTINCT m.*
-        FROM BIB_MATERIALES m
-        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
-        WHERE m.VIGENTE = TRUE 
-          AND e.SEDE_IDSEDE = ?
-        ORDER BY m.TITULO
-        LIMIT ? OFFSET ?
+    FROM BIB_MATERIALES m
+    JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+    WHERE m.VIGENTE = TRUE 
+      AND e.SEDE_IDSEDE = ?
+    ORDER BY m.TITULO
+    LIMIT ? OFFSET ?
     """;
 
         this.cargarRelaciones = false;
@@ -327,11 +324,11 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset) {
         String sql = """
         SELECT DISTINCT m.*
-        FROM BIB_MATERIALES m
-        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
-        WHERE e.SEDE_IDSEDE = ?
-        ORDER BY m.TITULO
-        LIMIT ? OFFSET ?
+    FROM BIB_MATERIALES m
+    JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+    WHERE e.SEDE_IDSEDE = ?
+    ORDER BY m.TITULO
+    LIMIT ? OFFSET ?
     """;
 
         this.cargarRelaciones = false;
@@ -428,9 +425,9 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     public List<MaterialesDTO> listarMasRecientes(int limite, int offset) {
         String sql = """
         SELECT *
-        FROM BIB_MATERIALES
-        ORDER BY ANHIO_PUBLICACION DESC, ID_MATERIAL DESC
-        LIMIT ? OFFSET ?
+    FROM BIB_MATERIALES
+    ORDER BY ANHIO_PUBLICACION DESC, ID_MATERIAL DESC
+    LIMIT ? OFFSET ?
     """;
 
         return (List<MaterialesDTO>) this.listarTodos(
@@ -517,12 +514,12 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
     @Override
     public List<MaterialesDTO> listarTodosPaginado(int limite, int offset) {
-        String sql = """
-    SELECT *
-    FROM BIB_MATERIALES
-    ORDER BY TITULO
-    LIMIT ? OFFSET ?
-    """;
+        String sql = String.format("""
+        SELECT %s
+        FROM BIB_MATERIALES
+        ORDER BY TITULO
+        LIMIT ? OFFSET ?
+    """, this.generarListaDeCampos());
 
         this.cargarRelaciones = false;
         try {
@@ -531,8 +528,8 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
                     params -> {
                         int[] p = (int[]) params;
                         try {
-                            this.statement.setInt(1, p[0]);
-                            this.statement.setInt(2, p[1]);
+                            this.statement.setInt(1, p[0]); // limite
+                            this.statement.setInt(2, p[1]); // offset
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -540,8 +537,45 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
                     new int[]{limite, offset}
             );
         } finally {
-            this.cargarRelaciones = true; 
+            this.cargarRelaciones = true;
         }
+    }
+
+    @Override
+    public int contarTodos() {
+        String sql = "SELECT COUNT(*) AS total FROM BIB_MATERIALES";
+        int total = 0;
+
+        this.cargarRelaciones = false;//porseacaso, aunque no importaria
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.ejecutarConsultaEnBD();
+            if (this.resultSet.next()) {
+                total = this.resultSet.getInt("total");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al contar todos los materiales", e);
+        } finally {
+            this.cargarRelaciones = true;
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error al cerrar la conexión después de contar todos", e);
+            }
+        }
+
+        return total;
+    }
+
+    @Override
+    public List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial) {
+        return this.creadoresMaterialesDAO.listarPorMaterial(idMaterial);
+    }
+
+    @Override
+    public List<TemasDTO> listarTemasPorMaterial(Integer idMaterial) {
+        return this.materialesTemasDAO.listarPorMaterial(idMaterial);
     }
 
 }

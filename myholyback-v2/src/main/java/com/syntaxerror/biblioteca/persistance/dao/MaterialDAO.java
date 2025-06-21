@@ -1,6 +1,8 @@
 package com.syntaxerror.biblioteca.persistance.dao;
 
+import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
+import com.syntaxerror.biblioteca.model.TemasDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public interface MaterialDAO {
 
     public List<MaterialesDTO> listarMaterialesVigentesPorCreadorFiltro(String filtro, int limite, int offset);
 
-   public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset) ;
+    public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset);
 
     public List<MaterialesDTO> listarVigentesPorSede(Integer idSede, int limite, int offset);
 
@@ -33,5 +35,11 @@ public interface MaterialDAO {
     List<MaterialesDTO> listarMasRecientes(int limite, int offset);
 
     public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo, int limite, int offset);
+
+    int contarTodos();
+
+    List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial);
+
+    List<TemasDTO> listarTemasPorMaterial(Integer idMaterial);
 
 }

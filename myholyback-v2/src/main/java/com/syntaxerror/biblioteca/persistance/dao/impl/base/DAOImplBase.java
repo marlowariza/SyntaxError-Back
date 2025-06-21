@@ -395,4 +395,38 @@ public abstract class DAOImplBase {
         }
 
     }
+
+    /**
+     * Genera una lista de campos separados por coma a partir de listaColumnas,
+     * sin alias. Ejemplo: "ID_MATERIAL, TITULO, EDICION, ..."
+     * @return 
+     */
+    protected String generarListaDeCampos() {
+        StringBuilder campos = new StringBuilder();
+        for (Columna columna : this.listaColumnas) {
+            if (campos.length() > 0) {
+                campos.append(", ");
+            }
+            campos.append(columna.getNombre());
+        }
+        return campos.toString();
+    }
+
+    /**
+     * Genera una lista de campos con alias. Ejemplo: "m.ID_MATERIAL, m.TITULO,
+     * ..."
+     * @param alias
+     * @return 
+     */
+    protected String generarListaDeCamposConAlias(String alias) {
+        StringBuilder campos = new StringBuilder();
+        for (Columna columna : this.listaColumnas) {
+            if (campos.length() > 0) {
+                campos.append(", ");
+            }
+            campos.append(alias).append(".").append(columna.getNombre());
+        }
+        return campos.toString();
+    }
+
 }
