@@ -11,6 +11,8 @@ public class MaterialesDTO {
     private String portada;
     private Boolean vigente;
     private NivelesInglesDTO nivel;
+    private int disponiblesFisicos;
+    private String autorPrincipal;
     //
     private EditorialesDTO editorial;
     private List<CreadoresDTO> creadores;
@@ -157,5 +159,21 @@ public class MaterialesDTO {
 
     public void removeTema(TemasDTO tema) {
         this.temas.remove(tema);
+    }
+    
+    public int getDisponiblesFisicos() {
+        return disponiblesFisicos;
+    }
+
+    public void setDisponiblesFisicos(int disponiblesFisicos) {
+        this.disponiblesFisicos = disponiblesFisicos;
+    }
+
+    public String getAutorPrincipal() {
+        return autorPrincipal;
+    }
+
+    public void setAutorPrincipal(String autorPrincipal) {
+        this.autorPrincipal = autorPrincipal;
     }
 }

@@ -305,7 +305,18 @@ public class MaterialBO {
             throw new BusinessException("Debe indicar un nivel de inglés válido.");
         }
         int offset = (pagina - 1) * limite;
-        return new MaterialDAOImpl().listarPaginadoPorNivel(nivel, limite, offset);
+        List<MaterialesDTO> materiales = new MaterialDAOImpl().listarPaginadoPorNivel(nivel, limite, offset);
+        for (MaterialesDTO mat : materiales) {
+            // Rellenar cantidad de ejemplares físicos disponibles
+            mat.setDisponiblesFisicos(this.contarDisponiblesFisicosPorMaterial(mat.getIdMaterial()));
+            // Rellenar autor principal (si existe)
+            try {
+                mat.setAutorPrincipal(this.obtenerNombreCreadorRandomPorMaterial(mat.getIdMaterial()));
+            } catch (Exception e) {
+                mat.setAutorPrincipal("");
+            }
+        }
+        return materiales;
     }
 
     public List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int pagina) throws BusinessException {
