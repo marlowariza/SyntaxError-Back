@@ -233,5 +233,28 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 new int[]{limite, offset}
         );
     }
+    
+    @Override
+    public String obtenerEstadoPrestamo(int idPrestamo) {
+        String sql = """
+            SELECT pe.ESTADO
+            FROM BIB_PRESTAMOS_DE_EJEMPLARES pe
+            JOIN BIB_PRESTAMOS p ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
+            WHERE p.ID_PRESTAMO = ?;
+        """;
+        
+        // Ejecuta la consulta y devuelve el estado
+        return (String) this.obtenerUnSoloValor(
+            sql,
+            params -> {
+                try {
+                    this.statement.setInt(1, idPrestamo);  // Establecer el idPrestamo
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        );
+    }
+    
 
 }

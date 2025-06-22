@@ -402,4 +402,9 @@ public class PrestamoBO {
         return this.prestamoDAO.listarPrestamosPorEstadoPaginado(estado, limite, offset);
     }
     
+    public String obtenerEstadoPrestamo(int idPrestamo) throws BusinessException {
+        BusinessValidator.validarId(idPrestamo, "prestamo");
+        return this.prestamoDAO.obtenerEstadoPrestamo(idPrestamo);
+    }
+    
 }

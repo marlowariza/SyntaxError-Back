@@ -25,4 +25,5 @@ public interface PrestamoDAO {
     
     public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int offset);
     
+    public String obtenerEstadoPrestamo(int idPrestamo);
 }

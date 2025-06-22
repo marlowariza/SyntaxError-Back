@@ -478,6 +478,27 @@ public abstract class DAOImplBase {
         return contador;
     }
     
-    
+    protected Object obtenerUnSoloValor(String sql, Consumer<CallableStatement> setter) {
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            if (setter != null) {
+                setter.accept(this.statement);
+            }
+            this.ejecutarConsultaEnBD();
+            if (this.resultSet.next()) {
+                return this.resultSet.getObject(1);  // Devuelve el primer valor de la consulta (en este caso el estado)
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error al intentar obtener un solo valor - " + ex);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException ex) {
+                System.err.println("Error al cerrar la conexión - " + ex);
+            }
+        }
+        return null;  // Si no se encuentra ningún resultado
+    }
 
 }
