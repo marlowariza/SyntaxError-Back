@@ -24,6 +24,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     private CreadorMaterialDAOImpl creadoresMaterialesDAO;
     private MaterialTemaDAOImpl materialesTemasDAO;
     private EditorialDAOImpl editorialDAO;
+    private NivelInglesDAOImpl nivelDAO;
 
     private boolean cargarRelaciones = true;
 
@@ -34,6 +35,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.creadoresMaterialesDAO = new CreadorMaterialDAOImpl();
         this.materialesTemasDAO = new MaterialTemaDAOImpl();
         this.editorialDAO = new EditorialDAOImpl();
+        this.nivelDAO = new NivelInglesDAOImpl();
     }
 
     @Override
@@ -91,17 +93,17 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material.setPortada(this.resultSet.getString("PORTADA"));
         this.material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
 
-        // Relación con NivelesIngles
-        NivelesInglesDTO nivel = new NivelesInglesDTO();
-        nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
-        this.material.setNivel(nivel);
+                // Relación con NivelesIngles (CORREGIDO)
+        int nivelId = this.resultSet.getInt("NIVEL_IDNIVEL");
+        if (!this.resultSet.wasNull()) {
+             this.material.setNivel(this.nivelDAO.obtenerPorId(nivelId));
+        }
         
-        EditorialesDTO editorial = new EditorialesDTO();
-        editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
-        this.material.setEditorial(editorial);
-        
-        /*EditorialesDTO editorial = editorialDAO.obtenerPorId(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
-        this.material.setEditorial(editorial);*/
+        // Relación con Editoriales (CORREGIDO)
+        int editorialId = this.resultSet.getInt("EDITORIAL_IDEDITORIAL");
+        if (!this.resultSet.wasNull()) {
+            this.material.setEditorial(this.editorialDAO.obtenerPorId(editorialId));
+        }
 
         // Cargar relaciones
         // === CONTROL DE RELACIONES ===
