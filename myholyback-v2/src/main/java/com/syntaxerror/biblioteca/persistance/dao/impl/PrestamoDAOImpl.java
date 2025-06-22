@@ -153,5 +153,58 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 idPersona
         );
     }
+    
+    
+    @Override
+    public List<PrestamosDTO> listarTodosPaginado(int limite, int offset) {
+        String sql = String.format("""
+        SELECT %s
+        FROM BIB_PRESTAMOS
+        ORDER BY ID_PRESTAMO
+        LIMIT ? OFFSET ?
+    """, this.generarListaDeCampos());
+
+        return (List<PrestamosDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    int[] p = (int[]) params;
+                    try {
+                        this.statement.setInt(1, p[0]); // limite
+                        this.statement.setInt(2, p[1]); // offset
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                new int[]{limite, offset}
+        ); // Manejo de excepciones SQL si se requiere
+    }
+    
+    @Override
+    public List<PrestamosDTO> listarPorSedePaginado(int limite, int offset, int sedeId) {
+        String sql = String.format("""
+        SELECT %s
+        FROM BIB_PRESTAMOS p
+        JOIN BIB_PRESTAMOS_DE_EJEMPLARES pe ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
+        JOIN BIB_EJEMPLARES e ON pe.EJEMPLAR_IDEJEMPLAR = e.ID_EJEMPLAR
+        WHERE e.Sede_IDSede = ?
+        ORDER BY p.FECHA_SOLICITUD DESC
+        LIMIT ? OFFSET ?
+        """, this.generarListaDeCampos());
+
+        return (List<PrestamosDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    int[] p = (int[]) params;
+                    try {
+                        this.statement.setInt(1, sedeId); // Sede ID
+                        this.statement.setInt(2, p[0]); // limite
+                        this.statement.setInt(3, p[1]); // offset
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                new int[]{limite, offset}
+        );
+    }
 
 }

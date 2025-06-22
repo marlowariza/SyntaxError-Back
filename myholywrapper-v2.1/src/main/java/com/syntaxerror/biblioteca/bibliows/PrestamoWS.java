@@ -13,6 +13,7 @@ import jakarta.xml.ws.WebServiceException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @WebService(serviceName = "PrestamoWS")
 public class PrestamoWS {
@@ -199,6 +200,35 @@ public class PrestamoWS {
     @WebMethod(operationName = "listarPrestamosNoCulminados")
     public ArrayList<PrestamosDTO> listarPrestamosNoCulminados() {
         return prestamoBO.listarPrestamosNoCulminados();
+    }
+    
+    @WebMethod(operationName = "listarPrestamosPaginado")
+    public List<PrestamosDTO> listarMaterialesPaginado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return prestamoBO.listarTodosPaginado(limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "listarPrestamosPorSedePaginado")
+    public List<PrestamosDTO> listarPorSedePaginado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina,
+            @WebParam(name = "sede") int idSede
+    ) {
+        try {
+            return prestamoBO.listarPorSedePaginado(limite, pagina, idSede);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+        }
     }
 
 }

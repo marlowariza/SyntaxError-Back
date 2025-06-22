@@ -383,5 +383,18 @@ public class PrestamoBO {
         BusinessValidator.validarId(idPersona, "persona");
         return new PrestamoEjemplarDAOImpl().contarEjemplaresEnProcesoPorIdPersona(idPersona);
     }
-
+    
+    public List<PrestamosDTO> listarTodosPaginado(int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.prestamoDAO.listarTodosPaginado(limite, offset);
+    }
+    
+    public List<PrestamosDTO> listarPorSedePaginado(int limite, int pagina, int idSede) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.prestamoDAO.listarPorSedePaginado(limite, offset, idSede);
+    }
+    
+    
 }

@@ -23,6 +23,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
     private MaterialesDTO material;
     private CreadorMaterialDAOImpl creadoresMaterialesDAO;
     private MaterialTemaDAOImpl materialesTemasDAO;
+    private EditorialDAOImpl editorialDAO;
 
     private boolean cargarRelaciones = true;
 
@@ -32,6 +33,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material = null;
         this.creadoresMaterialesDAO = new CreadorMaterialDAOImpl();
         this.materialesTemasDAO = new MaterialTemaDAOImpl();
+        this.editorialDAO = new EditorialDAOImpl();
     }
 
     @Override
@@ -93,10 +95,13 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         NivelesInglesDTO nivel = new NivelesInglesDTO();
         nivel.setIdNivel(this.resultSet.getInt("NIVEL_IDNIVEL"));
         this.material.setNivel(nivel);
-
+        
         EditorialesDTO editorial = new EditorialesDTO();
         editorial.setIdEditorial(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
         this.material.setEditorial(editorial);
+        
+        /*EditorialesDTO editorial = editorialDAO.obtenerPorId(this.resultSet.getInt("EDITORIAL_IDEDITORIAL"));
+        this.material.setEditorial(editorial);*/
 
         // Cargar relaciones
         // === CONTROL DE RELACIONES ===
