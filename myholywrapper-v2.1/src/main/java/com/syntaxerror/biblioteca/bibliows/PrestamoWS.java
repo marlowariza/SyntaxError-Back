@@ -246,4 +246,12 @@ public class PrestamoWS {
         }
     }
 
+    @WebMethod(operationName = "obtenerEstadoPrestamo")
+    public String obtenerEstadoPrestamo(@WebParam(name = "idPrestamo") int idPrestamo) {
+        try {
+            return prestamoBO.obtenerEstadoPrestamo(idPrestamo);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares prestados: " + e.getMessage());
+        }
+    }
 }
