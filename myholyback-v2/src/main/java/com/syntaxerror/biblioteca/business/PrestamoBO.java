@@ -396,5 +396,15 @@ public class PrestamoBO {
         return this.prestamoDAO.listarPorSedePaginado(limite, offset, idSede);
     }
     
+    public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.prestamoDAO.listarPrestamosPorEstadoPaginado(estado, limite, offset);
+    }
+    
+    public String obtenerEstadoPrestamo(int idPrestamo) throws BusinessException {
+        BusinessValidator.validarId(idPrestamo, "prestamo");
+        return this.prestamoDAO.obtenerEstadoPrestamo(idPrestamo);
+    }
     
 }

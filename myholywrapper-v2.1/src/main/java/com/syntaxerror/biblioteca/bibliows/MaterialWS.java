@@ -304,5 +304,15 @@ public class MaterialWS {
     public int contarPrestadosFisicosPorMaterial(@WebParam(name = "idMaterial") int idMaterial) throws BusinessException {
         return materialBO.contarPrestadosFisicosPorMaterial(idMaterial);
     }
+    
+    @WebMethod(operationName = "listarMaterialesPorTituloParcialPaginado")
+    public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(
+            @WebParam(name = "textoBusqueda") String textoBusqueda,
+            @WebParam(name = "sedeId") int sedeId, 
+            @WebParam(name = "limite") int limite, 
+            @WebParam(name = "pagina") int pagina) throws BusinessException {
+        //Integer sedeIdToPass = (sedeId == -1) ? null : sedeId;
+        return materialBO.listarMaterialesPorTituloParcialPaginado(textoBusqueda, sedeId, limite, pagina);
+    }
 
 }

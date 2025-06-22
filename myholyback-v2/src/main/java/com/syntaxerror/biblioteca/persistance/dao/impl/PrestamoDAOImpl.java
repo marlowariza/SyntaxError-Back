@@ -3,6 +3,7 @@ package com.syntaxerror.biblioteca.persistance.dao.impl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.PersonasDTO;
 import com.syntaxerror.biblioteca.model.PrestamosDTO;
+import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -206,5 +207,54 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 new int[]{limite, offset}
         );
     }
+    
+    @Override
+    public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int offset) {
+        String sql = String.format("""
+        SELECT %s
+        FROM BIB_PRESTAMOS p
+        JOIN BIB_PRESTAMOS_DE_EJEMPLARES pe ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
+        WHERE pe.ESTADO = ?
+        ORDER BY p.FECHA_SOLICITUD DESC
+        LIMIT ? OFFSET ?;
+        """, this.generarListaDeCampos());
+
+        return (List<PrestamosDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    try {
+                        this.statement.setString(1, estado.name()); // Establecer el estado
+                        this.statement.setInt(2, limite);    // Establecer el límite de resultados
+                        this.statement.setInt(3, offset);    // Establecer el offset (página actual)
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                new int[]{limite, offset}
+        );
+    }
+    
+    @Override
+    public String obtenerEstadoPrestamo(int idPrestamo) {
+        String sql = """
+            SELECT pe.ESTADO
+            FROM BIB_PRESTAMOS_DE_EJEMPLARES pe
+            JOIN BIB_PRESTAMOS p ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
+            WHERE p.ID_PRESTAMO = ?;
+        """;
+        
+        // Ejecuta la consulta y devuelve el estado
+        return (String) this.obtenerUnSoloValor(
+            sql,
+            params -> {
+                try {
+                    this.statement.setInt(1, idPrestamo);  // Establecer el idPrestamo
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        );
+    }
+    
 
 }

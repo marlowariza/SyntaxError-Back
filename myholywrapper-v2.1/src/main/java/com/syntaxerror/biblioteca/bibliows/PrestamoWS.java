@@ -210,9 +210,9 @@ public class PrestamoWS {
         try {
             return prestamoBO.listarTodosPaginado(limite, pagina);
         } catch (BusinessException e) {
-            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+            throw new WebServiceException("Error al listar prestamos paginados: " + e.getMessage());
         } catch (Exception e) {
-            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+            throw new WebServiceException("Error inesperado al listar prestamos paginados: " + e.getMessage());
         }
     }
     
@@ -225,10 +225,33 @@ public class PrestamoWS {
         try {
             return prestamoBO.listarPorSedePaginado(limite, pagina, idSede);
         } catch (BusinessException e) {
-            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+            throw new WebServiceException("Error al listar prestamos por sede paginados: " + e.getMessage());
         } catch (Exception e) {
-            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+            throw new WebServiceException("Error inesperado al listar prestamos por sede paginados: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "listarPrestamosPorEstadoPaginado")
+    public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(
+            @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return prestamoBO.listarPrestamosPorEstadoPaginado(estado, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar prestamos por estado paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar prestamos por estado paginados: " + e.getMessage()+estado);
         }
     }
 
+    @WebMethod(operationName = "obtenerEstadoPrestamo")
+    public String obtenerEstadoPrestamo(@WebParam(name = "idPrestamo") int idPrestamo) {
+        try {
+            return prestamoBO.obtenerEstadoPrestamo(idPrestamo);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar ejemplares prestados: " + e.getMessage());
+        }
+    }
 }
