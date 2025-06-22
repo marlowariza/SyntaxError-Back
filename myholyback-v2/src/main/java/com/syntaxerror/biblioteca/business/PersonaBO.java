@@ -309,4 +309,8 @@ public class PersonaBO {
         return this.personaDAO.modificar(persona);
     }
 
+    public int contarPersonas() {
+        return this.personaDAO.contar();
+    }
+
 }

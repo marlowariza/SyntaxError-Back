@@ -8,6 +8,8 @@ import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
+import com.syntaxerror.biblioteca.model.enums.Nivel;
+import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.CreadorDAO;
 
 import com.syntaxerror.biblioteca.persistance.dao.impl.EditorialDAOImpl;
@@ -295,6 +297,53 @@ public class MaterialBO {
     public List<TemasDTO> listarTemasPorMaterial(Integer idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
         return this.materialDAO.listarTemasPorMaterial(idMaterial);
+    }
+
+    public List<MaterialesDTO> listarPaginadoPorNivel(Nivel nivel, int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        if (nivel == null) {
+            throw new BusinessException("Debe indicar un nivel de inglés válido.");
+        }
+        int offset = (pagina - 1) * limite;
+        return new MaterialDAOImpl().listarPaginadoPorNivel(nivel, limite, offset);
+    }
+
+    public List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarTexto(descripcionTema, "descripcion tema");
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return new MaterialDAOImpl().listarPaginadoPorTema(descripcionTema, limite, offset);
+    }
+
+    public List<MaterialesDTO> listarPaginadoPorEditorial(String nombreEditorial, int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarTexto(nombreEditorial, "nombre editorial");
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return materialDAO.listarPaginadoPorEditorial(nombreEditorial, limite, offset);
+    }
+
+    public String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        String nombre = materialDAO.obtenerNombreCreadorRandomPorMaterial(idMaterial);
+        if (nombre == null || nombre.isBlank()) {
+            throw new BusinessException("No se encontró un creador asociado para el material especificado.");
+        }
+        return nombre;
+    }
+
+    public int contarStockFisicoPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return new EjemplarDAOImpl().contarEjemplaresPorFiltros(idMaterial, null, null, TipoEjemplar.FISICO);
+    }
+
+    public int contarDisponiblesFisicosPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return new EjemplarDAOImpl().contarEjemplaresPorFiltros(idMaterial, null, true, TipoEjemplar.FISICO);
+    }
+
+    public int contarPrestadosFisicosPorMaterial(int idMaterial) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        return new EjemplarDAOImpl().contarEjemplaresPorFiltros(idMaterial, null, false, TipoEjemplar.FISICO);
     }
 
 }

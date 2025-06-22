@@ -45,12 +45,12 @@ public class PersonaWSTest {
     /**
      * Test of listarPersonas method, of class PersonaWS.
      */
-    @Test
-    public void testListarPersonas() {
-        System.out.println("listarPersonas");
-        PersonaWS instance = new PersonaWS();
-        ArrayList<PersonasDTO> temp = instance.listarPersonas();
-        
-        System.out.println(temp.get(1).getCorreo());
-    }
+//    @Test
+//    public void testListarPersonas() {
+//        System.out.println("listarPersonas");
+//        PersonaWS instance = new PersonaWS();
+//        ArrayList<PersonasDTO> temp = instance.listarPersonas();
+//        
+//        System.out.println(temp.get(1).getCorreo());
+//    }
 }

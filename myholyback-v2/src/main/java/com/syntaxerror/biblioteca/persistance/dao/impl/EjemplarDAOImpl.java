@@ -221,7 +221,7 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
 
     @Override
     public int contarEjemplaresPorFiltros(Integer idMaterial, Integer idSede, Boolean disponible, TipoEjemplar tipo) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total FROM BIB_EJEMPLARES WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM BIB_EJEMPLARES WHERE 1=1");
         List<Object> parametros = new ArrayList<>();
 
         if (idMaterial != null) {
@@ -239,31 +239,17 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         if (tipo != null) {
             sql.append(" AND UPPER(TRIM(TIPO_EJEMPLAR)) = ?");
             parametros.add(tipo.name());
-
         }
 
-        int total = 0;
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql.toString());
+        return contarPorSQLyParametros(sql.toString(), stmt -> {
             for (int i = 0; i < parametros.size(); i++) {
-                this.statement.setObject(i + 1, parametros.get(i));
+                try {
+                    stmt.setObject(i + 1, parametros.get(i));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            this.resultSet = this.statement.executeQuery();
-            if (this.resultSet.next()) {
-                total = this.resultSet.getInt("total");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al contar ejemplares: " + e);
-        } finally {
-            try {
-                this.cerrarConexion();
-            } catch (SQLException ex) {
-                System.err.println("Error al cerrar conexión: " + ex);
-            }
-        }
-
-        return total;
+        });
     }
 
     @Override

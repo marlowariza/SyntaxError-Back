@@ -215,5 +215,20 @@ public class PrestamoWS {
             throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
         }
     }
+    
+    @WebMethod(operationName = "listarPrestamosPorSedePaginado")
+    public List<PrestamosDTO> listarPorSedePaginado(
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina,
+            @WebParam(name = "sede") int idSede
+    ) {
+        try {
+            return prestamoBO.listarPorSedePaginado(limite, pagina, idSede);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar materiales paginados: " + e.getMessage());
+        }
+    }
 
 }
