@@ -94,15 +94,31 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
 
                 // Relación con NivelesIngles (CORREGIDO)
-        int nivelId = this.resultSet.getInt("NIVEL_IDNIVEL");
+//        int nivelId = this.resultSet.getInt("NIVEL_IDNIVEL");
+//        if (!this.resultSet.wasNull()) {
+//             this.material.setNivel(this.nivelDAO.obtenerPorId(nivelId));
+//        }
+        
+        int idNivel = this.resultSet.getInt("NIVEL_IDNIVEL");
         if (!this.resultSet.wasNull()) {
-             this.material.setNivel(this.nivelDAO.obtenerPorId(nivelId));
+            NivelesInglesDTO nivel = nivelDAO.obtenerPorId(idNivel);
+            this.material.setNivel(nivel);
+        } else {
+            this.material.setNivel(null);
         }
         
         // Relación con Editoriales (CORREGIDO)
-        int editorialId = this.resultSet.getInt("EDITORIAL_IDEDITORIAL");
+//        int editorialId = this.resultSet.getInt("EDITORIAL_IDEDITORIAL");
+//        if (!this.resultSet.wasNull()) {
+//            this.material.setEditorial(this.editorialDAO.obtenerPorId(editorialId));
+//        }
+        
+        int idEditorial = this.resultSet.getInt("EDITORIAL_IDEDITORIAL");
         if (!this.resultSet.wasNull()) {
-            this.material.setEditorial(this.editorialDAO.obtenerPorId(editorialId));
+            EditorialesDTO editorial = editorialDAO.obtenerPorId(idEditorial);
+            this.material.setEditorial(editorial);
+        } else {
+            this.material.setEditorial(null);
         }
 
         // Cargar relaciones

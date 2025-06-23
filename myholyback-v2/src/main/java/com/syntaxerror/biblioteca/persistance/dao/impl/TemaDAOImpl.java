@@ -17,12 +17,14 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
 
     private TemasDTO tema;
     private MaterialTemaDAOImpl materialesTemasDAO;
+    private TemaDAOImpl temaDAO;
 
     public TemaDAOImpl() {
         super("BIB_TEMAS");
         this.retornarLlavePrimaria = true;
         this.tema = null;
         this.materialesTemasDAO = new MaterialTemaDAOImpl();
+        this.temaDAO = new TemaDAOImpl();
     }
 
     @Override
@@ -75,8 +77,7 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
 
         int idPadre = resultSet.getInt("ID_TEMA_PADRE");
         if (!resultSet.wasNull()) {
-            TemasDTO padre = new TemasDTO();
-            padre.setIdTema(idPadre);
+            TemasDTO padre = temaDAO.obtenerPorId(idPadre);
             this.tema.setTemaPadre(padre);
         } else {
             this.tema.setTemaPadre(null);
