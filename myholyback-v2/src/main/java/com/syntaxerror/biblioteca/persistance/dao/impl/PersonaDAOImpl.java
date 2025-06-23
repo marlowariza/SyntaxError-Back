@@ -15,11 +15,15 @@ import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
 
     private PersonasDTO persona;
+    private SedeDAOImpl sedeDAO;
+    private NivelInglesDAOImpl nivelInglesDAO;
 
     public PersonaDAOImpl() {
         super("BIB_PERSONAS");
         this.retornarLlavePrimaria = true;
         this.persona = null;
+        this.sedeDAO = new SedeDAOImpl();
+        this.nivelInglesDAO = new NivelInglesDAOImpl();
     }
 
     @Override
@@ -134,15 +138,24 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
 
         int idNivel = this.resultSet.getInt("NIVEL_IDNIVEL");
         if (!this.resultSet.wasNull()) {
-            NivelesInglesDTO nivel = new NivelesInglesDTO();
-            nivel.setIdNivel(idNivel);
+            NivelesInglesDTO nivel = nivelInglesDAO.obtenerPorId(idNivel);
             this.persona.setNivel(nivel);
+        } else {
+            this.persona.setNivel(null);
         }
 
         // Relación sede
-        SedesDTO sede = new SedesDTO();
-        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
-        this.persona.setSede(sede);
+//        SedesDTO sede = new SedesDTO();
+//        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
+//        this.persona.setSede(sede);
+        
+        int idSede = resultSet.getInt("SEDE_IDSEDE");
+        if (!resultSet.wasNull()) {
+            SedesDTO sede = sedeDAO.obtenerPorId(idSede);
+            this.persona.setSede(sede);
+        } else {
+            this.persona.setSede(null);
+        }
     }
 
     @Override
