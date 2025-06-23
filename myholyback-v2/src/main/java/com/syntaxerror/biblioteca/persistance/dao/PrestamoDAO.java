@@ -26,4 +26,13 @@ public interface PrestamoDAO {
     public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int offset);
     
     public String obtenerEstadoPrestamo(int idPrestamo);
+    
+    public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(EstadoPrestamoEjemplar estado, Integer sedeId, int limite, int offset);
+    
+    public int contarTotalPrestamos();
+    
+    public int contarTotalPrestamosPorEstado(EstadoPrestamoEjemplar estado);
+    
+    public int contarTotalPrestamosPorEstadoYSede(EstadoPrestamoEjemplar estado, int sedeId);
+    
 }

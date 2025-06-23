@@ -407,4 +407,21 @@ public class PrestamoBO {
         return this.prestamoDAO.obtenerEstadoPrestamo(idPrestamo);
     }
     
+    public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(EstadoPrestamoEjemplar estado, Integer sedeId, int limite, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(limite, pagina);
+        int offset = (pagina - 1) * limite;
+        return this.prestamoDAO.listarPrestamosPorEstadoYSedePaginado(estado, sedeId, limite, offset);
+    }
+    
+    public int contarTotalPrestamos() throws BusinessException {
+        return this.prestamoDAO.contarTotalPrestamos();
+    }
+    
+    public int contarTotalPrestamosPorEstado(EstadoPrestamoEjemplar estado) throws BusinessException {
+        return this.prestamoDAO.contarTotalPrestamosPorEstado(estado);
+    }
+    
+    public int contarTotalPrestamosPorEstadoYSede(EstadoPrestamoEjemplar estado, int sedeId) throws BusinessException {
+        return this.prestamoDAO.contarTotalPrestamosPorEstadoYSede(estado, sedeId);
+    }
 }

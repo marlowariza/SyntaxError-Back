@@ -183,7 +183,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
     @Override
     public List<PrestamosDTO> listarPorSedePaginado(int limite, int offset, int sedeId) {
         String sql = String.format("""
-        SELECT %s
+        SELECT DISTINCT %s
         FROM BIB_PRESTAMOS p
         JOIN BIB_PRESTAMOS_DE_EJEMPLARES pe ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
         JOIN BIB_EJEMPLARES e ON pe.EJEMPLAR_IDEJEMPLAR = e.ID_EJEMPLAR
@@ -211,7 +211,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
     @Override
     public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int offset) {
         String sql = String.format("""
-        SELECT %s
+        SELECT DISTINCT %s
         FROM BIB_PRESTAMOS p
         JOIN BIB_PRESTAMOS_DE_EJEMPLARES pe ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
         WHERE pe.ESTADO = ?
@@ -256,5 +256,96 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
         );
     }
     
+    @Override
+    public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(EstadoPrestamoEjemplar estado, Integer sedeId, int limite, int offset) {
+        StringBuilder sql = new StringBuilder(String.format("""
+            SELECT DISTINCT %s
+            FROM BIB_PRESTAMOS p
+            JOIN BIB_PRESTAMOS_DE_EJEMPLARES pe ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
+            JOIN BIB_EJEMPLARES e ON pe.EJEMPLAR_IDEJEMPLAR = e.ID_EJEMPLAR
+            WHERE pe.ESTADO = ?
+        """, this.generarListaDeCampos()));
+
+        // Si se especifica una sede válida (ej. ID > 0), se agrega al WHERE
+        if (sedeId != -1) {
+            sql.append(" AND e.SEDE_IDSEDE = ?");
+        }
+
+        sql.append("""
+            ORDER BY p.FECHA_SOLICITUD DESC
+            LIMIT ? OFFSET ?;
+        """);
+
+        return (List<PrestamosDTO>) this.listarTodos(
+            sql.toString(),
+            params -> {
+                try {
+                    this.statement.setString(1, estado.name());
+
+                    if (sedeId != -1) {
+                        this.statement.setInt(2, sedeId);
+                        this.statement.setInt(3, limite);
+                        this.statement.setInt(4, offset);
+                    } else {
+                        this.statement.setInt(2, limite);
+                        this.statement.setInt(3, offset);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            },
+            new int[]{limite, offset}
+        );
+    }
+
+    @Override
+    public int contarTotalPrestamos() {
+        String sql = "SELECT COUNT(*) FROM BIB_PRESTAMOS;";
+        return ((Long) this.obtenerUnSoloValor(sql, params -> {})).intValue();
+    }
+    
+    @Override
+    public int contarTotalPrestamosPorEstado(EstadoPrestamoEjemplar estado) {
+        String sql = """
+            SELECT COUNT(DISTINCT pe.PRESTAMO_IDPRESTAMO)
+            FROM BIB_PRESTAMOS_DE_EJEMPLARES pe
+            JOIN BIB_EJEMPLARES e ON pe.EJEMPLAR_IDEJEMPLAR = e.ID_EJEMPLAR        
+            WHERE pe.ESTADO = ?;
+        """;
+
+        return ((Long) this.obtenerUnSoloValor(sql, params -> {
+            try {
+                this.statement.setString(1, estado.name());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        })).intValue();
+    }
+
+    @Override
+    public int contarTotalPrestamosPorEstadoYSede(EstadoPrestamoEjemplar estado, int sedeId) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(DISTINCT pe.PRESTAMO_IDPRESTAMO)
+            FROM BIB_PRESTAMOS_DE_EJEMPLARES pe
+            JOIN BIB_EJEMPLARES e ON pe.EJEMPLAR_IDEJEMPLAR = e.ID_EJEMPLAR
+            WHERE pe.ESTADO = ?
+        """);
+
+        if (sedeId != -1) {
+            sql.append(" AND e.SEDE_IDSEDE = ?");
+        }
+
+        return ((Long) this.obtenerUnSoloValor(sql.toString(), params -> {
+            try {
+                this.statement.setString(1, estado.name());
+                if (sedeId != -1) {
+                    this.statement.setInt(2, sedeId);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } )).intValue();
+    }
+
 
 }

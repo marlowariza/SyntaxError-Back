@@ -487,7 +487,7 @@ public abstract class DAOImplBase {
             }
             this.ejecutarConsultaEnBD();
             if (this.resultSet.next()) {
-                return this.resultSet.getObject(1);  // Devuelve el primer valor de la consulta (en este caso el estado)
+                return this.resultSet.getObject(1);  // Devuelve el primer valor de la consulta
             }
         } catch (SQLException ex) {
             System.err.println("Error al intentar obtener un solo valor - " + ex);

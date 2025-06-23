@@ -251,7 +251,55 @@ public class PrestamoWS {
         try {
             return prestamoBO.obtenerEstadoPrestamo(idPrestamo);
         } catch (BusinessException e) {
-            throw new WebServiceException("Error al listar ejemplares prestados: " + e.getMessage());
+            throw new WebServiceException("Error al obtener estado de prestamo: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "listarPrestamosPorEstadoYSedePaginado")
+    public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(
+            @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
+            @WebParam(name = "sedeId") Integer sedeId,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return prestamoBO.listarPrestamosPorEstadoYSedePaginado(estado, sedeId, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al listar prestamos por estado y sede paginados: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado al listar prestamos por estado y sede paginados: " + e.getMessage()+estado);
+        }
+    }
+    
+    @WebMethod(operationName = "contarTotalPrestamos")
+    public int contarTotalPrestamos() {
+        try {
+            return prestamoBO.contarTotalPrestamos();
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al contar todos los prestamos: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "contarTotalPrestamosPorEstado")
+    public int contarTotalPrestamosPorEstado(
+            @WebParam(name = "estado") EstadoPrestamoEjemplar estado
+    ) {
+        try {
+            return prestamoBO.contarTotalPrestamosPorEstado(estado);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al contar todos los prestamos: " + e.getMessage());
+        }
+    }
+    
+    @WebMethod(operationName = "contarTotalPrestamosPorEstadoYSede")
+    public int contarTotalPrestamosPorEstadoYSede(
+            @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
+            @WebParam(name = "sedeId") Integer sedeId
+    ) {
+        try {
+            return prestamoBO.contarTotalPrestamosPorEstadoYSede(estado, sedeId);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error al contar todos los prestamos: " + e.getMessage());
         }
     }
 }
