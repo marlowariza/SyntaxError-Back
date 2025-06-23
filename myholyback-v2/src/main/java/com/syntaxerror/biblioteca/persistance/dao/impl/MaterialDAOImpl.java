@@ -93,12 +93,12 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         this.material.setPortada(this.resultSet.getString("PORTADA"));
         this.material.setVigente(this.resultSet.getInt("VIGENTE") == 1);
 
-                // Relación con NivelesIngles (CORREGIDO)
+        // Relación con NivelesIngles (CORREGIDO)
         int nivelId = this.resultSet.getInt("NIVEL_IDNIVEL");
         if (!this.resultSet.wasNull()) {
-             this.material.setNivel(this.nivelDAO.obtenerPorId(nivelId));
+            this.material.setNivel(this.nivelDAO.obtenerPorId(nivelId));
         }
-        
+
         // Relación con Editoriales (CORREGIDO)
         int editorialId = this.resultSet.getInt("EDITORIAL_IDEDITORIAL");
         if (!this.resultSet.wasNull()) {
@@ -751,7 +751,7 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
         return nombre;
     }
-    
+
     @Override
     public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int offset) {
         String sql = String.format("""
@@ -760,42 +760,60 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
         WHERE 1=1
         """, this.generarListaDeCampos());
-        
+
         if (textoBusqueda != null && !textoBusqueda.isEmpty()) {
             sql += " AND m.TITULO LIKE ?";
         }
-        
+
         if (sedeId != -1) {
             sql += " AND e.Sede_IDSEDE = ?";
         }
-        
+
         sql += " ORDER BY m.TITULO LIMIT ? OFFSET ?";
 
         return (List<MaterialesDTO>) this.listarTodos(
                 sql,
                 params -> {
-                String busqueda = textoBusqueda != null && !textoBusqueda.isEmpty() ? "%" + textoBusqueda + "%" : null;// Agregar los comodines % para la búsqueda parcial
-                int[] p = (int[]) params;
-                try {
-                    if (busqueda != null) {
-                        this.statement.setString(1, busqueda); // Establecer el texto de búsqueda con comodines
+                    String busqueda = textoBusqueda != null && !textoBusqueda.isEmpty() ? "%" + textoBusqueda + "%" : null;// Agregar los comodines % para la búsqueda parcial
+                    int[] p = (int[]) params;
+                    try {
+                        if (busqueda != null) {
+                            this.statement.setString(1, busqueda); // Establecer el texto de búsqueda con comodines
+                        }
+                        if (sedeId != -1) {
+                            // Si sedeId no es -1, se pasa como parámetro
+                            this.statement.setInt(busqueda != null ? 2 : 1, sedeId);
+                            this.statement.setInt(busqueda != null ? 3 : 2, p[0]); // Limite
+                            this.statement.setInt(busqueda != null ? 4 : 3, p[1]); // Offset
+                        } else {
+                            // Si no hay sedeId, solo paginación
+                            this.statement.setInt(busqueda != null ? 2 : 1, p[0]);
+                            this.statement.setInt(busqueda != null ? 3 : 2, p[1]);
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
                     }
-                    if (sedeId != -1) {
-                        // Si sedeId no es -1, se pasa como parámetro
-                        this.statement.setInt(busqueda != null ? 2 : 1, sedeId); 
-                        this.statement.setInt(busqueda != null ? 3 : 2, p[0]); // Limite
-                        this.statement.setInt(busqueda != null ? 4 : 3, p[1]); // Offset
-                    } else {
-                        // Si no hay sedeId, solo paginación
-                        this.statement.setInt(busqueda != null ? 2 : 1, p[0]);
-                        this.statement.setInt(busqueda != null ? 3 : 2, p[1]);
-                    }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            },
-            new int[]{limite, offset}
+                },
+                new int[]{limite, offset}
         );
+    }
+
+    @Override
+    public int contarMaterialesPorSede(Integer idSede) {
+        String sql = """
+        SELECT COUNT(DISTINCT m.ID_MATERIAL)
+        FROM BIB_MATERIALES m
+        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+        WHERE e.SEDE_IDSEDE = ?
+    """;
+
+        return contarPorSQLyParametros(sql, stmt -> {
+            try {
+                stmt.setInt(1, idSede);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

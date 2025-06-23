@@ -52,4 +52,6 @@ public interface MaterialDAO {
     String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial);
     
     public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int offset);
+    
+    public int contarMaterialesPorSede(Integer idSede);
 }

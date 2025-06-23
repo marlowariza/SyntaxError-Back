@@ -167,47 +167,81 @@ public abstract class DAOImplBase {
         return sql;
     }
 
+//    protected String generarSQLParaModificacion() {
+//
+//        String sql = "UPDATE ";
+//        sql = sql.concat(this.nombreTabla);
+//        sql = sql.concat(" SET ");
+//        String sql_columnas = "";
+//        String sql_predicado = "";
+//        for (Columna columna : this.listaColumnas) {
+//            if (columna.getEsllavePrimaria()) {
+//                if (!sql_predicado.isBlank()) {
+//                    sql_predicado = sql_predicado.concat(", ");
+//                }
+//                sql_predicado = sql_predicado.concat(columna.getNombre());
+//                sql_predicado = sql_predicado.concat("=?");
+//            } else {
+//                if (!sql_columnas.isBlank()) {
+//                    sql_columnas = sql_columnas.concat(", ");
+//                }
+//                sql_columnas = sql_columnas.concat(columna.getNombre());
+//                sql_columnas = sql_columnas.concat("=?");
+//            }
+//        }
+//        sql = sql.concat(sql_columnas);
+//        sql = sql.concat(" WHERE ");
+//        sql = sql.concat(sql_predicado);
+//        return sql;
+//    }
     protected String generarSQLParaModificacion() {
-
-        String sql = "UPDATE ";
-        sql = sql.concat(this.nombreTabla);
-        sql = sql.concat(" SET ");
+        String sql = "UPDATE " + this.nombreTabla + " SET ";
         String sql_columnas = "";
         String sql_predicado = "";
         for (Columna columna : this.listaColumnas) {
             if (columna.getEsllavePrimaria()) {
                 if (!sql_predicado.isBlank()) {
-                    sql_predicado = sql_predicado.concat(", ");
+                    sql_predicado = sql_predicado.concat(" AND ");
                 }
-                sql_predicado = sql_predicado.concat(columna.getNombre());
-                sql_predicado = sql_predicado.concat("=?");
+                sql_predicado = sql_predicado.concat(columna.getNombre()).concat("=?");
             } else {
                 if (!sql_columnas.isBlank()) {
                     sql_columnas = sql_columnas.concat(", ");
                 }
-                sql_columnas = sql_columnas.concat(columna.getNombre());
-                sql_columnas = sql_columnas.concat("=?");
+                sql_columnas = sql_columnas.concat(columna.getNombre()).concat("=?");
             }
         }
-        sql = sql.concat(sql_columnas);
-        sql = sql.concat(" WHERE ");
-        sql = sql.concat(sql_predicado);
+        sql = sql.concat(sql_columnas).concat(" WHERE ").concat(sql_predicado);
         return sql;
     }
 
+//    protected String generarSQLParaEliminacion() {
+//
+//        String sql = "DELETE FROM ";
+//        sql = sql.concat(this.nombreTabla);
+//        sql = sql.concat(" WHERE ");
+//        String sql_predicado = "";
+//        for (Columna columna : this.listaColumnas) {
+//            if (columna.getEsllavePrimaria()) {
+//                if (!sql_predicado.isBlank()) {
+//                    sql_predicado = sql_predicado.concat(", ");
+//                }
+//                sql_predicado = sql_predicado.concat(columna.getNombre());
+//                sql_predicado = sql_predicado.concat("=?");
+//            }
+//        }
+//        sql = sql.concat(sql_predicado);
+//        return sql;
+//    }
     protected String generarSQLParaEliminacion() {
-
-        String sql = "DELETE FROM ";
-        sql = sql.concat(this.nombreTabla);
-        sql = sql.concat(" WHERE ");
+        String sql = "DELETE FROM " + this.nombreTabla + " WHERE ";
         String sql_predicado = "";
         for (Columna columna : this.listaColumnas) {
             if (columna.getEsllavePrimaria()) {
                 if (!sql_predicado.isBlank()) {
-                    sql_predicado = sql_predicado.concat(", ");
+                    sql_predicado = sql_predicado.concat(" AND ");
                 }
-                sql_predicado = sql_predicado.concat(columna.getNombre());
-                sql_predicado = sql_predicado.concat("=?");
+                sql_predicado = sql_predicado.concat(columna.getNombre()).concat("=?");
             }
         }
         sql = sql.concat(sql_predicado);
@@ -477,7 +511,7 @@ public abstract class DAOImplBase {
         }
         return contador;
     }
-    
+
     protected Object obtenerUnSoloValor(String sql, Consumer<CallableStatement> setter) {
         try {
             this.abrirConexion();

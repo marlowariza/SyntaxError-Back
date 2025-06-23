@@ -119,6 +119,34 @@ public class PrestamoWS {
         }
     }
 
+    /**
+     * WS para recoger préstamo completo.
+     *
+     * @param idPrestamo ID del préstamo a recoger.
+     * @throws BusinessException si hay error de negocio.
+     */
+    @WebMethod(operationName = "recogerPrestamo")
+    public void recogerPrestamo(
+            @WebParam(name = "idPrestamo") Integer idPrestamo
+    ) throws BusinessException {
+        prestamoBO.recogerPrestamo(idPrestamo);
+    }
+
+    /**
+     * WS para devolver ejemplares de un préstamo.
+     *
+     * @param idPrestamo ID del préstamo principal.
+     * @param idEjemplaresDevueltos Lista de IDs de ejemplares devueltos.
+     * @throws BusinessException si hay error de negocio.
+     */
+    @WebMethod(operationName = "devolverPrestamo")
+    public void devolverPrestamo(
+            @WebParam(name = "idPrestamo") Integer idPrestamo,
+            @WebParam(name = "idEjemplaresDevueltos") List<Integer> idEjemplaresDevueltos
+    ) throws BusinessException {
+        prestamoBO.devolverPrestamo(idPrestamo, idEjemplaresDevueltos);
+    }
+
     @WebMethod(operationName = "listarEjemplaresPrestadosPorPersona")
     public ArrayList<EjemplaresDTO> listarEjemplaresPrestadosPorPersona(@WebParam(name = "idPersona") int idPersona) {
         try {
@@ -201,7 +229,7 @@ public class PrestamoWS {
     public ArrayList<PrestamosDTO> listarPrestamosNoCulminados() {
         return prestamoBO.listarPrestamosNoCulminados();
     }
-    
+
     @WebMethod(operationName = "listarPrestamosPaginado")
     public List<PrestamosDTO> listarPrestamosPaginado(
             @WebParam(name = "limite") int limite,
@@ -215,7 +243,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error inesperado al listar prestamos paginados: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosPorSedePaginado")
     public List<PrestamosDTO> listarPorSedePaginado(
             @WebParam(name = "limite") int limite,
@@ -230,7 +258,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error inesperado al listar prestamos por sede paginados: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosPorEstadoPaginado")
     public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(
             @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
@@ -242,7 +270,7 @@ public class PrestamoWS {
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar prestamos por estado paginados: " + e.getMessage());
         } catch (Exception e) {
-            throw new WebServiceException("Error inesperado al listar prestamos por estado paginados: " + e.getMessage()+estado);
+            throw new WebServiceException("Error inesperado al listar prestamos por estado paginados: " + e.getMessage() + estado);
         }
     }
 
@@ -254,7 +282,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al obtener estado de prestamo: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "listarPrestamosPorEstadoYSedePaginado")
     public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(
             @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
@@ -267,10 +295,10 @@ public class PrestamoWS {
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar prestamos por estado y sede paginados: " + e.getMessage());
         } catch (Exception e) {
-            throw new WebServiceException("Error inesperado al listar prestamos por estado y sede paginados: " + e.getMessage()+estado);
+            throw new WebServiceException("Error inesperado al listar prestamos por estado y sede paginados: " + e.getMessage() + estado);
         }
     }
-    
+
     @WebMethod(operationName = "contarTotalPrestamos")
     public int contarTotalPrestamos() {
         try {
@@ -279,7 +307,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al contar todos los prestamos: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "contarTotalPrestamosPorEstado")
     public int contarTotalPrestamosPorEstado(
             @WebParam(name = "estado") EstadoPrestamoEjemplar estado
@@ -290,7 +318,7 @@ public class PrestamoWS {
             throw new WebServiceException("Error al contar todos los prestamos: " + e.getMessage());
         }
     }
-    
+
     @WebMethod(operationName = "contarTotalPrestamosPorEstadoYSede")
     public int contarTotalPrestamosPorEstadoYSede(
             @WebParam(name = "estado") EstadoPrestamoEjemplar estado,
