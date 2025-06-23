@@ -17,15 +17,11 @@ import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
 
     private EjemplaresDTO ejemplar;
-    private SedeDAOImpl sedeDAO;
-    private MaterialDAOImpl materialDAO;
 
     public EjemplarDAOImpl() {
         super("BIB_EJEMPLARES");
         this.retornarLlavePrimaria = true;
         this.ejemplar = null;
-        this.sedeDAO = new SedeDAOImpl();
-        this.materialDAO = new MaterialDAOImpl();
     }
 
     @Override
@@ -122,29 +118,13 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         this.ejemplar.setUbicacion(this.resultSet.getString("UBICACION"));
 
         // Crear objetos DTO básicos para las relaciones
-//        SedesDTO sede = new SedesDTO();
-//        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
-//        this.ejemplar.setSede(sede);
-        
-        int idSede = this.resultSet.getInt("SEDE_IDSEDE");
-        if (!this.resultSet.wasNull()) {
-            SedesDTO sede = sedeDAO.obtenerPorId(idSede);
-            this.ejemplar.setSede(sede);
-        } else {
-            this.ejemplar.setSede(null);
-        }
+        SedesDTO sede = new SedesDTO();
+        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
+        this.ejemplar.setSede(sede);
 
-//        MaterialesDTO material = new MaterialesDTO();
-//        material.setIdMaterial(this.resultSet.getInt("MATERIAL_IDMATERIAL"));
-//        this.ejemplar.setMaterial(material);
-        
-        int idMaterial = this.resultSet.getInt("MATERIAL_IDMATERIAL");
-        if (!this.resultSet.wasNull()) {
-            MaterialesDTO material = materialDAO.obtenerPorId(idMaterial);
-            this.ejemplar.setMaterial(material);
-        } else {
-            this.ejemplar.setMaterial(null);
-        }
+        MaterialesDTO material = new MaterialesDTO();
+        material.setIdMaterial(this.resultSet.getInt("MATERIAL_IDMATERIAL"));
+        this.ejemplar.setMaterial(material);
     }
 
     @Override

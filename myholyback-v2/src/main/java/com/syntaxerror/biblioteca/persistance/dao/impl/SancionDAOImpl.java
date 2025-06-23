@@ -14,13 +14,11 @@ import com.syntaxerror.biblioteca.persistance.dao.SancionDAO;
 public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
 
     private SancionesDTO sancion;
-    private PrestamoDAOImpl prestamoDAO;
 
     public SancionDAOImpl() {
         super("BIB_SANCIONES");
         this.retornarLlavePrimaria = true;
         this.sancion = null;
-        this.prestamoDAO = new PrestamoDAOImpl();
     }
 
     @Override
@@ -82,17 +80,9 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
         this.sancion.setDescripcion(this.resultSet.getString("DESCRIPCION"));
 
         // Crear objetos DTO básicos para las relaciones
-//        PrestamosDTO prestamo = new PrestamosDTO();
-//        prestamo.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
-//        this.sancion.setPrestamo(prestamo);
-        
-        int idPrestamo = resultSet.getInt("PRESTAMO_IDPRESTAMO");
-        if (!resultSet.wasNull()) {
-            PrestamosDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
-            this.sancion.setPrestamo(prestamo);
-        } else {
-            this.sancion.setPrestamo(null);
-        }
+        PrestamosDTO prestamo = new PrestamosDTO();
+        prestamo.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
+        this.sancion.setPrestamo(prestamo);
     }
 
     @Override

@@ -14,13 +14,11 @@ import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
 
     private PrestamosDTO prestamo;
-    private PersonaDAOImpl personaDAO;
 
     public PrestamoDAOImpl() {
         super("BIB_PRESTAMOS");
         this.retornarLlavePrimaria = true;
         this.prestamo = null;
-        this.personaDAO = new PersonaDAOImpl();
     }
 
     @Override
@@ -92,17 +90,10 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
         this.prestamo.setFechaDevolucion(this.resultSet.getDate("FECHA_DEVOLUCION"));
 
         // Crear objetos DTO básicos para las relaciones
-//        PersonasDTO persona = new PersonasDTO();
-//        persona.setIdPersona(this.resultSet.getInt("PERSONA_IDPERSONA"));
-//        this.prestamo.setPersona(persona);
-        
-        int idPersona = resultSet.getInt("PERSONA_IDPERSONA");
-        if (!resultSet.wasNull()) {
-            PersonasDTO persona = personaDAO.obtenerPorId(idPersona);
-            this.prestamo.setPersona(persona);
-        } else {
-            this.prestamo.setPersona(null);
-        }
+        PersonasDTO persona = new PersonasDTO();
+        persona.setIdPersona(this.resultSet.getInt("PERSONA_IDPERSONA"));
+        this.prestamo.setPersona(persona);
+
     }
 
     @Override
