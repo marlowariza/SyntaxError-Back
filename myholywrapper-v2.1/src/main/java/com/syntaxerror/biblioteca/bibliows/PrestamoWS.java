@@ -203,7 +203,7 @@ public class PrestamoWS {
     }
     
     @WebMethod(operationName = "listarPrestamosPaginado")
-    public List<PrestamosDTO> listarMaterialesPaginado(
+    public List<PrestamosDTO> listarPrestamosPaginado(
             @WebParam(name = "limite") int limite,
             @WebParam(name = "pagina") int pagina
     ) {
