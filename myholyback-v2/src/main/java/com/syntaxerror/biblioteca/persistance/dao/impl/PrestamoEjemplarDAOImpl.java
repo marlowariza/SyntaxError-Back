@@ -127,24 +127,32 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
         SELECT PDE.EJEMPLAR_IDEJEMPLAR
         FROM BIB_PRESTAMOS_DE_EJEMPLARES PDE
         JOIN BIB_PRESTAMOS P ON P.ID_PRESTAMO = PDE.PRESTAMO_IDPRESTAMO
-        WHERE P.PERSONA_IDPERSONA = ? AND PDE.ESTADO IN ('PRESTADO', 'ATRASADO')
+        WHERE P.PERSONA_IDPERSONA = ? 
+          AND PDE.ESTADO IN ('PRESTADO', 'ATRASADO')
     """;
 
-        List<Integer> resultado = new ArrayList<>();
+        ArrayList<Integer> lista = new ArrayList<>();
+        //Solo se instancia el idPersona
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.statement.setInt(1, idPersona);
+            this.resultSet = this.statement.executeQuery();
 
-        super.listarTodos(sql, (param) -> {
-            try {
-                this.statement.setInt(1, (Integer) param);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            while (this.resultSet.next()) {
+                lista.add(this.resultSet.getInt("EJEMPLAR_IDEJEMPLAR"));
             }
-        }, idPersona).forEach(obj -> {
-            PrestamosDeEjemplaresDTO dto = (PrestamosDeEjemplaresDTO) obj;
-            resultado.add(dto.getIdEjemplar());
-        });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
-        return new ArrayList<>(resultado);
-
+        return lista;
     }
 
     @Override

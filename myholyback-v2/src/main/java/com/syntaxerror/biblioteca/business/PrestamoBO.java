@@ -17,7 +17,11 @@ import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
+import com.syntaxerror.biblioteca.util.CorreoUtil;
+import jakarta.mail.MessagingException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PrestamoBO {
 
@@ -188,7 +192,7 @@ public class PrestamoBO {
 //    }
     public void solicitarPrestamo(Integer idPersona, List<Integer> idEjemplares) throws BusinessException, ParseException {
 
-        // ✅ Validar entrada
+        // Validar entrada
         BusinessValidator.validarId(idPersona, "persona");
         if (idEjemplares == null || idEjemplares.isEmpty()) {
             throw new BusinessException("Debe seleccionar al menos un ejemplar.");
@@ -199,7 +203,7 @@ public class PrestamoBO {
             throw new BusinessException("No se encontró a la persona solicitante.");
         }
 
-        // ✅ Validar sanciones y límite de ejemplares en proceso
+        // Validar sanciones y límite de ejemplares en proceso
         new SancionBO().verificarSancionesActivas(idPersona);
         int ejemplaresEnProceso = this.contarEjemplaresEnProcesoPorUsuario(idPersona);
         int limite = new PersonaBO().calcularLimitePrestamos(persona.getCodigo());
@@ -208,7 +212,7 @@ public class PrestamoBO {
             throw new BusinessException("Has alcanzado el límite de ejemplares permitidos en proceso.");
         }
 
-        // ✅ Cargar ejemplares reales y validar disponibilidad + sede única
+        // Cargar ejemplares reales y validar disponibilidad + sede única
         EjemplarBO ejemplarBO = new EjemplarBO();
         List<EjemplaresDTO> ejemplares = new ArrayList<>();
         Integer sedeIdUnica = null;
@@ -222,7 +226,7 @@ public class PrestamoBO {
                 throw new BusinessException("El ejemplar con ID " + idEjemplar + " no está disponible.");
             }
 
-            // ✅ Verificar que todos son de la misma sede
+            // Verificar que todos son de la misma sede
             if (sedeIdUnica == null) {
                 sedeIdUnica = ej.getSede().getIdSede();
             } else if (!sedeIdUnica.equals(ej.getSede().getIdSede())) {
@@ -232,7 +236,7 @@ public class PrestamoBO {
             ejemplares.add(ej);
         }
 
-        // ✅ Crear préstamo principal
+        // Crear préstamo principal
         PrestamosDTO prestamo = new PrestamosDTO();
         Date fechaActual = new Date();
         prestamo.setFechaSolicitud(fechaActual);
@@ -242,7 +246,7 @@ public class PrestamoBO {
 
         int idPrestamo = this.prestamoDAO.insertar(prestamo);
 
-        // ✅ Insertar relación y marcar ejemplares como no disponibles
+        // Insertar relación y marcar ejemplares como no disponibles
         PrestamoEjemplarBO prestamoEjemplarBO = new PrestamoEjemplarBO();
         for (EjemplaresDTO ej : ejemplares) {
             prestamoEjemplarBO.insertar(
@@ -264,6 +268,25 @@ public class PrestamoBO {
             );
         }
 
+        //Crear correo (FUNCIONA,NECESITA CORREO EXISTENTE)
+//        String asunto = "Confirmación de solicitud de préstamo - MyHolyLib";
+//        StringBuilder contenido = new StringBuilder();
+//        contenido.append("<h2>Estimado/a ").append(persona.getNombre()).append("</h2>");
+//        contenido.append("<p>Su solicitud de préstamo se ha registrado correctamente con número de solicitud: <b>")
+//                .append(idPrestamo).append("</b>.</p>");
+//        contenido.append("<p>Los ejemplares solicitados son:</p><ul>");
+//        for (EjemplaresDTO ej : ejemplares) {
+//            contenido.append("<li>ID: ").append(ej.getIdEjemplar())
+//                    .append(" - Material ID: ").append(ej.getMaterial().getIdMaterial())
+//                    .append("</li>");
+//        }
+//        contenido.append("</ul>");
+//        contenido.append("<p>Gracias por usar MyHolyLib.</p>");
+//        try {
+//            CorreoUtil.enviarCorreo(persona.getCorreo(), asunto, contenido.toString());
+//        } catch (MessagingException ex) {
+//            Logger.getLogger(PrestamoBO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     public void recogerPrestamo(Integer idPrestamo) throws BusinessException {
@@ -471,7 +494,7 @@ public class PrestamoBO {
 
         return resultado;
     }
-    
+
     //RENOVACION CON VENTANA DE 3 DIAS
 //    public void renovarPrestamo(Integer idPrestamo) throws BusinessException {
 //    BusinessValidator.validarId(idPrestamo, "préstamo");
@@ -543,8 +566,6 @@ public class PrestamoBO {
 //
 //    prestamoDAO.modificar(prestamo);
 //}
-
-
     public ArrayList<PrestamosDTO> listarPrestamosPorEstadoPersona(int idPersona, EstadoPrestamoEjemplar estado) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");
 
