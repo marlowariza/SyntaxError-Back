@@ -10,7 +10,7 @@ public class CorreoUtil {
     private static final String HOST = "smtp.gmail.com";  
     private static final String PORT = "587";
     private static final String USERNAME = "myholylib.system@gmail.com"; //CUENTA REMITENTE
-    private static final String PASSWORD = "zneq wrif uxzh vdij";        // Clave de aplicación, NO tu clave normal
+    private static final String PASSWORD = "";        // Clave de aplicación, NO tu clave normal
 
     /**
      * Envía un correo de texto plano.
@@ -37,7 +37,7 @@ public class CorreoUtil {
         message.setFrom(new InternetAddress(USERNAME));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destino));
         message.setSubject(asunto);
-        message.setText(contenido); // Para HTML: setContent(contenido, "text/html")
+        message.setContent(contenido, "text/html; charset=utf-8"); // Para HTML: setContent(contenido, "text/html")
 
         Transport.send(message);
     }
