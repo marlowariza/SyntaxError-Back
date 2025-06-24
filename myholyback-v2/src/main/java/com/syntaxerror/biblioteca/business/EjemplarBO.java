@@ -161,6 +161,20 @@ public class EjemplarBO {
         return this.ejemplarDAO.listarEjemplaresPorFiltros(idMaterial, idSede, true, TipoEjemplar.FISICO);
     }
 
+    // Ejemplares disponibles por material y sede
+    public int contarEjemplaresDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+        return this.ejemplarDAO.contarEjemplaresPorFiltros(idMaterial, idSede, true, null);
+    }
+
+// 2️⃣ Ejemplares NO disponibles por material y sede
+    public int contarEjemplaresNoDisponiblesPorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
+        BusinessValidator.validarId(idMaterial, "material");
+        BusinessValidator.validarId(idSede, "sede");
+        return this.ejemplarDAO.contarEjemplaresPorFiltros(idMaterial, idSede, false, null);
+    }
+
     public EjemplaresDTO obtenerPrimerEjemplarFisicoDisponiblePorMaterialYSede(int idMaterial, int idSede) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
         BusinessValidator.validarId(idSede, "sede");

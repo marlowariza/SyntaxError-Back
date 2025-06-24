@@ -171,4 +171,18 @@ public class EjemplarWS {
         }
     }
 
+    @WebMethod(operationName = "contarEjemplaresNoDisponiblesPorMaterialYSede")
+    public int contarEjemplaresNoDisponiblesPorMaterialYSede(
+            @WebParam(name = "idMaterial") int idMaterial,
+            @WebParam(name = "idSede") int idSede) throws BusinessException {
+        return ejemplarBO.contarEjemplaresNoDisponiblesPorMaterialYSede(idMaterial, idSede);
+    }
+
+    @WebMethod(operationName = "contarEjemplaresDisponiblesPorMaterialYSede")
+    public int contarEjemplaresDisponiblesPorMaterialYSede(
+            @WebParam(name = "idMaterial") int idMaterial,
+            @WebParam(name = "idSede") int idSede) throws BusinessException {
+        return ejemplarBO.contarEjemplaresDisponiblesPorMaterialYSede(idMaterial, idSede);
+    }
+
 }

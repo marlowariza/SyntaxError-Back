@@ -283,7 +283,7 @@ public class MaterialWS {
     public List<MaterialesDTO> listarPaginadoPorEditorial(@WebParam(name = "nombreEditorial") String nombreEditorial, @WebParam(name = "limite") int limite, @WebParam(name = "pagina") int pagina) throws BusinessException {
         return materialBO.listarPaginadoPorEditorial(nombreEditorial, limite, pagina);
     }
-    
+
     @WebMethod
     public String obtenerNombreCreadorRandomPorMaterial(
             @WebParam(name = "idMaterial") Integer idMaterial) throws BusinessException {
@@ -304,15 +304,22 @@ public class MaterialWS {
     public int contarPrestadosFisicosPorMaterial(@WebParam(name = "idMaterial") int idMaterial) throws BusinessException {
         return materialBO.contarPrestadosFisicosPorMaterial(idMaterial);
     }
-    
+
     @WebMethod(operationName = "listarMaterialesPorTituloParcialPaginado")
     public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(
             @WebParam(name = "textoBusqueda") String textoBusqueda,
-            @WebParam(name = "sedeId") int sedeId, 
-            @WebParam(name = "limite") int limite, 
+            @WebParam(name = "sedeId") int sedeId,
+            @WebParam(name = "limite") int limite,
             @WebParam(name = "pagina") int pagina) throws BusinessException {
         //Integer sedeIdToPass = (sedeId == -1) ? null : sedeId;
         return materialBO.listarMaterialesPorTituloParcialPaginado(textoBusqueda, sedeId, limite, pagina);
     }
+
+    @WebMethod(operationName = "contarMaterialesPorSede")
+    public int contarMaterialesPorSede(@WebParam(name = "idSede") int idSede) throws BusinessException {
+        return materialBO.contarMaterialesPorSede(idSede);
+    }
+    
+    
 
 }

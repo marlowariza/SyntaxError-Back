@@ -356,11 +356,16 @@ public class MaterialBO {
         BusinessValidator.validarId(idMaterial, "material");
         return new EjemplarDAOImpl().contarEjemplaresPorFiltros(idMaterial, null, false, TipoEjemplar.FISICO);
     }
-    
-    public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int pagina) throws BusinessException{
+
+    public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int pagina) throws BusinessException {
         BusinessValidator.validarPaginacion(limite, pagina);
         int offset = (pagina - 1) * limite;
         return materialDAO.listarMaterialesPorTituloParcialPaginado(textoBusqueda, sedeId, limite, offset);
+    }
+
+    public int contarMaterialesPorSede(int idSede) throws BusinessException {
+        BusinessValidator.validarId(idSede, "sede");
+        return materialDAO.contarMaterialesPorSede(idSede);
     }
 
 }
