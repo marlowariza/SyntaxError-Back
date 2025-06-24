@@ -185,4 +185,12 @@ public class EjemplarWS {
         return ejemplarBO.contarEjemplaresDisponiblesPorMaterialYSede(idMaterial, idSede);
     }
 
+    //LISTA TODOS LOS EJEMPLARES ASOCIADOS A UN PRESTAMO
+    @WebMethod(operationName = "listarEjemplaresPorPrestamo")
+    public ArrayList<EjemplaresDTO> listarEjemplaresPorPrestamo(
+            @WebParam(name = "idPrestamo") Integer idPrestamo) throws BusinessException {
+
+        return ejemplarBO.listarPorIdPrestamo(idPrestamo);
+    }
+
 }
