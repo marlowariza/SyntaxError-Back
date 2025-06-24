@@ -29,9 +29,14 @@ public class MaterialWS {
 
     @WebMethod(operationName = "insertarMaterial")
     public int insertarMaterial(
-            @WebParam(name = "material") MaterialesDTO material
+            @WebParam(name = "material") MaterialesDTO material,
+            @WebParam(name = "creadores") List<CreadoresDTO> creadores,
+            @WebParam(name = "temas") List<TemasDTO> temas
     ) {
         try {
+            material.setCreadores(creadores);
+            material.setTemas(temas);
+
             return materialBO.insertar(material);
         } catch (BusinessException e) {
             throw new WebServiceException("Error al insertar material: " + e.getMessage());
@@ -319,7 +324,5 @@ public class MaterialWS {
     public int contarMaterialesPorSede(@WebParam(name = "idSede") int idSede) throws BusinessException {
         return materialBO.contarMaterialesPorSede(idSede);
     }
-    
-    
 
 }

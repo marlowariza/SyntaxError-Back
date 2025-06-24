@@ -381,6 +381,55 @@ public class PrestamoBO {
 
     }
 
+    public void renovarPrestamo(Integer idPrestamo) throws BusinessException {
+        BusinessValidator.validarId(idPrestamo, "préstamo");
+
+        PrestamosDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
+        if (prestamo == null) {
+            throw new BusinessException("No existe el préstamo indicado.");
+        }
+
+        PersonasDTO persona = personaDAO.obtenerPorId(prestamo.getPersona().getIdPersona());
+        if (persona == null) {
+            throw new BusinessException("No se encontró la persona asociada al préstamo.");
+        }
+
+        new SancionBO().verificarSancionesActivas(persona.getIdPersona());
+
+        Date hoy = new Date();
+        if (hoy.after(prestamo.getFechaDevolucion())) {
+            throw new BusinessException("El préstamo ya está atrasado y no puede renovarse.");
+        }
+
+        long plazoOriginal;
+        String tipoPersona = persona.getTipo().name();
+        switch (tipoPersona) {
+            case "ESTUDIANTE" ->
+                plazoOriginal = 7L;
+            case "PROFESOR", "ADMINISTRADOR" ->
+                plazoOriginal = 14L;
+            default ->
+                plazoOriginal = 7L;
+        }
+
+        long plazoActual = (prestamo.getFechaDevolucion().getTime() - prestamo.getFechaPrestamo().getTime()) / (1000 * 60 * 60 * 24);
+        if (plazoActual > plazoOriginal) {
+            throw new BusinessException("Este préstamo ya fue renovado una vez. No se permite más de una renovación.");
+        }
+
+        ArrayList<PrestamosDeEjemplaresDTO> ejemplares = prestamoEjemplarDAO.listarPorIdPrestamo(idPrestamo);
+        for (PrestamosDeEjemplaresDTO pe : ejemplares) {
+            if (pe.getEstado() != EstadoPrestamoEjemplar.PRESTADO) {
+                throw new BusinessException("No se puede renovar: uno o más ejemplares no están en estado PRESTADO.");
+            }
+        }
+
+        Date nuevaFechaDevolucion = new Date(prestamo.getFechaDevolucion().getTime() + (plazoOriginal * 24 * 60 * 60 * 1000));
+        prestamo.setFechaDevolucion(nuevaFechaDevolucion);
+
+        prestamoDAO.modificar(prestamo);
+    }
+
     public ArrayList<PrestamosDTO> listarPrestamosDevueltos() {
         ArrayList<PrestamosDeEjemplaresDTO> prestamosDevueltos = prestamoEjemplarDAO.listarPrestamosDevueltos();
         ArrayList<PrestamosDTO> prestamos = new ArrayList<>();
