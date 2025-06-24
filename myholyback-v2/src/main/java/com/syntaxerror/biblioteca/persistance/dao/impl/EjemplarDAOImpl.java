@@ -324,4 +324,26 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         );
     }
 
+    @Override
+    public ArrayList<EjemplaresDTO> listarPorIdPrestamo(Integer idPrestamo) {
+        String sql = String.format("""
+        SELECT %s
+        FROM BIB_EJEMPLARES e
+        JOIN BIB_PRESTAMOS_DE_EJEMPLARES pde ON e.ID_EJEMPLAR = pde.EJEMPLAR_IDEJEMPLAR
+        WHERE pde.PRESTAMO_IDPRESTAMO = ?
+    """, this.generarListaDeCamposConAlias("e"));
+
+        return (ArrayList<EjemplaresDTO>) this.listarTodos(
+                sql,
+                param -> {
+                    try {
+                        this.statement.setInt(1, idPrestamo);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                idPrestamo
+        );
+    }
+
 }

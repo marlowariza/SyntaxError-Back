@@ -28,4 +28,6 @@ public interface EjemplarDAO {
 
     public int contarEjemplaresPorFiltros(Integer idMaterial, Integer idSede, Boolean disponible, TipoEjemplar tipo);
 
+    public ArrayList<EjemplaresDTO> listarPorIdPrestamo(Integer idPrestamo);
+
 }

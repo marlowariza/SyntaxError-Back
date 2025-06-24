@@ -471,6 +471,79 @@ public class PrestamoBO {
 
         return resultado;
     }
+    
+    //RENOVACION CON VENTANA DE 3 DIAS
+//    public void renovarPrestamo(Integer idPrestamo) throws BusinessException {
+//    BusinessValidator.validarId(idPrestamo, "préstamo");
+//
+//    // Obtener prestamo
+//    PrestamosDTO prestamo = prestamoDAO.obtenerPorId(idPrestamo);
+//    if (prestamo == null) {
+//        throw new BusinessException("No existe el préstamo indicado.");
+//    }
+//
+//    // Obtener persona
+//    PersonasDTO persona = personaDAO.obtenerPorId(prestamo.getPersona().getIdPersona());
+//    if (persona == null) {
+//        throw new BusinessException("No se encontró la persona asociada al préstamo.");
+//    }
+//
+//    // Validar sanciones
+//    new SancionBO().verificarSancionesActivas(persona.getIdPersona());
+//
+//    // Validar prestamo no atrasado
+//    Date hoy = new Date();
+//    if (hoy.after(prestamo.getFechaDevolucion())) {
+//        throw new BusinessException("El préstamo ya está atrasado y no puede renovarse.");
+//    }
+//
+//    // Hallar plazo original
+//    long plazoOriginal;
+//    int diasVentanaRenovacion;
+//    String tipoPersona = persona.getTipo().name();
+//    switch (tipoPersona) {
+//        case "ESTUDIANTE" -> {
+//            plazoOriginal = 7L;
+//            diasVentanaRenovacion = 3;  // Por ejemplo: ventana de renovación 3 días antes del vencimiento
+//        }
+//        case "PROFESOR", "ADMINISTRADOR" -> {
+//            plazoOriginal = 14L;
+//            diasVentanaRenovacion = 5;  // Profesores/Admins: 5 días antes
+//        }
+//        default -> {
+//            plazoOriginal = 7L;
+//            diasVentanaRenovacion = 3;
+//        }
+//    }
+//
+//    // Validar que no se haya renovado antes
+//    long plazoActual = (prestamo.getFechaDevolucion().getTime() - prestamo.getFechaPrestamo().getTime()) / (1000 * 60 * 60 * 24);
+//    if (plazoActual > plazoOriginal) {
+//        throw new BusinessException("Este préstamo ya fue renovado una vez. No se permite más de una renovación.");
+//    }
+//
+//    // Validar ventana de renovacion
+//    Date fechaDevolucion = prestamo.getFechaDevolucion();
+//    Date inicioVentana = new Date(fechaDevolucion.getTime() - (diasVentanaRenovacion * 24L * 60 * 60 * 1000));
+//    if (hoy.before(inicioVentana)) {
+//        throw new BusinessException("Solo se permite renovar dentro de los últimos " + diasVentanaRenovacion + " días antes de la fecha de devolución.");
+//    }
+//
+//    // Validar estado de los ejemplares
+//    ArrayList<PrestamosDeEjemplaresDTO> ejemplares = prestamoEjemplarDAO.listarPorIdPrestamo(idPrestamo);
+//    for (PrestamosDeEjemplaresDTO pe : ejemplares) {
+//        if (pe.getEstado() != EstadoPrestamoEjemplar.PRESTADO) {
+//            throw new BusinessException("No se puede renovar: uno o más ejemplares no están en estado PRESTADO.");
+//        }
+//    }
+//
+//    // Calcular y setear nueva fecha
+//    Date nuevaFechaDevolucion = new Date(fechaDevolucion.getTime() + (plazoOriginal * 24L * 60 * 60 * 1000));
+//    prestamo.setFechaDevolucion(nuevaFechaDevolucion);
+//
+//    prestamoDAO.modificar(prestamo);
+//}
+
 
     public ArrayList<PrestamosDTO> listarPrestamosPorEstadoPersona(int idPersona, EstadoPrestamoEjemplar estado) throws BusinessException {
         BusinessValidator.validarId(idPersona, "persona");

@@ -181,4 +181,10 @@ public class EjemplarBO {
         ArrayList<EjemplaresDTO> disponibles = this.ejemplarDAO.listarEjemplaresPorFiltros(idMaterial, idSede, true, TipoEjemplar.FISICO);
         return disponibles.isEmpty() ? null : disponibles.get(0);
     }
+
+    //LISTA TODOS LOS EJEMPLARES ASOCIADOS A UN PRESTAMO
+    public ArrayList<EjemplaresDTO> listarPorIdPrestamo(Integer idPrestamo) throws BusinessException {
+        BusinessValidator.validarId(idPrestamo, "prestamo");
+        return this.ejemplarDAO.listarPorIdPrestamo(idPrestamo);
+    }
 }
