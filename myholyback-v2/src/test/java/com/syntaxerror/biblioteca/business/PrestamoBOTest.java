@@ -45,15 +45,13 @@
 //    public void testSolicitarPrestamo() throws Exception {
 //        System.out.println("solicitarPrestamo");
 //
-//         1️⃣ Arrange: datos de prueba
-//        Integer idPersona = 7; // ID de persona válida en tu BD
+//        Integer idPersona = 9; // ID de persona válida en tu BD
 //        List<Integer> idEjemplares = new ArrayList<>();
-//        idEjemplares.add(63); // ID de ejemplar válido y disponible
-//        idEjemplares.add(74); // Otro ejemplar válido y disponible
+//        idEjemplares.add(66); // ID de ejemplar válido y disponible
+////        idEjemplares.add(67); // Otro ejemplar válido y disponible
 //
 //        PrestamoBO instance = new PrestamoBO();
 //
-//         2️⃣ Act: ejecutar método
 //        try {
 //            instance.solicitarPrestamo(idPersona, idEjemplares);
 //        } catch (Exception e) {
@@ -61,7 +59,6 @@
 //            fail("Error inesperado: " + e.getMessage());
 //        }
 //
-//         3️⃣ Assert: verifica que los ejemplares ahora estén marcados como no disponibles
 //        EjemplarBO ejemplarBO = new EjemplarBO();
 //        for (Integer idEjemplar : idEjemplares) {
 //            EjemplaresDTO ejemplar = ejemplarBO.obtenerPorId(idEjemplar);
@@ -83,7 +80,6 @@
 //        prestamoBO.recogerPrestamo(17);
 //        System.out.println("Préstamo recogido correctamente.");
 //
-//         👉 4) DEVOLVER uno
 //        prestamoBO.devolverPrestamo(17, List.of(idEjemplar1));
 //        System.out.println("Ejemplar devuelto correctamente.");
 //    }
