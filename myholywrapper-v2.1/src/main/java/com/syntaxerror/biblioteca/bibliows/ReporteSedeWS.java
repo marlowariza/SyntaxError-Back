@@ -1,5 +1,6 @@
 package com.syntaxerror.biblioteca.bibliows;
 
+import com.syntaxerror.biblioteca.bibliows.reports.ReporteUtil;
 import com.syntaxerror.biblioteca.business.ReporteSedeBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.ReportesPorSedeDTO;
@@ -22,8 +23,8 @@ public class ReporteSedeWS {
 
     @WebMethod(operationName = "generarReporte")
     public void generarReporte(
-        @WebParam(name = "anio") Integer anio,
-        @WebParam(name = "mes") Integer mes
+            @WebParam(name = "anio") Integer anio,
+            @WebParam(name = "mes") Integer mes
     ) {
         try {
             reporteBO.generarReporte(anio, mes);
@@ -34,11 +35,11 @@ public class ReporteSedeWS {
 
     @WebMethod(operationName = "listarPorPeriodoYSede")
     public ArrayList<ReportesPorSedeDTO> listarPorPeriodoYSede(
-        @WebParam(name = "anio") Integer anio,
-        @WebParam(name = "mes") Integer mes,
-        @WebParam(name = "idSede") Integer idSede,
-        @WebParam(name = "idPrestamo") Integer idPrestamo,
-        @WebParam(name = "idPersona") Integer idPersona
+            @WebParam(name = "anio") Integer anio,
+            @WebParam(name = "mes") Integer mes,
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "idPrestamo") Integer idPrestamo,
+            @WebParam(name = "idPersona") Integer idPersona
     ) {
         try {
             return reporteBO.listarPorPeriodoYSede(anio, mes, idSede, idPrestamo, idPersona);
@@ -46,4 +47,19 @@ public class ReporteSedeWS {
             throw new WebServiceException("Error al listar reporte: " + e.getMessage());
         }
     }
+    //Si id sede=0 lista todas las sedes, Reprte de sedes, especificando cada material disponible
+    // total de ejmplares y cantidad de préstamos.
+    @WebMethod(operationName = "reportePrestamosPorSede")
+    public byte[] reportePrestamosPorSede(
+            @WebParam(name = "idSede") Integer idSede,
+            @WebParam(name = "anio") Integer anio,
+            @WebParam(name = "mes") Integer mes
+    ) {
+        try {
+            return ReporteUtil.reportePrestamosPorSede(idSede, anio, mes);
+        } catch (Exception e) {
+            throw new WebServiceException("Error al generar PDF del reporte: " + e.getMessage());
+        }
+    }
+
 }

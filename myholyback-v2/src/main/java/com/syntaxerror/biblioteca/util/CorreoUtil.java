@@ -23,6 +23,7 @@ public class CorreoUtil {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.ssl.trust", "*"); // para pruebas: acepta cualquier certificado SSL
         props.put("mail.smtp.host", HOST);
         props.put("mail.smtp.port", PORT);
 

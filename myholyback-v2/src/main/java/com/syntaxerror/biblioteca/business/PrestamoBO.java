@@ -269,24 +269,24 @@ public class PrestamoBO {
         }
 
         //Crear correo (FUNCIONA,NECESITA CORREO EXISTENTE)
-//        String asunto = "Confirmación de solicitud de préstamo - MyHolyLib";
-//        StringBuilder contenido = new StringBuilder();
-//        contenido.append("<h2>Estimado/a ").append(persona.getNombre()).append("</h2>");
-//        contenido.append("<p>Su solicitud de préstamo se ha registrado correctamente con número de solicitud: <b>")
-//                .append(idPrestamo).append("</b>.</p>");
-//        contenido.append("<p>Los ejemplares solicitados son:</p><ul>");
-//        for (EjemplaresDTO ej : ejemplares) {
-//            contenido.append("<li>ID: ").append(ej.getIdEjemplar())
-//                    .append(" - Material ID: ").append(ej.getMaterial().getIdMaterial())
-//                    .append("</li>");
-//        }
-//        contenido.append("</ul>");
-//        contenido.append("<p>Gracias por usar MyHolyLib.</p>");
-//        try {
-//            CorreoUtil.enviarCorreo(persona.getCorreo(), asunto, contenido.toString());
-//        } catch (MessagingException ex) {
-//            Logger.getLogger(PrestamoBO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        String asunto = "Confirmación de solicitud de préstamo - MyHolyLib";
+        StringBuilder contenido = new StringBuilder();
+        contenido.append("<h2>Estimado/a ").append(persona.getNombre()).append("</h2>");
+        contenido.append("<p>Su solicitud de préstamo se ha registrado correctamente con número de solicitud: <b>")
+                .append(idPrestamo).append("</b>.</p>");
+        contenido.append("<p>Los ejemplares solicitados son:</p><ul>");
+        for (EjemplaresDTO ej : ejemplares) {
+            contenido.append("<li>ID: ").append(ej.getIdEjemplar())
+                    .append(" - Material ID: ").append(ej.getMaterial().getIdMaterial())
+                    .append("</li>");
+        }
+        contenido.append("</ul>");
+        contenido.append("<p>Gracias por usar MyHolyLib.</p>");
+        try {
+            CorreoUtil.enviarCorreo(persona.getCorreo(), asunto, contenido.toString());
+        } catch (MessagingException ex) {
+            Logger.getLogger(PrestamoBO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void recogerPrestamo(Integer idPrestamo) throws BusinessException {
