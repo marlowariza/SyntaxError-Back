@@ -249,8 +249,8 @@ public class PersonaBO {
         if (identificador.contains("@")) {
             if (!(identificador.endsWith("@myholylib.edu.pe")
                     || identificador.endsWith("@britanico.edu.pe")
-                    || identificador.endsWith("@gmail.edu.pe")
-                    || identificador.endsWith("@hotmail.edu.pe"))) {
+                    || identificador.endsWith("@gmail.com")
+                    || identificador.endsWith("@hotmail.com"))) {
                 throw new BusinessException("El correo ingresado no tiene un dominio válido.");
             }
         } else {
