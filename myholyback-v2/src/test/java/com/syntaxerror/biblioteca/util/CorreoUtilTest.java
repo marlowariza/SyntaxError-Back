@@ -43,7 +43,7 @@
 //    public void testEnviarCorreo() throws Exception {
 //        try {
 //            CorreoUtil.enviarCorreo(
-//                    "fzapataarburua@gmail.com",
+//                    "jalvaradoaranguri@gmail.com",
 //                    "📚 Prueba de envío de correo",
 //                    "<h1>Hola!</h1><p>Este es un correo de prueba de MyHolyLib.</p>"
 //            );
