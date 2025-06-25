@@ -17,11 +17,13 @@ import com.syntaxerror.biblioteca.persistance.dao.EjemplarDAO;
 public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
 
     private EjemplaresDTO ejemplar;
+    private SedeDAOImpl sedeDAO;
 
     public EjemplarDAOImpl() {
         super("BIB_EJEMPLARES");
         this.retornarLlavePrimaria = true;
         this.ejemplar = null;
+        this.sedeDAO = new SedeDAOImpl();
     }
 
     @Override
@@ -118,9 +120,14 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         this.ejemplar.setUbicacion(this.resultSet.getString("UBICACION"));
 
         // Crear objetos DTO básicos para las relaciones
-        SedesDTO sede = new SedesDTO();
-        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
-        this.ejemplar.setSede(sede);
+//        SedesDTO sede = new SedesDTO();
+//        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
+//        this.ejemplar.setSede(sede);
+        
+        int sedeId = this.resultSet.getInt("SEDE_IDSEDE");
+        if (!this.resultSet.wasNull()) {
+            this.ejemplar.setSede(this.sedeDAO.obtenerPorId(sedeId));
+        }
 
         MaterialesDTO material = new MaterialesDTO();
         material.setIdMaterial(this.resultSet.getInt("MATERIAL_IDMATERIAL"));
