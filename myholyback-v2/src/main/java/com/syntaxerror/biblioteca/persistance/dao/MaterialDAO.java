@@ -54,4 +54,6 @@ public interface MaterialDAO {
     public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int offset);
     
     public int contarMaterialesPorSede(Integer idSede);
+    
+    public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId);
 }
