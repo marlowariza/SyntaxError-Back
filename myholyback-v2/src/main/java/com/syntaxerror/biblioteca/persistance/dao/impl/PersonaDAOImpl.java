@@ -203,7 +203,13 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
     public PersonasDTO obtenerPorCredenciales(String identificador, String contrasenha) {
         try {
             this.abrirConexion();
-            String sql = "SELECT * FROM BIB_PERSONAS WHERE (CORREO = ? OR CODIGO = ?) AND CONTRASENHA = ?";
+
+            String sql = """
+            SELECT %s
+            FROM BIB_PERSONAS
+            WHERE (CORREO = ? OR CODIGO = ?) AND CONTRASENHA = ?
+        """.formatted(this.generarListaDeCampos());
+
             this.colocarSQLenStatement(sql);
             this.statement.setString(1, identificador);
             this.statement.setString(2, identificador);
@@ -230,11 +236,11 @@ public class PersonaDAOImpl extends DAOImplBase implements PersonaDAO {
     @Override
     public List<PersonasDTO> listarTodosPaginado(int limite, int offset) {
         String sql = """
-        SELECT *
+        SELECT %s
         FROM BIB_PERSONAS
         ORDER BY NOMBRE, PATERNO, MATERNO
         LIMIT ? OFFSET ?
-    """;
+    """.formatted(this.generarListaDeCampos());
 
         return (List<PersonasDTO>) this.listarTodos(
                 sql,
