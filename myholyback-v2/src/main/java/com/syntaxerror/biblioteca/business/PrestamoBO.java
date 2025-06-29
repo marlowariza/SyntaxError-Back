@@ -317,7 +317,7 @@ public class PrestamoBO {
             throw new BusinessException("No hay ejemplares en estado SOLICITADO para este préstamo.");
         }
 
-        // 3️⃣ Registrar fecha de préstamo y calcular fecha devolución según rol
+        // Registrar prestamo y calcular fecha devolucion sugun rol
         Date fechaPrestamo = new Date();
         prestamo.setFechaPrestamo(fechaPrestamo);
 

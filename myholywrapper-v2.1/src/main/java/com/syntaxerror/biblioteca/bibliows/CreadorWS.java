@@ -3,7 +3,6 @@ package com.syntaxerror.biblioteca.bibliows;
 import com.syntaxerror.biblioteca.business.CreadorBO;
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
-import com.syntaxerror.biblioteca.model.enums.TipoCreador;
 
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
