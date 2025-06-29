@@ -189,7 +189,11 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
 
     @Override
     public ArrayList<PrestamosDeEjemplaresDTO> listarPorIdPrestamo(int idPrestamo) {
-        String sql = "SELECT * FROM BIB_PRESTAMOS_DE_EJEMPLARES WHERE PRESTAMO_IDPRESTAMO = ?";
+        String sql = """
+        SELECT %s
+        FROM BIB_PRESTAMOS_DE_EJEMPLARES
+        WHERE PRESTAMO_IDPRESTAMO = ?
+    """.formatted(this.generarListaDeCampos());
 
         return (ArrayList<PrestamosDeEjemplaresDTO>) this.listarTodos(
                 sql,
@@ -225,36 +229,56 @@ public class PrestamoEjemplarDAOImpl extends DAOImplBase implements PrestamoEjem
     }
 
 // Versión para un único estado
+//    private ArrayList<PrestamosDeEjemplaresDTO> listarPorEstado(EstadoPrestamoEjemplar estado) {
+//        ArrayList<PrestamosDeEjemplaresDTO> resultados = new ArrayList<>();
+//        String sql = "SELECT * FROM BIB_PRESTAMOS_DE_EJEMPLARES WHERE ESTADO = ?";
+//
+//        try {
+//            this.abrirConexion();
+//            this.colocarSQLenStatement(sql);
+//            this.statement.setString(1, estado.name());
+//            this.resultSet = this.statement.executeQuery();
+//
+//            while (this.resultSet.next()) {
+//                PrestamosDeEjemplaresDTO dto = new PrestamosDeEjemplaresDTO();
+//                dto.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
+//                dto.setIdEjemplar(this.resultSet.getInt("EJEMPLAR_IDEJEMPLAR"));
+//                dto.setEstado(EstadoPrestamoEjemplar.valueOf(this.resultSet.getString("ESTADO")));
+//                dto.setFechaRealDevolucion(this.resultSet.getDate("FECHA_REAL_DEVOLUCION"));
+//
+//                resultados.add(dto);
+//            }
+//        } catch (SQLException ex) {
+//            System.err.println("Error al listar por estado: " + ex.getMessage());
+//        } finally {
+//            try {
+//                this.cerrarConexion();
+//            } catch (SQLException ex) {
+//                System.err.println("Error al cerrar conexión: " + ex.getMessage());
+//            }
+//        }
+//
+//        return resultados;
+//    }
+
     private ArrayList<PrestamosDeEjemplaresDTO> listarPorEstado(EstadoPrestamoEjemplar estado) {
-        ArrayList<PrestamosDeEjemplaresDTO> resultados = new ArrayList<>();
-        String sql = "SELECT * FROM BIB_PRESTAMOS_DE_EJEMPLARES WHERE ESTADO = ?";
+        String sql = """
+        SELECT %s
+        FROM BIB_PRESTAMOS_DE_EJEMPLARES
+        WHERE ESTADO = ?
+    """.formatted(this.generarListaDeCampos());
 
-        try {
-            this.abrirConexion();
-            this.colocarSQLenStatement(sql);
-            this.statement.setString(1, estado.name());
-            this.resultSet = this.statement.executeQuery();
-
-            while (this.resultSet.next()) {
-                PrestamosDeEjemplaresDTO dto = new PrestamosDeEjemplaresDTO();
-                dto.setIdPrestamo(this.resultSet.getInt("PRESTAMO_IDPRESTAMO"));
-                dto.setIdEjemplar(this.resultSet.getInt("EJEMPLAR_IDEJEMPLAR"));
-                dto.setEstado(EstadoPrestamoEjemplar.valueOf(this.resultSet.getString("ESTADO")));
-                dto.setFechaRealDevolucion(this.resultSet.getDate("FECHA_REAL_DEVOLUCION"));
-
-                resultados.add(dto);
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error al listar por estado: " + ex.getMessage());
-        } finally {
-            try {
-                this.cerrarConexion();
-            } catch (SQLException ex) {
-                System.err.println("Error al cerrar conexión: " + ex.getMessage());
-            }
-        }
-
-        return resultados;
+        return (ArrayList<PrestamosDeEjemplaresDTO>) this.listarTodos(
+                sql,
+                params -> {
+                    try {
+                        this.statement.setString(1, estado.name());
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Error al setear parámetro de estado", e);
+                    }
+                },
+                null
+        );
     }
 
     @Override

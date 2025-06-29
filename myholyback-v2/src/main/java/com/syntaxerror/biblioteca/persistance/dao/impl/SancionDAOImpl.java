@@ -130,11 +130,11 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
     @Override
     public ArrayList<SancionesDTO> listarSancionesPorPersona(int idPersona) {
         String sql = """
-        SELECT s.*
+        SELECT %s
         FROM BIB_SANCIONES s
         JOIN BIB_PRESTAMOS p ON s.PRESTAMO_IDPRESTAMO = p.ID_PRESTAMO
         WHERE p.PERSONA_IDPERSONA = ?
-    """;
+    """.formatted(this.generarListaDeCamposConAlias("s"));
 
         return (ArrayList<SancionesDTO>) super.listarTodos(
                 sql,
@@ -152,12 +152,12 @@ public class SancionDAOImpl extends DAOImplBase implements SancionDAO {
     @Override
     public ArrayList<SancionesDTO> listarSancionesActivasPorPersona(int idPersona) {
         String sql = """
-        SELECT s.*
+        SELECT %s
         FROM BIB_SANCIONES s
         JOIN BIB_PRESTAMOS p ON s.PRESTAMO_IDPRESTAMO = p.ID_PRESTAMO
         WHERE p.PERSONA_IDPERSONA = ?
           AND s.DURACION > CURRENT_DATE
-    """;
+    """.formatted(this.generarListaDeCamposConAlias("s"));
 
         return (ArrayList<SancionesDTO>) super.listarTodos(
                 sql,

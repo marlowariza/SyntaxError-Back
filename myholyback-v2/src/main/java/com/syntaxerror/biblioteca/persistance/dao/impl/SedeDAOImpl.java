@@ -133,11 +133,11 @@ public class SedeDAOImpl extends DAOImplBase implements SedeDAO {
     @Override
     public ArrayList<SedesDTO> listarSedesActivasPorMaterial(int idMaterial) {
         String sql = """
-        SELECT DISTINCT s.*
+        SELECT DISTINCT %s
         FROM BIB_BIBLIOTECA_SEDES s
         JOIN BIB_EJEMPLARES e ON s.ID_SEDE = e.SEDE_IDSEDE
         WHERE s.ACTIVA = 1 AND e.MATERIAL_IDMATERIAL = ?
-    """;
+    """.formatted(this.generarListaDeCamposConAlias("s"));
 
         return (ArrayList<SedesDTO>) super.listarTodos(
                 sql,

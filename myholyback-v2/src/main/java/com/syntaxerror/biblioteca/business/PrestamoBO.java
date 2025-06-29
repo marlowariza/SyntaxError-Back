@@ -14,6 +14,7 @@ import com.syntaxerror.biblioteca.model.enums.EstadoPrestamoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.PersonaDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoDAO;
 import com.syntaxerror.biblioteca.persistance.dao.PrestamoEjemplarDAO;
+import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PersonaDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.PrestamoEjemplarDAOImpl;
@@ -216,7 +217,7 @@ public class PrestamoBO {
         EjemplarBO ejemplarBO = new EjemplarBO();
         List<EjemplaresDTO> ejemplares = new ArrayList<>();
         Integer sedeIdUnica = null;
-
+        MaterialDAOImpl materialDAO = new MaterialDAOImpl();
         for (Integer idEjemplar : idEjemplares) {
             EjemplaresDTO ej = ejemplarBO.obtenerPorId(idEjemplar);
             if (ej == null) {
@@ -232,7 +233,7 @@ public class PrestamoBO {
             } else if (!sedeIdUnica.equals(ej.getSede().getIdSede())) {
                 throw new BusinessException("Todos los ejemplares del préstamo deben pertenecer a la misma sede.");
             }
-
+            ej.setMaterial(materialDAO.obtenerPorId(ej.getMaterial().getIdMaterial()));
             ejemplares.add(ej);
         }
 
@@ -247,6 +248,7 @@ public class PrestamoBO {
         int idPrestamo = this.prestamoDAO.insertar(prestamo);
 
         // Insertar relación y marcar ejemplares como no disponibles
+        
         PrestamoEjemplarBO prestamoEjemplarBO = new PrestamoEjemplarBO();
         for (EjemplaresDTO ej : ejemplares) {
             prestamoEjemplarBO.insertar(
@@ -267,26 +269,35 @@ public class PrestamoBO {
                     ej.getMaterial().getIdMaterial()
             );
         }
-
+         
         //Crear correo (FUNCIONA,NECESITA CORREO EXISTENTE)
         String asunto = "Confirmación de solicitud de préstamo - MyHolyLib";
+
         StringBuilder contenido = new StringBuilder();
-        contenido.append("<h2>Estimado/a ").append(persona.getNombre()).append("</h2>");
-        contenido.append("<p>Su solicitud de préstamo se ha registrado correctamente con número de solicitud: <b>")
+        contenido.append("<h2>Estimado/a ").append(persona.getNombre()).append(" ").append(persona.getPaterno()).append(",</h2>");
+        contenido.append("<p>Su solicitud de préstamo ha sido registrada exitosamente con número de solicitud: <b>")
                 .append(idPrestamo).append("</b>.</p>");
-        contenido.append("<p>Los ejemplares solicitados son:</p><ul>");
+
+        contenido.append("<p>Detalles del préstamo:</p>");
+        contenido.append("<ul>");
         for (EjemplaresDTO ej : ejemplares) {
-            contenido.append("<li>ID: ").append(ej.getIdEjemplar())
-                    .append(" - Material ID: ").append(ej.getMaterial().getIdMaterial())
+            contenido.append("<li>")
+                    .append("ID Ejemplar: ").append(ej.getIdEjemplar())
+                    .append(" — <b>").append(ej.getMaterial().getTitulo()).append("</b>")
+                    .append(" (ID Material: ").append(ej.getMaterial().getIdMaterial()).append(")")
                     .append("</li>");
         }
         contenido.append("</ul>");
-        contenido.append("<p>Gracias por usar MyHolyLib.</p>");
+
+        contenido.append("<p><b>Sede de retiro:</b> ").append(ejemplares.get(0).getSede().getNombre()).append("</p>");
+        contenido.append("<p>Por favor, acérquese a la sede indicada para recoger su préstamo.</p>");
+        contenido.append("<br><p>Gracias por utilizar <b>MyHolyLib</b>.</p>");
         try {
             CorreoUtil.enviarCorreo(persona.getCorreo(), asunto, contenido.toString());
         } catch (MessagingException ex) {
             Logger.getLogger(PrestamoBO.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     public void recogerPrestamo(Integer idPrestamo) throws BusinessException {

@@ -59,14 +59,14 @@
 //            fail("Error inesperado: " + e.getMessage());
 //        }
 //
-//        EjemplarBO ejemplarBO = new EjemplarBO();
-//        for (Integer idEjemplar : idEjemplares) {
-//            EjemplaresDTO ejemplar = ejemplarBO.obtenerPorId(idEjemplar);
-//            assertFalse(ejemplar.getDisponible(),
-//                    "El ejemplar ID " + idEjemplar + " debería estar marcado como NO disponible después del préstamo.");
-//        }
+////        EjemplarBO ejemplarBO = new EjemplarBO();
+////        for (Integer idEjemplar : idEjemplares) {
+////            EjemplaresDTO ejemplar = ejemplarBO.obtenerPorId(idEjemplar);
+////            assertFalse(ejemplar.getDisponible(),
+////                    "El ejemplar ID " + idEjemplar + " debería estar marcado como NO disponible después del préstamo.");
+////        }
 //
-//        System.out.println("Préstamo solicitado correctamente con ejemplares: " + idEjemplares);
+////        System.out.println("Préstamo solicitado correctamente con ejemplares: " + idEjemplares);
 //    }
 //
 //    @Test

@@ -3,7 +3,6 @@ package com.syntaxerror.biblioteca.persistance.dao.impl;
 import com.syntaxerror.biblioteca.persistance.dao.impl.base.DAOImplBase;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
-import com.syntaxerror.biblioteca.model.SedesDTO;
 import com.syntaxerror.biblioteca.model.enums.FormatoDigital;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
@@ -123,7 +122,6 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
 //        SedesDTO sede = new SedesDTO();
 //        sede.setIdSede(this.resultSet.getInt("SEDE_IDSEDE"));
 //        this.ejemplar.setSede(sede);
-        
         int sedeId = this.resultSet.getInt("SEDE_IDSEDE");
         if (!this.resultSet.wasNull()) {
             this.ejemplar.setSede(this.sedeDAO.obtenerPorId(sedeId));
@@ -190,7 +188,7 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
 
     @Override
     public ArrayList<EjemplaresDTO> listarEjemplaresPorFiltros(Integer idMaterial, Integer idSede, Boolean disponible, TipoEjemplar tipo) {
-        StringBuilder sql = new StringBuilder("SELECT * FROM BIB_EJEMPLARES WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT %s FROM BIB_EJEMPLARES WHERE 1=1".formatted(this.generarListaDeCampos()));
 
         List<Object> parametros = new ArrayList<>();
         if (idMaterial != null) {
@@ -208,7 +206,6 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
         if (tipo != null) {
             sql.append(" AND UPPER(TRIM(TIPO_EJEMPLAR)) = ?");
             parametros.add(tipo.name());
-
         }
 
         return (ArrayList<EjemplaresDTO>) super.listarTodos(
@@ -262,9 +259,10 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
     @Override
     public ArrayList<EjemplaresDTO> listarPorIdMaterial(Integer idMaterial) {
         String sql = """
-        SELECT * FROM BIB_EJEMPLARES
+        SELECT %s
+        FROM BIB_EJEMPLARES
         WHERE MATERIAL_IDMATERIAL = ?
-    """;
+    """.formatted(this.generarListaDeCampos());
 
         return (ArrayList<EjemplaresDTO>) this.listarTodos(
                 sql,
@@ -311,11 +309,13 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
     @Override
     public List<EjemplaresDTO> listarPorIdMaterialPaginado(Integer idMaterial, int limite, int offset) {
         String sql = """
-        SELECT * FROM BIB_EJEMPLARES
+        SELECT %s
+        FROM BIB_EJEMPLARES
         WHERE MATERIAL_IDMATERIAL = ?
         ORDER BY ID_EJEMPLAR
         LIMIT ? OFFSET ?
-    """;
+    """.formatted(this.generarListaDeCampos());
+
         return (List<EjemplaresDTO>) this.listarTodos(
                 sql,
                 params -> {

@@ -140,7 +140,11 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
 
     @Override
     public ArrayList<PrestamosDTO> listarPorIdPersona(int idPersona) {
-        String sql = "SELECT * FROM BIB_PRESTAMOS WHERE PERSONA_IDPERSONA = ?";
+        String sql = """
+        SELECT %s
+        FROM BIB_PRESTAMOS
+        WHERE PERSONA_IDPERSONA = ?
+    """.formatted(this.generarListaDeCampos());
 
         return (ArrayList<PrestamosDTO>) this.listarTodos(
                 sql,
@@ -154,8 +158,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 idPersona
         );
     }
-    
-    
+
     @Override
     public List<PrestamosDTO> listarTodosPaginado(int limite, int offset) {
         String sql = String.format("""
@@ -179,7 +182,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 new int[]{limite, offset}
         ); // Manejo de excepciones SQL si se requiere
     }
-    
+
     @Override
     public List<PrestamosDTO> listarPorSedePaginado(int limite, int offset, int sedeId) {
         String sql = String.format("""
@@ -207,7 +210,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 new int[]{limite, offset}
         );
     }
-    
+
     @Override
     public List<PrestamosDTO> listarPrestamosPorEstadoPaginado(EstadoPrestamoEjemplar estado, int limite, int offset) {
         String sql = String.format("""
@@ -233,7 +236,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
                 new int[]{limite, offset}
         );
     }
-    
+
     @Override
     public String obtenerEstadoPrestamo(int idPrestamo) {
         String sql = """
@@ -242,20 +245,20 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
             JOIN BIB_PRESTAMOS p ON p.ID_PRESTAMO = pe.PRESTAMO_IDPRESTAMO
             WHERE p.ID_PRESTAMO = ?;
         """;
-        
+
         // Ejecuta la consulta y devuelve el estado
         return (String) this.obtenerUnSoloValor(
-            sql,
-            params -> {
-                try {
-                    this.statement.setInt(1, idPrestamo);  // Establecer el idPrestamo
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                sql,
+                params -> {
+                    try {
+                        this.statement.setInt(1, idPrestamo);  // Establecer el idPrestamo
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
         );
     }
-    
+
     @Override
     public List<PrestamosDTO> listarPrestamosPorEstadoYSedePaginado(EstadoPrestamoEjemplar estado, Integer sedeId, int limite, int offset) {
         StringBuilder sql = new StringBuilder(String.format("""
@@ -277,33 +280,34 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
         """);
 
         return (List<PrestamosDTO>) this.listarTodos(
-            sql.toString(),
-            params -> {
-                try {
-                    this.statement.setString(1, estado.name());
+                sql.toString(),
+                params -> {
+                    try {
+                        this.statement.setString(1, estado.name());
 
-                    if (sedeId != -1) {
-                        this.statement.setInt(2, sedeId);
-                        this.statement.setInt(3, limite);
-                        this.statement.setInt(4, offset);
-                    } else {
-                        this.statement.setInt(2, limite);
-                        this.statement.setInt(3, offset);
+                        if (sedeId != -1) {
+                            this.statement.setInt(2, sedeId);
+                            this.statement.setInt(3, limite);
+                            this.statement.setInt(4, offset);
+                        } else {
+                            this.statement.setInt(2, limite);
+                            this.statement.setInt(3, offset);
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            },
-            new int[]{limite, offset}
+                },
+                new int[]{limite, offset}
         );
     }
 
     @Override
     public int contarTotalPrestamos() {
         String sql = "SELECT COUNT(*) FROM BIB_PRESTAMOS;";
-        return ((Long) this.obtenerUnSoloValor(sql, params -> {})).intValue();
+        return ((Long) this.obtenerUnSoloValor(sql, params -> {
+        })).intValue();
     }
-    
+
     @Override
     public int contarTotalPrestamosPorEstado(EstadoPrestamoEjemplar estado) {
         String sql = """
@@ -344,8 +348,7 @@ public class PrestamoDAOImpl extends DAOImplBase implements PrestamoDAO {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } )).intValue();
+        })).intValue();
     }
-
 
 }
