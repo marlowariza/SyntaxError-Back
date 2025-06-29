@@ -360,10 +360,7 @@ public class MaterialBO {
     public String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
         String nombre = materialDAO.obtenerNombreCreadorRandomPorMaterial(idMaterial);
-        if (nombre == null || nombre.isBlank()) {
-            throw new BusinessException("No se encontró un creador asociado para el material especificado.");
-        }
-        return nombre;
+        return (nombre != null && !nombre.isBlank()) ? nombre : "";
     }
 
     public int contarStockFisicoPorMaterial(int idMaterial) throws BusinessException {
