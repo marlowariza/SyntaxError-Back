@@ -7,6 +7,7 @@ import com.syntaxerror.biblioteca.model.enums.Categoria;
 import com.syntaxerror.biblioteca.persistance.dao.impl.TemaDAOImpl;
 import java.util.ArrayList;
 import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
+import java.util.List;
 
 public class TemaBO {
 
@@ -90,5 +91,9 @@ public class TemaBO {
         if (categoria == null) {
             throw new BusinessException("Debe especificarse una categoría válida.");
         }
+    }
+
+    public List<TemasDTO> listarNombresTemas() {
+        return temaDAO.listarNombresTemas();
     }
 }

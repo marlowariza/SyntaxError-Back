@@ -2,6 +2,7 @@ package com.syntaxerror.biblioteca.persistance.dao;
 
 import com.syntaxerror.biblioteca.model.NivelesInglesDTO;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public interface NivelInglesDAO {
@@ -15,4 +16,6 @@ public interface NivelInglesDAO {
     public Integer modificar(NivelesInglesDTO nivelDeIngles);
 
     public Integer eliminar(NivelesInglesDTO nivelDeIngles);
+    
+    public List<NivelesInglesDTO> listarNombresNiveles();
 }

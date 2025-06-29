@@ -154,4 +154,8 @@ public class CreadorBO {
             throw new BusinessException("Debe indicarse si el creador está activo.");
         }
     }
+
+    public List<CreadoresDTO> listarNombresAutores() {
+        return creadorDAO.listarNombresAutores();
+    }
 }

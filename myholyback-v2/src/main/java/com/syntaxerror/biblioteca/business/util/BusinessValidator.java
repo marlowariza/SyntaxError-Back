@@ -26,4 +26,15 @@ public class BusinessValidator {
             throw new BusinessException("La página debe ser mayor que cero.");
         }
     }
+
+    public static void validarIdNegativoPermitido(Integer id, String nombreCampo) throws BusinessException {
+        if (id == null) {
+            throw new BusinessException("El campo " + nombreCampo + " no puede ser nulo.");
+        }
+        // Se permite -1 como valor especial, pero no otros negativos
+        if (id < -1) {
+            throw new BusinessException("El campo " + nombreCampo + " tiene un valor inválido.");
+        }
+    }
+
 }

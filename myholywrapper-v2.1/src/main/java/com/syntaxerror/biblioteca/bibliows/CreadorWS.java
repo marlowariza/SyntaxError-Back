@@ -11,6 +11,7 @@ import jakarta.jws.WebParam;
 import jakarta.xml.ws.WebServiceException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @WebService(serviceName = "CreadorWS")
 public class CreadorWS {
@@ -68,5 +69,10 @@ public class CreadorWS {
         } catch (Exception e) {
             throw new WebServiceException("Error al listar creadores: " + e.getMessage());
         }
+    }
+
+    @WebMethod
+    public List<CreadoresDTO> listarNombresAutores() {
+        return creadorBO.listarNombresAutores();
     }
 }

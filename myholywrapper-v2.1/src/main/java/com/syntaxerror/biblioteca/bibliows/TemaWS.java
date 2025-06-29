@@ -11,6 +11,7 @@ import jakarta.jws.WebParam;
 import jakarta.xml.ws.WebServiceException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @WebService(serviceName = "TemaWS")
 public class TemaWS {
@@ -23,7 +24,7 @@ public class TemaWS {
 
     @WebMethod(operationName = "insertarTema")
     public int insertarTema(
-        @WebParam(name = "tema") TemasDTO tema
+            @WebParam(name = "tema") TemasDTO tema
     ) {
         try {
             return temaBO.insertar(tema);
@@ -34,7 +35,7 @@ public class TemaWS {
 
     @WebMethod(operationName = "modificarTema")
     public int modificarTema(
-        @WebParam(name = "tema") TemasDTO tema
+            @WebParam(name = "tema") TemasDTO tema
     ) {
         try {
             return temaBO.modificar(tema);
@@ -68,5 +69,10 @@ public class TemaWS {
         } catch (Exception e) {
             throw new WebServiceException("Error al listar temas: " + e.getMessage());
         }
+    }
+
+    @WebMethod
+    public List<TemasDTO> listarNombresTemas() {
+        return temaBO.listarNombresTemas();
     }
 }
