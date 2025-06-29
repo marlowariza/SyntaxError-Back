@@ -368,4 +368,7 @@ public class MaterialBO {
         return materialDAO.contarMaterialesPorSede(idSede);
     }
 
+    public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId) throws BusinessException {
+        return materialDAO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
+    }
 }

@@ -352,5 +352,4 @@ public class EjemplarDAOImpl extends DAOImplBase implements EjemplarDAO {
                 idPrestamo
         );
     }
-
 }

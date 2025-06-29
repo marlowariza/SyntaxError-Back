@@ -324,5 +324,11 @@ public class MaterialWS {
     public int contarMaterialesPorSede(@WebParam(name = "idSede") int idSede) throws BusinessException {
         return materialBO.contarMaterialesPorSede(idSede);
     }
-
+    
+    @WebMethod(operationName = "contarMaterialesTotalPorFiltro")
+    public int contarMaterialesTotalPorFiltro(
+            @WebParam(name = "textoBusqueda") String textoBusqueda,
+            @WebParam(name = "sedeId") int sedeId) throws BusinessException {
+        return materialBO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
+    }
 }
