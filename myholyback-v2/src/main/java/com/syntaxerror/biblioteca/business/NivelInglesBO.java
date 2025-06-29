@@ -8,6 +8,7 @@ import com.syntaxerror.biblioteca.persistance.dao.impl.NivelInglesDAOImpl;
 
 import java.util.ArrayList;
 import com.syntaxerror.biblioteca.persistance.dao.NivelInglesDAO;
+import java.util.List;
 
 public class NivelInglesBO {
 
@@ -72,5 +73,9 @@ public class NivelInglesBO {
         } catch (IllegalArgumentException e) {
             throw new BusinessException("El nivel '" + nombreNivel + "' no es válido. Debe ser BASICO, INTERMEDIO o AVANZADO.");
         }
+    }
+
+    public List<NivelesInglesDTO> listarNombresNiveles() {
+        return nivelesDAO.listarNombresNiveles();
     }
 }

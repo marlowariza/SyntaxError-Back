@@ -80,7 +80,7 @@ public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
         this.creador.setTipo(TipoCreador.valueOf(this.resultSet.getString("TIPO_CREADOR")));
         this.creador.setNacionalidad(this.resultSet.getString("NACIONALIDAD"));
         this.creador.setActivo(this.resultSet.getInt("ACTIVO") == 1);
-        
+
         // Cargar los materiales asociados
         this.creador.setMateriales(creadoresMaterialesDAO.listarPorCreador(this.creador.getIdCreador()));
     }
@@ -143,4 +143,48 @@ public class CreadorDAOImpl extends DAOImplBase implements CreadorDAO {
         creadoresMaterialesDAO.eliminarAsociacionesConMateriales(creador.getIdCreador());
         return super.eliminar();
     }
+
+    @Override
+    public List<CreadoresDTO> listarNombresAutores() {
+        List<CreadoresDTO> lista = new ArrayList<>();
+        String sql = """
+        SELECT ID_CREADOR,
+               CASE 
+                 WHEN TRIM(SEUDONIMO) IS NOT NULL AND TRIM(SEUDONIMO) != ''
+                 THEN TRIM(SEUDONIMO)
+                 ELSE CONCAT_WS(' ', TRIM(NOMBRE), TRIM(PATERNO), TRIM(MATERNO))
+               END AS NOMBRE_COMPLETO
+        FROM BIB_CREADORES
+        WHERE TIPO_CREADOR = 'AUTOR' AND ACTIVO = 1
+        ORDER BY NOMBRE_COMPLETO
+    """;
+
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.ejecutarConsultaEnBD();
+
+            while (this.resultSet.next()) {
+                int id = this.resultSet.getInt("ID_CREADOR");
+                String nombre = this.resultSet.getString("NOMBRE_COMPLETO");
+
+                CreadoresDTO autor = new CreadoresDTO();
+                autor.setIdCreador(id);
+                autor.setSeudonimo(nombre); // usando el campo `seudonimo` para contener el nombre final
+
+                lista.add(autor);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar nombres de autores", e);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                System.err.println("Error cerrando conexión: " + e.getMessage());
+            }
+        }
+
+        return lista;
+    }
+
 }

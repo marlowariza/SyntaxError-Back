@@ -212,7 +212,7 @@ public class MaterialWS {
             @WebParam(name = "pagina") int pagina
     ) {
         try {
-            return materialBO.listarTodosPaginado(limite, pagina);
+            return materialBO.listarMaterialesPaginado(limite, pagina).getDatos();
         } catch (BusinessException e) {
             throw new WebServiceException("Error al listar materiales paginados: " + e.getMessage());
         } catch (Exception e) {
@@ -324,11 +324,46 @@ public class MaterialWS {
     public int contarMaterialesPorSede(@WebParam(name = "idSede") int idSede) throws BusinessException {
         return materialBO.contarMaterialesPorSede(idSede);
     }
-    
+
+    @WebMethod(operationName = "buscarMaterialesUsuario")
+    public List<MaterialesDTO> buscarMaterialesUsuario(
+            @WebParam(name = "idTema") Integer idTema,
+            @WebParam(name = "idAutor") Integer idAutor,
+            @WebParam(name = "idNivel") Integer idNivel,
+            @WebParam(name = "filtro") String filtro,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina
+    ) {
+        try {
+            return materialBO.buscarMaterialesUsuario(idTema, idAutor, idNivel, filtro, limite, pagina);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error de negocio: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado: " + e.getMessage());
+        }
+    }
+
+    @WebMethod(operationName = "contarMaterialesUsuario")
+    public int contarMaterialesUsuario(
+            @WebParam(name = "idTema") Integer idTema,
+            @WebParam(name = "idAutor") Integer idAutor,
+            @WebParam(name = "idNivel") Integer idNivel,
+            @WebParam(name = "filtro") String filtro
+    ) {
+        try {
+            return materialBO.contarMaterialesUsuario(idTema, idAutor, idNivel, filtro);
+        } catch (BusinessException e) {
+            throw new WebServiceException("Error de negocio: " + e.getMessage());
+        } catch (Exception e) {
+            throw new WebServiceException("Error inesperado: " + e.getMessage());
+        }
+    }
+
     @WebMethod(operationName = "contarMaterialesTotalPorFiltro")
     public int contarMaterialesTotalPorFiltro(
             @WebParam(name = "textoBusqueda") String textoBusqueda,
             @WebParam(name = "sedeId") int sedeId) throws BusinessException {
         return materialBO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
     }
+
 }

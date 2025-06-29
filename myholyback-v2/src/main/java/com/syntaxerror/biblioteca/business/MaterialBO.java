@@ -2,6 +2,8 @@ package com.syntaxerror.biblioteca.business;
 
 import com.syntaxerror.biblioteca.business.util.BusinessException;
 import com.syntaxerror.biblioteca.business.util.BusinessValidator;
+import com.syntaxerror.biblioteca.business.util.PaginacionDTO;
+import com.syntaxerror.biblioteca.business.util.SeekPaginator;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.EditorialesDTO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
@@ -200,6 +202,18 @@ public class MaterialBO {
         return this.materialDAO.listarTodosPaginado(limite, offset);
     }
 
+    public PaginacionDTO<MaterialesDTO> listarMaterialesPaginado(int cantidad, int pagina) throws BusinessException {
+        BusinessValidator.validarPaginacion(cantidad, pagina);
+
+        return SeekPaginator.paginar(
+                cantidad,
+                pagina,
+                (titulo, id, limit) -> materialDAO.listarTodosSeek(titulo, id, limit),
+                MaterialesDTO::getTitulo,
+                MaterialesDTO::getIdMaterial
+        );
+    }
+
     //LISTA EJEMPLARES POR ID MATERIAL (SEA FISICO O DIGITAL / DISPONIBLE O NO)
     public List<EjemplaresDTO> listarEjemplaresMaterial(Integer idMaterial, int limite, int pagina) throws BusinessException {
         BusinessValidator.validarId(idMaterial, "material");
@@ -208,40 +222,50 @@ public class MaterialBO {
         return ejemplarDAO.listarPorIdMaterialPaginado(idMaterial, limite, offset);
     }
 
-    //LISTA MATERIALES POR CARACTERES EN EL BUSCADOR ( DISPONIBLE O NO)
+// LISTA MATERIALES (TODOS) POR CARACTERES EN EL BUSCADOR
     public ArrayList<MaterialesDTO> listarPorCaracteres(String car, int limite, int pagina) throws BusinessException {
-        BusinessValidator.validarPaginacion(limite, pagina);
-        if (car == null || car.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-        int offset = (pagina - 1) * limite;
-        return (ArrayList<MaterialesDTO>) materialDAO.listarPorTituloConteniendo(car, limite, offset);
+        return this.listarPorCaracteresGenerico(car, limite, pagina, false);
     }
 
-    // LISTA MATERIALES VIGENTES POR CARACTERES EN EL BUSCADOR
+// LISTA MATERIALES VIGENTES POR CARACTERES EN EL BUSCADOR
     public ArrayList<MaterialesDTO> listarVigentesPorCaracteres(String car, int limite, int pagina) throws BusinessException {
+        return this.listarPorCaracteresGenerico(car, limite, pagina, true);
+    }
+
+// MÉTODO GENERALIZADO INTERNO
+    private ArrayList<MaterialesDTO> listarPorCaracteresGenerico(String car, int limite, int pagina, boolean soloVigentes) throws BusinessException {
         BusinessValidator.validarPaginacion(limite, pagina);
         if (car == null || car.trim().isEmpty()) {
             return new ArrayList<>();
         }
         int offset = (pagina - 1) * limite;
-        return materialDAO.listarVigentesPorTituloConteniendo(car, limite, offset);
+
+        List<MaterialesDTO> lista = soloVigentes
+                ? materialDAO.listarPorTituloConteniendoGenerico(car, limite, offset, true)
+                : materialDAO.listarPorTituloConteniendoGenerico(car, limite, offset, false);
+
+        return new ArrayList<>(lista);
     }
 
-    //LISTA MATERIALES POR ID SEDE ( VIGENTE O NO)
+// LISTA MATERIALES (VIGENTES O NO) POR ID DE SEDE
     public List<MaterialesDTO> listarMaterialesPorSede(Integer idSede, int limite, int pagina) throws BusinessException {
-        BusinessValidator.validarId(idSede, "sede");
-        BusinessValidator.validarPaginacion(limite, pagina);
-        int offset = (pagina - 1) * limite;
-        return materialDAO.listarPorSede(idSede, limite, offset);
+        return this.listarMaterialesPorSedeGenerico(idSede, limite, pagina, false);
     }
 
-    //LISTA MATERIALES VIGENTES POR SEDE
+// LISTA MATERIALES VIGENTES POR ID DE SEDE
     public List<MaterialesDTO> listarMaterialesVigentesPorSede(Integer idSede, int limite, int pagina) throws BusinessException {
+        return this.listarMaterialesPorSedeGenerico(idSede, limite, pagina, true);
+    }
+
+// MÉTODO AUXILIAR COMÚN
+    private List<MaterialesDTO> listarMaterialesPorSedeGenerico(Integer idSede, int limite, int pagina, boolean soloVigentes) throws BusinessException {
         BusinessValidator.validarId(idSede, "sede");
         BusinessValidator.validarPaginacion(limite, pagina);
         int offset = (pagina - 1) * limite;
-        return materialDAO.listarVigentesPorSede(idSede, limite, offset);
+
+        return soloVigentes
+                ? materialDAO.listarPorSedeGenerico(idSede, limite, offset, true)
+                : materialDAO.listarPorSedeGenerico(idSede, limite, offset, false);
     }
 
     //INDICA SI EXISTE EJEMPLAR DIGITAL)
@@ -368,7 +392,43 @@ public class MaterialBO {
         return materialDAO.contarMaterialesPorSede(idSede);
     }
 
+    // BUSCADOR PRINCIPAL PARA USUARIOS
+    public List<MaterialesDTO> buscarMaterialesUsuario(
+            Integer idTema,
+            Integer idAutor,
+            Integer idNivel,
+            String filtro,
+            int limite,
+            int pagina
+    ) throws BusinessException {
+
+        BusinessValidator.validarPaginacion(limite, pagina);
+        BusinessValidator.validarIdNegativoPermitido(idTema, "tema");
+        BusinessValidator.validarIdNegativoPermitido(idAutor, "autor");
+        BusinessValidator.validarIdNegativoPermitido(idNivel, "nivel");
+
+        int offset = (pagina - 1) * limite;
+
+        return materialDAO.buscarMaterialesUsuario(idTema, idAutor, idNivel, filtro, limite, offset);
+    }
+
+    // CONTADOR PARA BUSCADOR DE USUARIOS
+    public int contarMaterialesUsuario(
+            Integer idTema,
+            Integer idAutor,
+            Integer idNivel,
+            String filtro
+    ) throws BusinessException {
+
+        BusinessValidator.validarIdNegativoPermitido(idTema, "tema");
+        BusinessValidator.validarIdNegativoPermitido(idAutor, "autor");
+        BusinessValidator.validarIdNegativoPermitido(idNivel, "nivel");
+
+        return materialDAO.contarMaterialesUsuario(idTema, idAutor, idNivel, filtro);
+    }
+
     public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId) throws BusinessException {
         return materialDAO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
     }
+
 }

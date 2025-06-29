@@ -10,6 +10,7 @@ import jakarta.jws.WebParam;
 import jakarta.xml.ws.WebServiceException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @WebService(serviceName = "NivelInglesWS")
 public class NivelInglesWS {
@@ -70,5 +71,10 @@ public class NivelInglesWS {
         } catch (Exception e) {
             throw new WebServiceException("Error al listar niveles: " + e.getMessage());
         }
+    }
+
+    @WebMethod
+    public List<NivelesInglesDTO> listarNombresNiveles() {
+        return nivelBO.listarNombresNiveles();
     }
 }

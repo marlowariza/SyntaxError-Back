@@ -29,13 +29,13 @@ public class NivelInglesDAOImpl extends DAOImplBase implements NivelInglesDAO {
 
     @Override
     protected void incluirValorDeParametrosParaInsercion() throws SQLException {
-        this.statement.setString(1, this.nivel.getNivel().name()); 
+        this.statement.setString(1, this.nivel.getNivel().name());
         this.statement.setString(2, this.nivel.getDescripcion());
     }
 
     @Override
     protected void incluirValorDeParametrosParaModificacion() throws SQLException {
-        this.statement.setString(1, this.nivel.getNivel().name()); 
+        this.statement.setString(1, this.nivel.getNivel().name());
         this.statement.setString(2, this.nivel.getDescripcion());
         this.statement.setInt(3, this.nivel.getIdNivel());
     }
@@ -54,7 +54,7 @@ public class NivelInglesDAOImpl extends DAOImplBase implements NivelInglesDAO {
     protected void instanciarObjetoDelResultSet() throws SQLException {
         this.nivel = new NivelesInglesDTO();
         this.nivel.setIdNivel(this.resultSet.getInt("ID_NIVEL"));
-        this.nivel.setNivel(Nivel.valueOf(this.resultSet.getString("NIVEL"))); 
+        this.nivel.setNivel(Nivel.valueOf(this.resultSet.getString("NIVEL")));
         this.nivel.setDescripcion(this.resultSet.getString("DESCRIPCION"));
     }
 
@@ -99,4 +99,38 @@ public class NivelInglesDAOImpl extends DAOImplBase implements NivelInglesDAO {
         this.nivel = nivel;
         return super.eliminar();
     }
+
+    @Override
+    public List<NivelesInglesDTO> listarNombresNiveles() {
+        List<NivelesInglesDTO> lista = new ArrayList<>();
+        String sql = "SELECT ID_NIVEL, NIVEL FROM BIB_NIVELES_INGLES ORDER BY ID_NIVEL";
+
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.ejecutarConsultaEnBD();
+
+            while (this.resultSet.next()) {
+                int id = this.resultSet.getInt("ID_NIVEL");
+                String nivelStr = this.resultSet.getString("NIVEL");
+
+                NivelesInglesDTO dto = new NivelesInglesDTO();
+                dto.setIdNivel(id);
+                dto.setNivel(Nivel.valueOf(nivelStr)); // enum Nivel
+
+                lista.add(dto);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar nombres de niveles", e);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                System.err.println("Error cerrando conexión: " + e.getMessage());
+            }
+        }
+
+        return lista;
+    }
+
 }

@@ -21,39 +21,42 @@ public interface MaterialDAO {
 
     public Integer eliminar(MaterialesDTO material);
 
-    public List<MaterialesDTO> listarPorTituloConteniendo(String texto, int limite, int offset);
-
-    public ArrayList<MaterialesDTO> listarVigentesPorTituloConteniendo(String texto, int limite, int offset);
+    public List<MaterialesDTO> listarPorTituloConteniendoGenerico(String texto, int limite, int offset, boolean soloVigentes);
 
     public List<MaterialesDTO> listarMaterialesVigentesPorCreadorFiltro(String filtro, int limite, int offset);
 
-    public ArrayList<MaterialesDTO> listarPorSede(Integer idSede, int limite, int offset);
+    public List<MaterialesDTO> listarPorSedeGenerico(Integer idSede, int limite, int offset, boolean soloVigentes);
 
-    public List<MaterialesDTO> listarVigentesPorSede(Integer idSede, int limite, int offset);
+    public List<MaterialesDTO> listarMasSolicitados(int limite, int offset);
 
-    List<MaterialesDTO> listarMasSolicitados(int limite, int offset);
-
-    List<MaterialesDTO> listarMasRecientes(int limite, int offset);
+    public List<MaterialesDTO> listarMasRecientes(int limite, int offset);
 
     public List<MaterialesDTO> listarPorSedeYFiltro(Integer idSede, String filtro, boolean porTitulo, int limite, int offset);
 
     int contarTodos();
 
-    List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial);
+    public List<CreadoresDTO> listarCreadoresPorMaterial(Integer idMaterial);
 
-    List<TemasDTO> listarTemasPorMaterial(Integer idMaterial);
+    public List<TemasDTO> listarTemasPorMaterial(Integer idMaterial);
 
-    List<MaterialesDTO> listarPaginadoPorNivel(Nivel nivel, int limite, int offset);
+    public List<MaterialesDTO> listarPaginadoPorNivel(Nivel nivel, int limite, int offset);
 
-    List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int offset);
+    public List<MaterialesDTO> listarPaginadoPorTema(String descripcionTema, int limite, int offset);
 
     public List<MaterialesDTO> listarPaginadoPorEditorial(String nombreEditorial, int limite, int offset);
 
-    String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial);
-    
+    public String obtenerNombreCreadorRandomPorMaterial(Integer idMaterial);
+
     public List<MaterialesDTO> listarMaterialesPorTituloParcialPaginado(String textoBusqueda, Integer sedeId, int limite, int offset);
-    
+
     public int contarMaterialesPorSede(Integer idSede);
-    
+
+    public List<MaterialesDTO> listarTodosSeek(String ultimoTitulo, int ultimoId, int limite);
+
+    public List<MaterialesDTO> buscarMaterialesUsuario(Integer idTema, Integer idAutor, Integer idNivel, String filtro, int limite, int offset);
+
+    int contarMaterialesUsuario(Integer idTema, Integer idAutor, Integer idNivel, String filtro);
+
     public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId);
+
 }

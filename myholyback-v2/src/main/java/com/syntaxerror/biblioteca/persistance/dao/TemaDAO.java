@@ -3,6 +3,7 @@ package com.syntaxerror.biblioteca.persistance.dao;
 import java.util.ArrayList;
 
 import com.syntaxerror.biblioteca.model.TemasDTO;
+import java.util.List;
 
 public interface TemaDAO { 
     
@@ -15,4 +16,6 @@ public interface TemaDAO {
     public Integer modificar(TemasDTO tema);
 
     public Integer eliminar(TemasDTO tema);
+    
+    public List<TemasDTO> listarNombresTemas();
 }

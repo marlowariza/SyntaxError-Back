@@ -10,7 +10,6 @@ import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
 import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
-import com.syntaxerror.biblioteca.persistance.dao.impl.MaterialDAOImpl;
 import com.syntaxerror.biblioteca.persistance.dao.TemaDAO;
 
 public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
@@ -81,7 +80,7 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
         } else {
             this.tema.setTemaPadre(null);
         }
-        
+
         // Cargar materiales asociados
         if (this.tema.getIdTema() != null) {
             this.tema.setMateriales(materialesTemasDAO.listarPorTema(this.tema.getIdTema()));
@@ -146,4 +145,34 @@ public class TemaDAOImpl extends DAOImplBase implements TemaDAO {
         materialesTemasDAO.eliminarAsociacionesConMateriales(tema.getIdTema());
         return super.eliminar();
     }
+
+    @Override
+    public List<TemasDTO> listarNombresTemas() {
+        List<TemasDTO> lista = new ArrayList<>();
+        String sql = "SELECT ID_TEMA, DESCRIPCION FROM BIB_TEMAS ORDER BY DESCRIPCION";
+
+        try {
+            this.abrirConexion();
+            this.colocarSQLenStatement(sql);
+            this.ejecutarConsultaEnBD();
+
+            while (this.resultSet.next()) {
+                TemasDTO tema = new TemasDTO();
+                tema.setIdTema(this.resultSet.getInt("ID_TEMA"));
+                tema.setDescripcion(this.resultSet.getString("DESCRIPCION")); // o setNombre() si aplica
+                lista.add(tema);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar nombres de temas", e);
+        } finally {
+            try {
+                this.cerrarConexion();
+            } catch (SQLException e) {
+                System.err.println("Error cerrando conexión: " + e.getMessage());
+            }
+        }
+
+        return lista;
+    }
+
 }
