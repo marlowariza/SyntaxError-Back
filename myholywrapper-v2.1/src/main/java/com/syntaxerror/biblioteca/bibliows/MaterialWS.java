@@ -359,4 +359,11 @@ public class MaterialWS {
         }
     }
 
+    @WebMethod(operationName = "contarMaterialesTotalPorFiltro")
+    public int contarMaterialesTotalPorFiltro(
+            @WebParam(name = "textoBusqueda") String textoBusqueda,
+            @WebParam(name = "sedeId") int sedeId) throws BusinessException {
+        return materialBO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
+    }
+
 }

@@ -17,6 +17,8 @@ import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
@@ -891,4 +893,35 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
         });
     }
 
+    //sirve para contar los materiales resultado de una búsqueda
+    @Override
+    public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId) {
+        String sql = """
+            SELECT COUNT(DISTINCT m.ID_MATERIAL)
+            FROM BIB_MATERIALES m
+            JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+            WHERE 1=1
+        """;
+
+        if (textoBusqueda != null && !textoBusqueda.isEmpty()) {
+            sql += " AND m.TITULO LIKE ?";
+        }
+        if (sedeId != -1) {
+            sql += " AND e.SEDE_IDSEDE = ?";
+        }
+        return contarPorSQLyParametros(sql, stmt -> {
+            try {
+                int index = 1;
+                if (textoBusqueda != null && !textoBusqueda.isEmpty()) {
+                    stmt.setString(index++, "%" + textoBusqueda + "%");
+                }
+                if (sedeId != -1) {
+                    stmt.setInt(index, sedeId);
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }

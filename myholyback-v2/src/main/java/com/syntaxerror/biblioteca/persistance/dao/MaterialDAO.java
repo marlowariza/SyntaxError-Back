@@ -57,4 +57,6 @@ public interface MaterialDAO {
 
     int contarMaterialesUsuario(Integer idTema, Integer idAutor, Integer idNivel, String filtro);
 
+    public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId);
+
 }

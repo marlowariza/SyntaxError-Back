@@ -427,4 +427,8 @@ public class MaterialBO {
         return materialDAO.contarMaterialesUsuario(idTema, idAutor, idNivel, filtro);
     }
 
+    public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId) throws BusinessException {
+        return materialDAO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
+    }
+
 }
