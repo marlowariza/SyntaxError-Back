@@ -42,4 +42,14 @@ public class ReporteUtil {
         parametros.put("MES", mes);
         return invocarReporte("ReporteSede", parametros);
     }
+    
+    public static byte[] reporteMaterialesSolicitados(Integer sedeId, Integer anho, Integer mes) {
+        HashMap<String, Object> parametros = new HashMap<>();
+        parametros.put("SEDE_ID", sedeId);
+        parametros.put("ANHO", anho);
+        parametros.put("MES", mes);
+        return invocarReporte("ReporteMaterialesSolicitados", parametros);
+    }
+    
+    
 }

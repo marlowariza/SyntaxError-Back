@@ -55,4 +55,13 @@ public class ReporteGeneralWS {
     ){
         return ReporteUtil.reportePrestamosPorSede( sedeId,  anho,  mes);
     }
+    
+    @WebMethod(operationName = "reporteMaterialesSolicitados")
+    public byte[] reporteMaterialesSolicitados(
+        @WebParam(name = "sedeId") Integer sedeId,
+        @WebParam(name = "anho") Integer anho,
+        @WebParam(name = "mes") Integer mes
+    ){
+        return ReporteUtil.reporteMaterialesSolicitados( sedeId,  anho,  mes);
+    }
 }
