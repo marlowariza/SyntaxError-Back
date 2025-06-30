@@ -7,11 +7,13 @@ import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
+import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import jakarta.xml.ws.WebServiceException;
 import java.util.List;
 import jakarta.jws.WebService;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
+import static java.time.Clock.offset;
 import java.util.ArrayList;
 
 /**
@@ -364,6 +366,15 @@ public class MaterialWS {
             @WebParam(name = "textoBusqueda") String textoBusqueda,
             @WebParam(name = "sedeId") int sedeId) throws BusinessException {
         return materialBO.contarMaterialesTotalPorFiltro(textoBusqueda, sedeId);
+    }
+
+    @WebMethod
+    public List<MaterialesDTO> listarMaterialesPorTipoEjemplar(
+            @WebParam(name = "tipoEjemplar") TipoEjemplar tipoEjemplar,
+            @WebParam(name = "limite") int limite,
+            @WebParam(name = "pagina") int pagina) throws BusinessException {
+
+        return materialBO.listarPaginadoPorTipoEjemplar(tipoEjemplar, limite, pagina);
     }
 
 }

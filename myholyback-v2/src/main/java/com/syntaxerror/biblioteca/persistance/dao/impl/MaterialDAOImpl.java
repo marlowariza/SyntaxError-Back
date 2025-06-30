@@ -16,6 +16,7 @@ import com.syntaxerror.biblioteca.persistance.dao.impl.util.Columna;
 import com.syntaxerror.biblioteca.persistance.dao.MaterialDAO;
 import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
+import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -924,4 +925,38 @@ public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
             }
         });
     }
+
+    @Override
+    public List<MaterialesDTO> listarPaginadoPorTipoEjemplar(TipoEjemplar tipo, int limite, int offset) {
+        String sql = """
+        SELECT DISTINCT %s
+        FROM BIB_MATERIALES m
+        JOIN BIB_EJEMPLARES e ON m.ID_MATERIAL = e.MATERIAL_IDMATERIAL
+        WHERE m.VIGENTE = TRUE
+          AND e.TIPO_EJEMPLAR = ?
+        ORDER BY m.TITULO
+        LIMIT ? OFFSET ?
+    """.formatted(this.generarListaDeCamposConAlias("m"));
+
+        this.cargarRelaciones = false;
+        try {
+            return (List<MaterialesDTO>) this.listarTodos(
+                    sql,
+                    params -> {
+                        try {
+                            Object[] p = (Object[]) params;
+                            this.statement.setString(1, tipo.name());
+                            this.statement.setInt(2, (Integer) p[0]);
+                            this.statement.setInt(3, (Integer) p[1]); 
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    new Object[]{limite, offset}
+            );
+        } finally {
+            this.cargarRelaciones = true;
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
+import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,5 +59,7 @@ public interface MaterialDAO {
     int contarMaterialesUsuario(Integer idTema, Integer idAutor, Integer idNivel, String filtro);
 
     public int contarMaterialesTotalPorFiltro(String textoBusqueda, Integer sedeId);
+
+    public List<MaterialesDTO> listarPaginadoPorTipoEjemplar(TipoEjemplar tipo, int limite, int offset);
 
 }
