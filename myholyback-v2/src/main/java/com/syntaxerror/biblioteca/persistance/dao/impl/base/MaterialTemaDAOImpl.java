@@ -1,12 +1,9 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl.base;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.syntaxerror.biblioteca.db.DBManager;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.TemasDTO;
 import com.syntaxerror.biblioteca.model.enums.Categoria;
@@ -19,7 +16,7 @@ public class MaterialTemaDAOImpl extends DAOImplRelaciones {
     public MaterialTemaDAOImpl() {
         super();
     }
-
+    
     // Métodos wrapper para mantener compatibilidad
     public void asociarTema(Integer idMaterial, Integer idTema) {
         this.asociar(idMaterial, idTema);
@@ -93,7 +90,7 @@ public class MaterialTemaDAOImpl extends DAOImplRelaciones {
 
     public ArrayList<TemasDTO> listarPorMaterial(Integer idMaterial) {
         ArrayList<TemasDTO> temas = new ArrayList<>();
-        String sql = "SELECT t.* FROM BIB_TEMAS t " +
+        String sql = "SELECT t.ID_TEMA, t.DESCRIPCION, t.CATEGORIA, t.ID_TEMA_PADRE FROM BIB_TEMAS t " +
                 "INNER JOIN " + TABLA_INTERMEDIA + " mt ON t.ID_TEMA = mt.TEMA_IDTEMA " +
                 "WHERE mt.MATERIAL_IDMATERIAL = ?";
         try {
@@ -118,8 +115,8 @@ public class MaterialTemaDAOImpl extends DAOImplRelaciones {
 
     public ArrayList<MaterialesDTO> listarPorTema(Integer idTema) {
         ArrayList<MaterialesDTO> materiales = new ArrayList<>();
-        String sql = "SELECT m.* FROM BIB_MATERIALES m " +
-                "INNER JOIN " + TABLA_INTERMEDIA + " mt ON m.ID_MATERIAL = mt.MATERIAL_IDMATERIAL " +
+        String sql = "SELECT m.ID_MATERIAL, m.TITULO, m.EDICION, m.ANHIO_PUBLICACION, m.PORTADA, m.VIGENTE "
+                + "FROM BIB_MATERIALES m " +"INNER JOIN " + TABLA_INTERMEDIA + " mt ON m.ID_MATERIAL = mt.MATERIAL_IDMATERIAL " +
                 "WHERE mt.TEMA_IDTEMA = ?";
         try {
             this.abrirConexion();

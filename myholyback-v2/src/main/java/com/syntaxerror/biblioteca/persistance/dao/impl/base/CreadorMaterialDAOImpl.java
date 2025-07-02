@@ -1,12 +1,9 @@
 package com.syntaxerror.biblioteca.persistance.dao.impl.base;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.syntaxerror.biblioteca.db.DBManager;
 import com.syntaxerror.biblioteca.model.CreadoresDTO;
 import com.syntaxerror.biblioteca.model.MaterialesDTO;
 import com.syntaxerror.biblioteca.model.enums.TipoCreador;
@@ -80,7 +77,7 @@ public class CreadorMaterialDAOImpl extends DAOImplRelaciones {
     
     public ArrayList<MaterialesDTO> listarPorCreador(Integer idCreador) {
         ArrayList<MaterialesDTO> materiales = new ArrayList<>();
-        String sql = "SELECT m.* FROM BIB_MATERIALES m " +
+        String sql = "SELECT m.ID_MATERIAL, m.TITULO, m.EDICION, m.ANHIO_PUBLICACION, m.PORTADA, m.VIGENTE FROM BIB_MATERIALES m " +
                     "INNER JOIN " + TABLA_INTERMEDIA + " mc ON m.ID_MATERIAL = mc.MATERIAL_IDMATERIAL " +
                     "WHERE mc.CREADOR_IDCREADOR = ?";
         try {
@@ -105,7 +102,8 @@ public class CreadorMaterialDAOImpl extends DAOImplRelaciones {
     
     public ArrayList<CreadoresDTO> listarPorMaterial(Integer idMaterial) {
         ArrayList<CreadoresDTO> creadores = new ArrayList<>();
-        String sql = "SELECT c.* FROM BIB_CREADORES c " +
+        String sql = "SELECT c.ID_CREADOR, c.NOMBRE, c.PATERNO, c.MATERNO, c.SEUDONIMO,"
+                + "c.TIPO_CREADOR, c.NACIONALIDAD, c.ACTIVO FROM BIB_CREADORES c " +
                     "INNER JOIN " + TABLA_INTERMEDIA + " mc ON c.ID_CREADOR = mc.CREADOR_IDCREADOR " +
                     "WHERE mc.MATERIAL_IDMATERIAL = ?";
         try {

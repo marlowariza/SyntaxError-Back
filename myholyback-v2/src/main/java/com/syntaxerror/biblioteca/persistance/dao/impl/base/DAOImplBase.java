@@ -532,7 +532,7 @@ public abstract class DAOImplBase {
                 System.err.println("Error al cerrar la conexión - " + ex);
             }
         }
-        return null;  // Si no se encuentra ningún resultado
+        return null;  
     }
 
 }

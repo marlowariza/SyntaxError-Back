@@ -18,8 +18,6 @@ import com.syntaxerror.biblioteca.model.EjemplaresDTO;
 import com.syntaxerror.biblioteca.model.enums.Nivel;
 import com.syntaxerror.biblioteca.model.enums.TipoEjemplar;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MaterialDAOImpl extends DAOImplBase implements MaterialDAO {
 
