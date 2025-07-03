@@ -1,6 +1,7 @@
 package com.syntaxerror.biblioteca.bibliows.reports;
 
 import com.syntaxerror.biblioteca.db.DBManager;
+import java.net.URL;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -40,16 +41,19 @@ public class ReporteUtil {
         parametros.put("SEDE_ID", sedeId);
         parametros.put("ANHO", anho);
         parametros.put("MES", mes);
+        URL url = ReporteUtil.class.getClassLoader().getResource("myholylogo.png");
+        parametros.put("logopath", url);
         return invocarReporte("ReporteSede", parametros);
     }
-    
+
     public static byte[] reporteMaterialesSolicitados(Integer sedeId, Integer anho, Integer mes) {
         HashMap<String, Object> parametros = new HashMap<>();
         parametros.put("SEDE_ID", sedeId);
         parametros.put("ANHO", anho);
         parametros.put("MES", mes);
+        URL url = ReporteUtil.class.getClassLoader().getResource("myholylogo.png");
+        parametros.put("logopath", url);
         return invocarReporte("ReporteMaterialesSolicitados", parametros);
     }
-    
-    
+
 }
